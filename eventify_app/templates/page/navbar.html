@@ -11,7 +11,24 @@
                 <div class="div-3">Domovská stránka</div>
                 <div class="div-4">Eventy</div>
             </div>
-            <div class="div-5">Přihlášení</div>
+            <ul class="nav navbar-nav navbar-right">
+           {% if user.is_authenticated %}
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="user-profile" data-toggle="dropdown">
+                 {{ user.get_username }}
+              </a>
+              <div class="dropdown-menu">
+                  <a class="dropdown-item" href="{% url 'password_reset' %}">Změnit heslo</a>
+                  <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit">logout</button>
+                  </form>
+              </div>
+            </li>
+           {% else %}
+             <li class="nav-item"><a href="{% url 'login'%}?next={{request.path}}" class="nav-link">Přihlášení</a></li>
+           {% endif %}
+        </ul>
         </div>
         <!--ul class="navbar-nav mr-auto mt-2 mt-lg-0">
             <li class="nav-item active">

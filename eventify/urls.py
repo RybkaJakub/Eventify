@@ -22,7 +22,6 @@ from django.views.generic import RedirectView
 from . import settings
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('eventify_app/', include('eventify_app.urls')),
     path('', RedirectView.as_view(url='eventify_app/')),
 ]
