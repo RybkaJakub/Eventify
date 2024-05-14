@@ -1,45 +1,58 @@
 {% load static %}
-<nav class="navbar navbar-expand-sm navbar-light bg-light">
+<nav class="navbar navbar-expand-sm navbar-light nav-style">
+    <a class="navbar-brand" href="#"><img height="64px"
+                                          width="64px" src="{% static 'img/eventify_logo_rounded.png' %}"
+                                          alt="Eventify"></a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavId">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="collapsibleNavId">
-        <div class="div">
-            <a class="navbar-brand text-dark" href="#"><img src="{% static 'img/eventify_logo_rounded.png' %}" height="64px"
-                                                    width="64px" alt="Eventify"></a>
-            <div class="div-2">
-                <div class="div-3">Domovská stránka</div>
-                <div class="div-4">Eventy</div>
-            </div>
-            <ul class="nav navbar-nav navbar-right">
-           {% if user.is_authenticated %}
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="user-profile" data-toggle="dropdown">
-                 {{ user.get_username }}
-              </a>
-              <div class="dropdown-menu">
-                  <a class="dropdown-item" href="{% url 'password_reset' %}">Změnit heslo</a>
-                  <form method="post" action="{% url 'logout' %}">
-                    {% csrf_token %}
-                    <button type="submit">logout</button>
-                  </form>
-              </div>
-            </li>
-           {% else %}
-             <li class="nav-item"><a href="{% url 'login'%}?next={{request.path}}" class="nav-link">Přihlášení</a></li>
-           {% endif %}
-        </ul>
-        </div>
-        <!--ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+        <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
             <li class="nav-item active">
-                <a class="nav-link">Úvodní stránka <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="{% url 'index' %}">Úvodní stránka <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link">Eventy</a>
+                <a class="nav-link" href="">Eventy</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link ml-auto">Příhlášení</a>
+            <li>
+                <a class="nav-link" href="">Kalendář</a>
             </li>
-        </ul>-->
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            {% if user.is_authenticated %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="user-profile" data-toggle="dropdown">
+                        {{ user.get_username }}
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        {% if divider_rendered %}
+                            <div class="dropdown-divider"></div>
+                        {% endif %}
+                        {% for group in user.groups.all %}
+                            {% if group.name == "eventer" %}
+                                <a class="dropdown-item" href="">Správa eventů</a>
+                            {% endif %}
+                            {% if group.name == "admin" %}
+                                <a class="dropdown-item" href="{% url 'admin:index' %}">Administrace</a>
+                            {% endif %}
+                        {% endfor %}
+
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="">Správa profilu</a>
+                        <a class="dropdown-item" href="">Správa eventů</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{% url 'password_reset' %}">Změnit heslo</a>
+                        <form method="post" action="{% url 'logout' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="dropdown-item">Odhlásit se</button>
+                        </form>
+                        <div class="dropdown-divider"></div>
+                    </div>
+                </li>
+            {% else %}
+                <li class="nav-item"><a href="{% url 'login' %}?next={{ request.path }}" class="nav-link">Přihlásit
+                    se</a></li>
+            {% endif %}
+        </ul>
     </div>
 </nav>

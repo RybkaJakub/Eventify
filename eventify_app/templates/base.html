@@ -14,17 +14,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Záhlaví -->
-    <!-- {% include 'page/header.html' %} -->
-    <!-- Navigace -->
     {% include 'page/navbar.html' %}
-    <!-- Obsah stránky -->
-    <main class="container">
+    <main class="">
     {% block content %}{% endblock %}
     </main>
-    <!-- Zápatí -->
      {% include 'page/footer.html' %}
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="{% static 'bootstrap/jquery-3.3.1.slim.min.js' %}"></script>
     <script src="{% static 'bootstrap/popper.min.js' %}"></script>
     <script src="{% static 'bootstrap/bootstrap.min.js' %}"></script>

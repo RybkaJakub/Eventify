@@ -1,5 +1,52 @@
-header {
-    background-image: url('../img/book-logo.png');
-    background-repeat: no-repeat;
-    background-position: left 30px center;
-}
+.welcome-section {
+    background-image: url("../img/eventify_wallpaper.jpg");
+    position: relative;
+  }
+
+  .welcome-heading {
+    color: #00d2c6;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 70px;
+  }
+
+  .eventify-text {
+    color: rgba(0, 210, 198, 1);
+  }
+
+  .welcome-description {
+    color: #fff;
+    font-family: 'Big Shoulders Display', -apple-system, Roboto, Helvetica, sans-serif;
+    font-size: 25px;
+  }
+
+  .gradient-overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0) 0.12%,
+      rgba(255, 255, 255, 0.28) 23.07%,
+      rgba(255, 255, 255, 0.5) 31.05%,
+      rgba(255, 255, 255, 0.9) 57.48%,
+      #fff 72.44%,
+      #fff 99.88%
+    );
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 167px;
+    z-index: 10;
+  }
+
+  @media (max-width: 991px) {
+    .welcome-heading {
+      font-size: 40px;
+    }
+
+    .welcome-description {
+      font-size: 20px;
+    }
+
+    .gradient-overlay {
+      height: 100px;
+    }
+  }

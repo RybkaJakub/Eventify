@@ -1,14 +1,29 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-    <div class="row">
-        <div class="col-lg-8 mt-3 mb-3">
-            <h1>Vítejte v aplikaci Eventify</h1>
-            <p class="lead">Eventify je aplikace pro správu událostí. Pomocí této aplikace můžete vytvářet, upravovat a mazat události. Také můžete prohlížet detaily jednotlivých událostí a zobrazovat je na mapě.</p>
-            <p class="lead">Pro využití aplikace se musíte přihlásit. Pokud ještě nemáte účet, můžete se zaregistrovat.</p>
-            <p class="lead">Pokud jste se již registrovali, můžete se přihlásit.</p>
-        </div>
-        <div class="col-lg-4 bg-light mt-3 mb-3">
+    <div>
+        <div class="welcome-section py-5">
+            <div class>
+                <div class="row justify-content-center">
+                    <div class="col-lg-8 text-center">
+                        <h1 class="welcome-heading mb-4">Vítej na <span class="eventify-text">eventify</span></h1>
+                        <p class="welcome-description lead">
+                            Vítejte na Eventify - vašem průvodci světem událostí a zážitků! Jsme zde, abychom vám
+                            přinesli ten nejaktuálnější přehled nadcházejících událostí ve vašem okolí, od koncertů a
+                            festivalů po sportovní akce a kulturní akce.
+                            <br/>
+                            Náš cíl je propojit lidi s těmi nejzajímavějšími událostmi ve vašem regionu a umožnit vám
+                            objevovat nové zážitky, setkávat se s lidmi se stejnými zájmy a tvořit nezapomenutelné
+                            vzpomínky.
+                            <br/>
+                            Procházejte naší stránkou, objevujte nové události, registrujte se k odběru novinek a nechte
+                            se unést do světa zábavy, kultury a dobrodružství s Eventify!
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="gradient-overlay"></div>
         </div>
     </div>
 {% endblock %}
