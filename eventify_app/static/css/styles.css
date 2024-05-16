@@ -1,10 +1,31 @@
+*{
+  max-width: 100vw; /* 100% šířky okna prohlížeče */
+  margin: 0 auto; /* zarovnání na střed */
+}
+
 .welcome-section {
     background-image: url("../img/eventify_wallpaper.jpg");
-    position: relative;
+    background-size: cover;
+    background-position: center;
+    height: 700px; /* nastavte výšku dle potřeby */
+    position: relative; /* zajistí umístění absolutního divu vůči tomuto */
+  }
+
+  .welcome-section-overlay {
+    background-color: rgba(0, 0, 0, 0.5); /* 60% šedá s průhledností */
+    position: absolute; /* umístění nad pozadím */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .welcome-card {
+    margin-top: 10%;
   }
 
   .welcome-heading {
-    color: #00d2c6;
+    color: #ffffff;
     font-family: 'Bebas Neue', sans-serif;
     font-size: 70px;
   }
@@ -15,8 +36,10 @@
 
   .welcome-description {
     color: #fff;
-    font-family: 'Big Shoulders Display', -apple-system, Roboto, Helvetica, sans-serif;
-    font-size: 25px;
+    font-family: "Big Shoulders Display", sans-serif;
+    font-style: normal;
+    font-size: 20px;
+    max-width: 70%;
   }
 
   .gradient-overlay {
