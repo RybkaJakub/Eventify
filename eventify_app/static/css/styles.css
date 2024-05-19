@@ -3,11 +3,11 @@
   margin: 0 auto; /* zarovnání na střed */
 }
 
-.welcome-section {
+  .welcome-section {
     background-image: url("../img/eventify_wallpaper.jpg");
     background-size: cover;
     background-position: center;
-    height: 700px; /* nastavte výšku dle potřeby */
+    height: 500px; /* nastavte výšku dle potřeby */
     position: relative; /* zajistí umístění absolutního divu vůči tomuto */
   }
 
@@ -56,7 +56,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    height: 167px;
+    height: 50px;
     z-index: 10;
   }
 
@@ -70,6 +70,37 @@
     }
 
     .gradient-overlay {
-      height: 100px;
+      height: 60px;
     }
   }
+
+.events-title-wrapper {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .events-title {
+            position: relative;
+            color: #000000;
+            font-family: 'Bebas Neue', sans-serif;
+            padding-bottom: 10px;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .events-title::after {
+            content: '';
+            position: absolute;
+            left: 10%; /* Odsazení zleva */
+            bottom: 0; /* Podtržení na spodním okraji textu */
+            width: 80%; /* Nastavení šířky podtržení */
+            height: 2px; /* Výška podtržení */
+            background-color: #00A79D; /* Barva podtržení */
+        }
+
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+        }
