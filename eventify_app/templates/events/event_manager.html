@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Správce eventů {% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="events-title-wrapper text-center">
+            <h2 class="events-title">Moje události</h2>
+        </div>
+        <div class="table-wrapper"> <!-- Přidání obalu pro tabulku -->
+            <table>
+                <thead>
+                <tr>
+                    <th>ID eventu</th>
+                    <th>Jméno eventu</th>
+                    <th>Popisek eventu</th>
+                    <th>Datum eventu</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% if events %}
+                    {% for event in events %}
+                        <tr>
+                            <td>
+                                <div class="event-data">{{ event.id }}</div>
+                            </td>
+                            <td>
+                                <div class="event-data">{{ event.name }}</div>
+                            </td>
+                            <td>
+                                <div class="event-data">{{ event.description }}</div>
+                            </td>
+                            <td>
+                                <div class="event-data">{{ event.datetime }}</div>
+                            </td>
+                            <td>
+                                <div class="event-data"><a href="{% url 'delete_event' event.id %}">Smazat</a></div>
+                            </td>
+                            <td>
+                                <div class="event-data"><a href="{% url 'edit_event' event.id %}">Upravit</a> </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

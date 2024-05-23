@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    {% if event.image %}
+        <img src="{{ event.image.url }}" alt="{{ event.name }}">
+    {% else %}
+        <img src="{% static 'img/static.jpg' %}" alt="{{ event.name }}">
+    {% endif %}
+  <h2>{{ event.name }}</h2>
+  <p>{{ event.description }}</p>
+  <p>Datum: {{ event.datetime }}</p>
+  <p>Místo: {{ event.location }}</p>
+  <p>Dostupná místa: {{ available_seats }}</p>
+
+  {% if registered %}
+    <p>Jste již zaregistrován na tento event.</p>
+  {% else %}
+    <form method="post" action="{% url 'register_for_event' event.id %}">
+      {% csrf_token %}
+      <button type="submit">Registrovat se</button>
+    </form>
+  {% endif %}
+{% endblock %}

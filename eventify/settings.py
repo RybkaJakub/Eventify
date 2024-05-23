@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'eventify_app',
     'crispy_forms',
     'crispy_bootstrap5',
+    'osm_field'
 ]
 
 MIDDLEWARE = [

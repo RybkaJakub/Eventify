@@ -30,7 +30,7 @@
                         {% endif %}
                         {% for group in user.groups.all %}
                             {% if group.name == "eventer" %}
-                                <a class="dropdown-item" href="">Správa eventů</a>
+                                <a class="dropdown-item" href="{% url 'event_manager' %}">Správa eventů</a>
                             {% endif %}
                             {% if group.name == "admin" %}
                                 <a class="dropdown-item" href="{% url 'admin:index' %}">Administrace</a>
@@ -39,7 +39,7 @@
 
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="">Správa profilu</a>
-                        <a class="dropdown-item" href="">Správa eventů</a>
+                        <a class="dropdown-item" href="">Mé eventy</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{% url 'password_reset' %}">Změnit heslo</a>
                         <form method="post" action="{% url 'logout' %}">

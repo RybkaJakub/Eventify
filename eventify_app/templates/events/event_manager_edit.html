@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}Upravit událost{% endblock %}
+
+{% block content %}
+    <h2>Upravit událost</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Uložit změny</button>
+    </form>
+{% endblock %}

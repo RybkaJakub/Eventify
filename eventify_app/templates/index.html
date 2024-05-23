@@ -32,46 +32,28 @@
                 <h2 class="events-title">Moje události</h2>
             </div>
             <div class="row">
-                <div class="col-lg-3 col-md-6 col-sm-12 mb-4">
-                    <div class="card h-100">
-                        <img src="{% static 'img/static.jpg' %}" class="card-img-top" alt="Majáles">
-                        <div class="card-body">
-                            <h5 class="card-title">Majáles</h5>
-                            <p class="card-text">Každoroční klasický Majáles 2025</p>
-                            <p class="card-text"><small class="text-muted">6.5.2025</small></p>
+                {% if registered_events %}
+                    {% for registration in registered_events %}
+                        <div class="col-lg-3 col-md-6 col-sm-12 mb-4">
+                            <div class="card h-100">
+                                <img src="{{ registration.event.image.url }}" class="card-img-top" alt="{{ registration.event.name }}">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ registration.event.name }}</h5>
+                                    <p class="card-text">{{ registration.event.description }}</p>
+                                    <p class="card-text"><small class="text-muted">{{ registration.event.datetime }}</small></p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="col-lg-12 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">Není registrován na žádném eventu</h5>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-lg-3 col-md-6 col-sm-12 mb-4">
-                    <div class="card h-100">
-                        <img src="{% static 'img/static.jpg' %}" class="card-img-top" alt="Majáles">
-                        <div class="card-body">
-                            <h5 class="card-title">Majáles</h5>
-                            <p class="card-text">Každoroční klasický Majáles 2025</p>
-                            <p class="card-text"><small class="text-muted">6.5.2025</small></p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 col-sm-12 mb-4">
-                    <div class="card h-100">
-                        <img src="{% static 'img/static.jpg' %}" class="card-img-top" alt="Majáles">
-                        <div class="card-body">
-                            <h5 class="card-title">Majáles</h5>
-                            <p class="card-text">Každoroční klasický Majáles 2025</p>
-                            <p class="card-text"><small class="text-muted">6.5.2025</small></p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 col-sm-12 mb-4">
-                    <div class="card h-100">
-                        <img src="{% static 'img/static.jpg' %}" class="card-img-top" alt="Majáles">
-                        <div class="card-body">
-                            <h5 class="card-title">Majáles</h5>
-                            <p class="card-text">Každoroční klasický Majáles 2025</p>
-                            <p class="card-text"><small class="text-muted">6.5.2025</small></p>
-                        </div>
-                    </div>
-                </div>
+                {% endif %}
             </div>
         </div>
     {% endif %}
@@ -80,46 +62,35 @@
             <h2 class="events-title">Nadcházející události</h2>
         </div>
         <div class="row">
-            <div class="col-lg-3 col-md-6 col-sm-12 mb-4">
-                <div class="card h-100">
-                    <img src="{% static 'img/static.jpg' %}" class="card-img-top" alt="Majáles">
-                    <div class="card-body">
-                        <h5 class="card-title">Majáles</h5>
-                        <p class="card-text">Každoroční klasický Majáles 2025</p>
-                        <p class="card-text"><small class="text-muted">6.5.2025</small></p>
-                    </div>
+            {% if upcoming_events %}
+    {% for event in upcoming_events %}
+        <div class="col-lg-3 col-md-6 col-sm-12 mb-4">
+            <div class="card h-100">
+                {% if event.image %}
+                    <img src="{{ event.image.url }}" class="card-img-top" alt="{{ event.name }}">
+                {% else %}
+                    <img src="{% static 'img/static.jpg' %}" class="card-img-top" alt="{{ event.name }}">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ event.name }}</h5>
+                    <p class="card-text">{{ event.description }}</p>
+                    <p class="card-text"><small class="text-muted">{{ event.datetime }}</small></p>
+                </div>
+                <div class="card-footer"> <!-- Přidání tlačítka pod kartou -->
+                    <a href="{% url 'event_detail' event.id %}" class="btn btn-primary">Detail události</a>
                 </div>
             </div>
-            <div class="col-lg-3 col-md-6 col-sm-12 mb-4">
-                <div class="card h-100">
-                    <img src="{% static 'img/static.jpg' %}" class="card-img-top" alt="Majáles">
-                    <div class="card-body">
-                        <h5 class="card-title">Majáles</h5>
-                        <p class="card-text">Každoroční klasický Majáles 2025</p>
-                        <p class="card-text"><small class="text-muted">6.5.2025</small></p>
-                    </div>
-                </div>
+        </div>
+    {% endfor %}
+{% else %}
+    <div class="col-lg-12 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Není žádná nadcházející událost</h5>
             </div>
-            <div class="col-lg-3 col-md-6 col-sm-12 mb-4">
-                <div class="card h-100">
-                    <img src="{% static 'img/static.jpg' %}" class="card-img-top" alt="Majáles">
-                    <div class="card-body">
-                        <h5 class="card-title">Majáles</h5>
-                        <p class="card-text">Každoroční klasický Majáles 2025</p>
-                        <p class="card-text"><small class="text-muted">6.5.2025</small></p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 col-sm-12 mb-4">
-                <div class="card h-100">
-                    <img src="{% static 'img/static.jpg' %}" class="card-img-top" alt="Majáles">
-                    <div class="card-body">
-                        <h5 class="card-title">Majáles</h5>
-                        <p class="card-text">Každoroční klasický Majáles 2025</p>
-                        <p class="card-text"><small class="text-muted">6.5.2025</small></p>
-                    </div>
-                </div>
-            </div>
+        </div>
+    </div>
+{% endif %}
         </div>
     </div>
 {% endblock %}
