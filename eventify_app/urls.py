@@ -13,5 +13,5 @@ urlpatterns = [
     path('eventmanager/edit/<int:pk>/', EventUpdateView.as_view(), name='edit_event'),
     path('eventmanager/delete/<int:pk>/', EventDeleteView.as_view(), name='delete_event'),
     path('event_detail/<int:pk>/', EventDetailView.as_view(), name='event_detail'),
-    path('event/<int:event_id>/register/', register_for_event, name='register_for_event'),
+    path('event_detail/<int:event_id>/register/', register_for_event, name='register_for_event'),
 ]

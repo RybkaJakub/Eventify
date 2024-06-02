@@ -39,8 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'eventify_app',
     'crispy_forms',
-    'crispy_bootstrap5',
-    'osm_field'
+    'crispy_bootstrap5'
 ]
 
 MIDDLEWARE = [
@@ -103,6 +102,12 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+
+AUTH_USER_MODEL = 'eventify_app.CustomUser'
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/

@@ -67,12 +67,27 @@ class EventDetailView(DetailView):
     template_name = 'event_detail.html'
     context_object_name = 'event'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.user.is_authenticated:
+            # Zkontroluje, zda je uživatel registrován na daný event
+            context['registered'] = UserEventRegistration.objects.filter(
+                user=self.request.user,
+                event=self.object
+            ).exists()
+        else:
+            context['registered'] = False
+        return context
+
 @login_required
 def register_for_event(request, event_id):
     event = get_object_or_404(Event, id=event_id)
-    registration, created = UserEventRegistration.objects.get_or_create(event=event, user=request.user)
-    if created:
-        messages.success(request, f'Byli jste úspěšně zaregistrováni na event "{event.name}".')
-    else:
+    # Zkontroluje, zda je uživatel již zaregistrován na tuto událost
+    existing_registration = UserEventRegistration.objects.filter(user=request.user, event=event).exists()
+    if existing_registration:
         messages.warning(request, f'Již jste registrováni na event "{event.name}".')
-    return redirect('event_detail', event_id=event_id)
+    else:
+        # Vytvoří nový záznam registrace
+        UserEventRegistration.objects.create(user=request.user, event=event)
+        messages.success(request, f'Byli jste úspěšně zaregistrováni na event "{event.name}".')
+    return redirect('event_detail', pk=event_id)

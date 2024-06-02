@@ -1,9 +1,21 @@
 from django.contrib import admin
+from django.contrib.auth.models import User
 from django.utils.safestring import mark_safe
 from django import forms
 
-from .forms import EventForm
-from .models import Event, UserEventRegistration
+from .forms import EventForm, OrganisationForm
+from .models import Event, CustomUser, Organization
+
+admin.site.register(CustomUser)
+
+@admin.register(Organization)
+class Organistaion(admin.ModelAdmin):
+    form = OrganisationForm
+    fields = ['name', 'address']
+    widgets = {
+        'datetime': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+    }
+
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
