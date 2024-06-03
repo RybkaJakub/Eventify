@@ -2,6 +2,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
 from django.contrib import messages
+from django.urls import reverse, reverse_lazy
+
 from .models import Event, UserEventRegistration
 from .forms import EventForm
 from django.utils import timezone
@@ -44,7 +46,11 @@ class EventCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.created_by = self.request.user
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        return response
+
+    def get_success_url(self):
+        return reverse_lazy('event_detail', kwargs={'pk': self.object.pk})
 
 class EventUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     model = Event

@@ -12,6 +12,8 @@ class Organization(models.Model):
 
 class CustomUser(AbstractUser):
     organization = models.ForeignKey('Organization', on_delete=models.CASCADE, null=True, blank=True)
+    email = models.EmailField(unique=True)
+    telephone = models.CharField(max_length=20, blank=True, null=True)
 
 class Event(models.Model):
     name = models.CharField(max_length=200)
@@ -24,6 +26,7 @@ class Event(models.Model):
 
     def __str__(self):
         return self.name
+
 class UserEventRegistration(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
