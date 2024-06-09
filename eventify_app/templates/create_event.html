@@ -1,11 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
-  <h2>Vytvořit nový event</h2>
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Vytvořit event</button>
-  </form>
+    <div class="container">
+  <h2 class="my-4">Vytvořit nový event</h2>
+  {% load crispy_forms_tags %}
+    {% crispy form %}
   {% if messages %}
     <ul class="messages">
       {% for message in messages %}
@@ -13,4 +11,5 @@
       {% endfor %}
     </ul>
   {% endif %}
+    </div>
 {% endblock %}

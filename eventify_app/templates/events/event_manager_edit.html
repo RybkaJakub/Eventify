@@ -1,12 +1,17 @@
 {% extends 'base.html' %}
 
-{% block title %}Upravit událost{% endblock %}
 
 {% block content %}
-    <h2>Upravit událost</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Uložit změny</button>
-    </form>
+    <div class="container">
+  <h2 class="my-4">Upravit event</h2>
+  {% load crispy_forms_tags %}
+    {% crispy form %}
+  {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+    </div>
 {% endblock %}

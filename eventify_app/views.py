@@ -55,8 +55,13 @@ class EventCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
 class EventUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     model = Event
     form_class = EventForm
-    template_name = 'edit_event.html'
+    template_name = 'events/event_manager_edit.html'
     permission_required = 'eventify_app.change_event'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['event'] = self.object
+        return context
 
 class EventDeleteView(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Event
@@ -75,6 +80,15 @@ class EventDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['isAdmin'] = False
+        context['registeredUsers'] = [registration.user for registration in
+                                      UserEventRegistration.objects.filter(event=self.object)]
+        if self.request.user.is_authenticated:
+
+            for group in self.request.user.groups.all():
+                if group.name == "eventer" or group.name == "admin":
+                    context['isAdmin'] = True
+                    break
         if self.request.user.is_authenticated:
             # Zkontroluje, zda je uživatel registrován na daný event
             context['registered'] = UserEventRegistration.objects.filter(

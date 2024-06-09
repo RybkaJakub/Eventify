@@ -8,6 +8,9 @@
         <div class="events-title-wrapper text-center">
             <h2 class="events-title">Moje události</h2>
         </div>
+        <div class="text-center mb-4">
+            <a class="btn btn-primary" href="{% url 'create_event' %}">Přidat událost</a>
+        </div>
         <div class="table-wrapper"> <!-- Přidání obalu pro tabulku -->
             <table>
                 <thead>
@@ -35,13 +38,18 @@
                                 <div class="event-data">{{ event.datetime }}</div>
                             </td>
                             <td>
-                                <div class="event-data"><a href="{% url 'delete_event' event.id %}">Smazat</a></div>
-                            </td>
-                            <td>
-                                <div class="event-data"><a href="{% url 'edit_event' event.id %}">Upravit</a> </div>
+                                <div class="event-data">
+                                    <a class="btn btn-info btn-sm" href="{% url 'event_detail' event.id %}">Detail</a>
+                                    <a class="btn btn-warning btn-sm" href="{% url 'edit_event' event.id %}">Upravit</a>
+                                    <a class="btn btn-danger btn-sm" href="{% url 'delete_event' event.id %}">Smazat</a>
+                                </div>
                             </td>
                         </tr>
                     {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center">Žádné události nejsou k dispozici</td>
+                    </tr>
                 {% endif %}
                 </tbody>
             </table>
