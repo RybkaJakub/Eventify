@@ -5,54 +5,63 @@
 
 {% block content %}
     <div class="container mt-5">
-        <div class="events-title-wrapper text-center">
-            <h2 class="events-title">Moje události</h2>
-        </div>
-        <div class="text-center mb-4">
-            <a class="btn btn-primary" href="{% url 'create_event' %}">Přidat událost</a>
-        </div>
-        <div class="table-wrapper"> <!-- Přidání obalu pro tabulku -->
-            <table>
-                <thead>
-                <tr>
-                    <th>ID eventu</th>
-                    <th>Jméno eventu</th>
-                    <th>Popisek eventu</th>
-                    <th>Datum eventu</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% if events %}
-                    {% for event in events %}
-                        <tr>
-                            <td>
-                                <div class="event-data">{{ event.id }}</div>
-                            </td>
-                            <td>
-                                <div class="event-data">{{ event.name }}</div>
-                            </td>
-                            <td>
-                                <div class="event-data">{{ event.description }}</div>
-                            </td>
-                            <td>
-                                <div class="event-data">{{ event.datetime }}</div>
-                            </td>
-                            <td>
-                                <div class="event-data">
-                                    <a class="btn btn-info btn-sm" href="{% url 'event_detail' event.id %}">Detail</a>
-                                    <a class="btn btn-warning btn-sm" href="{% url 'edit_event' event.id %}">Upravit</a>
-                                    <a class="btn btn-danger btn-sm" href="{% url 'delete_event' event.id %}">Smazat</a>
-                                </div>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                {% else %}
+        {% if in_organization %}
+            <div class="events-title-wrapper text-center">
+                <h2 class="events-title">Události organizace: {{ organization.name }}</h2>
+            </div>
+            <div class="text-center mb-4">
+                <a class="btn btn-primary" href="{% url 'create_event' %}">Přidat událost</a>
+            </div>
+            <div class="table-wrapper"> <!-- Přidání obalu pro tabulku -->
+                <table>
+                    <thead>
                     <tr>
-                        <td colspan="5" class="text-center">Žádné události nejsou k dispozici</td>
+                        <th>ID eventu</th>
+                        <th>Jméno eventu</th>
+                        <th>Popisek eventu</th>
+                        <th>Datum eventu</th>
                     </tr>
-                {% endif %}
-                </tbody>
-            </table>
-        </div>
+                    </thead>
+                    <tbody>
+                    {% if events %}
+                        {% for event in events %}
+                            <tr>
+                                <td>
+                                    <div class="event-data">{{ event.id }}</div>
+                                </td>
+                                <td>
+                                    <div class="event-data">{{ event.name }}</div>
+                                </td>
+                                <td>
+                                    <div class="event-data">{{ event.description }}</div>
+                                </td>
+                                <td>
+                                    <div class="event-data">{{ event.datetime }}</div>
+                                </td>
+                                <td>
+                                    <div class="event-data">
+                                        <a class="btn btn-info btn-sm"
+                                           href="{% url 'event_detail' event.id %}">Detail</a>
+                                        <a class="btn btn-warning btn-sm"
+                                           href="{% url 'edit_event' event.id %}">Upravit</a>
+                                        <a class="btn btn-danger btn-sm"
+                                           href="{% url 'delete_event' event.id %}">Smazat</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center">Žádné události nejsou k dispozici</td>
+                        </tr>
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-danger" role="alert">
+                Nejdříve musíte být přiděleni do organizace, abyste mohli přidávat události.
+            </div>
+        {% endif %}
     </div>
 {% endblock %}

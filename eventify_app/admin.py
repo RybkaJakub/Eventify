@@ -3,14 +3,14 @@ from django.contrib.auth.models import User
 from django.utils.safestring import mark_safe
 from django import forms
 
-from .forms import EventForm, OrganisationForm
+from .forms import EventForm, OrganizationForm
 from .models import Event, CustomUser, Organization
 
 admin.site.register(CustomUser)
 
 @admin.register(Organization)
-class Organistaion(admin.ModelAdmin):
-    form = OrganisationForm
+class Organization(admin.ModelAdmin):
+    form = OrganizationForm
     fields = ['name', 'address']
     widgets = {
         'datetime': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
@@ -21,7 +21,7 @@ class Organistaion(admin.ModelAdmin):
 class EventAdmin(admin.ModelAdmin):
     form = EventForm
     readonly_fields = ['image', 'display_logo']  # Přidání display_logo do readonly_fields
-    fields = ['name', 'description', 'datetime', 'seats', 'image', 'display_logo']  # display_logo zůstane zde pro zobrazení v detailu
+    fields = ['name', 'description', 'organization', 'datetime', 'seats', 'image', 'display_logo']  # display_logo zůstane zde pro zobrazení v detailu
     widgets = {
         'datetime': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
     }

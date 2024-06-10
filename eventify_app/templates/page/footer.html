@@ -1,3 +1,19 @@
-<footer class="container-fluid p-3 border-top">
-    <p class="text-center text-dark">Maturitní projekt: &copy; 2024 Jakub Rybka</p>
+<footer class="container-fluid p-3 border-top" style="background-color: rgb(128,128,128)" id="main-footer">
+    <p class="text-center text-dark">Copyright &copy;<script>document.write(new Date().getFullYear());</script>
+                        Rybka Jakub | All rights reserved | Made with <i class="fa fa-heart-o"></i> by Jakub Rybka</p>
 </footer>
+
+<script>
+    window.addEventListener('load', function() {
+  var footer = document.getElementById('main-footer');
+  var windowHeight = window.innerHeight;
+  var documentHeight = document.body.scrollHeight;
+
+  if (documentHeight < windowHeight) {
+    footer.style.position = 'fixed';
+    footer.style.bottom = '0';
+  } else {
+    footer.style.position = 'static';
+  }
+});
+</script>
