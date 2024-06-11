@@ -58,7 +58,7 @@
                 <p class="text-muted description">{{ event.description }}</p>
                 <button id="toggleDescription" class="btn btn-link p-0">Zobrazit více</button>
             </div>
-            <p><strong>Datum:</strong> {{ event.datetime }}</p>
+            <p><strong>Datum:</strong> {{ event.day }} {{ event.start_time }}</p>
             <p><strong>Místo:</strong> {{ event.location }}</p>
             <p><strong>Dostupná místa:</strong> {{ seatsLeft }}</p>
             <p><strong>Akci pořádá organizace:</strong> {{ event.organization.name }}</p>

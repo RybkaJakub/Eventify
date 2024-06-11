@@ -44,7 +44,7 @@
                             <div class="card-body">
                                 <h5 class="card-title" style="width: 100%;">{{ registration.event.name }}</h5>
                                 <p class="card-text" style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical;">{{ registration.event.description }}</p>
-                                <p class="card-text"><small class="text-muted">{{ registration.event.datetime }}</small></p>
+                                <p class="card-text"><small class="text-muted">{{ registration.event.day }} {{ registration.start_time }}</small></p>
                             </div>
                             <div class="card-footer"> <!-- Přidání tlačítka pod kartou -->
                                 <a href="{% url 'event_detail' registration.event.id %}" class="btn btn-primary">Detail události</a>
@@ -81,7 +81,7 @@
                         <div class="card-body">
                             <h5 class="card-title" style="width: 100%;">{{ event.name }}</h5>
                             <p class="card-text" style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical;">{{ event.description }}</p>
-                            <p class="card-text"><small class="text-muted">{{ event.datetime }}</small></p>
+                            <p class="card-text"><small class="text-muted">{{ event.day }} {{ event.start_time }}</small></p>
                         </div>
                         <div class="card-footer">
                             <a href="{% url 'event_detail' event.id %}" class="btn btn-primary">Detail události</a>

@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User, AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.conf import settings
+from django.utils import timezone
+
 
 class Organization(models.Model):
     name = models.CharField(max_length=255, verbose_name='Název organizace', help_text='Zadejte název organizace')
@@ -14,6 +16,7 @@ class Organization(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class CustomUser(AbstractUser):
     organization = models.ForeignKey('Organization', on_delete=models.CASCADE, null=True, blank=True,
@@ -29,11 +32,16 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.email
 
+
 class Event(models.Model):
-    # Zde jsou definována vaše pole
     name = models.CharField(max_length=200, verbose_name='Název události', help_text='Zadejte název události')
     description = models.TextField(verbose_name='Popis události', help_text='Zadejte popis události')
-    datetime = models.DateTimeField(verbose_name='Datum a čas', help_text='Zadejte datum a čas události')
+    day = models.DateField(verbose_name='Den konání eventu', help_text='Zadejte den konání eventu',
+                           default=timezone.now)
+    start_time = models.TimeField(verbose_name='Čas začátku eventu', help_text='Zadejte čas začátku eventu',
+                                  default=timezone.now())
+    end_time = models.TimeField(verbose_name='Čas konce eventu', help_text='Zadejte čas konce eventu',
+                                default=timezone.now())
     seats = models.PositiveIntegerField(verbose_name='Počet míst', help_text='Zadejte počet dostupných míst')
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
                                    verbose_name='Vytvořeno uživatelem', help_text='Vyberte uživatele, který událost vytvořil')
@@ -55,6 +63,8 @@ class Event(models.Model):
         if self.created_by and not self.organization:
             self.organization = self.created_by.organization
         super(Event, self).save(*args, **kwargs)
+
+
 class UserEventRegistration(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
                              verbose_name='Uživatel', help_text='Vyberte uživatele, který se zúčastní události')

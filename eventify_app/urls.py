@@ -3,7 +3,7 @@ from django.urls import path
 from django.contrib import admin
 from django.contrib.auth.views import LogoutView
 from .views import index, register_for_event, EventManagerView, EventCreateView, EventDeleteView, EventDetailView, \
-    EventUpdateView, CustomLoginView, CustomLogoutView, SignUpView
+    EventUpdateView, CustomLoginView, CustomLogoutView, SignUpView, MyEventsListView
 
 urlpatterns = [
     # URL adresa pro zobrazení domovské stránky
@@ -13,6 +13,7 @@ urlpatterns = [
     path('eventmanager/create/', EventCreateView.as_view(), name='create_event'),
     path('eventmanager/edit/<int:pk>/', EventUpdateView.as_view(), name='edit_event'),
     path('eventmanager/delete/<int:pk>/', EventDeleteView.as_view(), name='delete_event'),
+    path('my_events_list/', MyEventsListView.as_view(), name='my_events_list'),
     path('event_detail/<int:pk>/', EventDetailView.as_view(), name='event_detail'),
     path('event_detail/<int:event_id>/register/', register_for_event, name='register_for_event'),
     path('accounts/login/', CustomLoginView.as_view(), name='login'),

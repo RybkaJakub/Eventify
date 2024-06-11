@@ -20,6 +20,8 @@
                         <th>Jméno eventu</th>
                         <th>Popisek eventu</th>
                         <th>Datum eventu</th>
+                        <th>Začátek eventu</th>
+                        <th>Konec eventu</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -36,7 +38,13 @@
                                     <div class="event-data">{{ event.description }}</div>
                                 </td>
                                 <td>
-                                    <div class="event-data">{{ event.datetime }}</div>
+                                    <div class="event-data">{{ event.day }}</div>
+                                </td>
+                                <td>
+                                    <div class="event-data">{{ event.start_time }}</div>
+                                </td>
+                                <td>
+                                    <div class="event-data">{{ event.end_time }}</div>
                                 </td>
                                 <td>
                                     <div class="event-data">

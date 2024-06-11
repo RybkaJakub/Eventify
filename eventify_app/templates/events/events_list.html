@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Mé události {% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        {% if events %}
+            <div class="events-title-wrapper text-center">
+                <h2 class="events-title">Moje události</h2>
+            </div>
+            <div class="table-wrapper"> <!-- Přidání obalu pro tabulku -->
+                <table>
+                    <thead>
+                    <tr>
+                        <th>ID eventu</th>
+                        <th>Jméno eventu</th>
+                        <th>Popisek eventu</th>
+                        <th>Datum eventu</th>
+                        <th>Začátek eventu</th>
+                        <th>Konec eventu</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% if events %}
+                        {% for event in events %}
+                            <tr>
+                                <td>
+                                    <div class="event-data">{{ event.id }}</div>
+                                </td>
+                                <td>
+                                    <div class="event-data">{{ event.name }}</div>
+                                </td>
+                                <td>
+                                    <div class="event-data">{{ event.description }}</div>
+                                </td>
+                                <td>
+                                    <div class="event-data">{{ event.day }}</div>
+                                </td>
+                                <td>
+                                    <div class="event-data">{{ event.start_time }}</div>
+                                </td>
+                                <td>
+                                    <div class="event-data">{{ event.end_time }}</div>
+                                </td>
+                                <td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center">Žádné události nejsou k dispozici</td>
+                        </tr>
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-danger" role="alert">
+                Nejprve se musíš na nějaký event registrovat
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

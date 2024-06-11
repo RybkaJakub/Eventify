@@ -12,19 +12,14 @@ admin.site.register(CustomUser)
 class Organization(admin.ModelAdmin):
     form = OrganizationForm
     fields = ['name', 'address']
-    widgets = {
-        'datetime': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
-    }
 
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
     form = EventForm
     readonly_fields = ['image', 'display_logo']  # Přidání display_logo do readonly_fields
-    fields = ['name', 'description', 'organization', 'datetime', 'seats', 'image', 'display_logo']  # display_logo zůstane zde pro zobrazení v detailu
-    widgets = {
-        'datetime': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
-    }
+    fields = ['name', 'description', 'organization', 'day',
+              'start_time', 'end_time', 'seats', 'image', 'display_logo']
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
