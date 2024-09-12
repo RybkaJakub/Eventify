@@ -1,3 +1,4 @@
+
 from django.contrib.auth import logout
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
@@ -136,14 +137,11 @@ class EventDetailView(DetailView):
         seats_left = self.object.seats - seats_taken
         context['seatsLeft'] = seats_left
         context['isAdmin'] = False
+        context['userOrganization'] = False
         context['registeredUsers'] = [registration.user for registration in
                                       UserEventRegistration.objects.filter(event=self.object)]
         current_url_name = resolve(self.request.path_info).url_name
         context['current_url'] = current_url_name
-        if self.object.organization == self.request.user.organization:
-            context['userOrganization'] = True
-        else:
-            context['userOrganization'] = False
         if self.request.user.is_authenticated:
 
             for group in self.request.user.groups.all():
@@ -156,6 +154,8 @@ class EventDetailView(DetailView):
                 user=self.request.user,
                 event=self.object
             ).exists()
+            if self.object.organization == self.request.user.organization:
+                context['userOrganization'] = True
         else:
             context['registered'] = False
         return context
@@ -222,11 +222,17 @@ class MyEventsListView(ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        user = self.request.user
 
-        # Najít eventy, na které je uživatel registrován
-        registered_events = UserEventRegistration.objects.filter(user=user).values_list('event', flat=True)
-        context['events'] = Event.objects.filter(id__in=registered_events)
+        if (self.request.user.is_authenticated):
+            user = self.request.user
+
+            # Najít eventy, na které je uživatel registrován
+            registered_events = UserEventRegistration.objects.filter(user=user).values_list('event', flat=True)
+            context['events'] = Event.objects.filter(id__in=registered_events)
+            context['isAuth'] = True
+        else:
+            context['events'] = []
+            context['isAuth'] = False
         current_url_name = resolve(self.request.path_info).url_name
         context['current_url'] = current_url_name
 

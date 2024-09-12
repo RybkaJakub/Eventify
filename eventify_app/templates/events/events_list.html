@@ -54,6 +54,10 @@
                     </tbody>
                 </table>
             </div>
+        {% elif not isAuth %}
+            <div class="alert alert-danger" role="alert">
+                Nejprve se musíš přihlásit
+            </div>
         {% else %}
             <div class="alert alert-danger" role="alert">
                 Nejprve se musíš na nějaký event registrovat
