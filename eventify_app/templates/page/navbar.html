@@ -11,7 +11,7 @@
             <li class="nav-item {% if current_url is empty %}active{% endif %}">
                 <a class="nav-link" href="{% url 'index' %}">Úvodní stránka <span class="sr-only">(current)</span></a>
             </li>
-            <li class="nav-item {% if current_url == 'events_list' %}active{% endif %}">
+            <li class="nav-item {% if current_url == 'my_events_list' %}active{% endif %}">
                 <a class="nav-link" href="{% url 'my_events_list' %}">Eventy</a>
             </li>
             <li class="nav-item {% if current_url == 'calendar' %}active{% endif %}">
