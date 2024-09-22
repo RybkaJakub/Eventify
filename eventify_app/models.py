@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User, AbstractUser
-from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator, RegexValidator
 from django.conf import settings
 from django.utils import timezone
 
@@ -22,8 +22,19 @@ class CustomUser(AbstractUser):
     organization = models.ForeignKey('Organization', on_delete=models.CASCADE, null=True, blank=True,
                                      verbose_name='Organizace', help_text='Vyberte organizaci uživatele')
     email = models.EmailField(unique=True, verbose_name='E-mail', help_text='Zadejte e-mail uživatele')
-    telephone = models.CharField(max_length=20, blank=True, null=True, verbose_name='Telefonní číslo',
-                                  help_text='Zadejte telefonní číslo uživatele')
+    phone_validator = RegexValidator(
+        regex=r'^\d{9}$',
+        message="Telefonní číslo musí obsahovat přesně 9 číslic."
+    )
+
+    telephone = models.CharField(
+        max_length=9,
+        blank=True,
+        null=True,
+        verbose_name='Telefonní číslo',
+        help_text='Zadejte telefonní číslo',
+        validators=[phone_validator]
+    )
 
     class Meta:
         verbose_name = 'Uživatel'
