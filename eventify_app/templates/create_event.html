@@ -1,15 +1,79 @@
 {% extends 'base.html' %}
 {% block content %}
     <div class="container">
-  <h2 class="my-4">Vytvořit nový event</h2>
-  {% load crispy_forms_tags %}
-    {% crispy form %}
-  {% if messages %}
-    <ul class="messages">
-      {% for message in messages %}
-        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-      {% endfor %}
-    </ul>
-  {% endif %}
+        <h2 class="my-4">Vytvořit nový event</h2>
+
+        {% load crispy_forms_tags %}
+
+        <form method="POST">
+            {% csrf_token %}
+            <!-- Hlavní formulář pro vytvoření eventu -->
+            {{ form|crispy }}
+
+            <h3 class="my-4">Přidat druhy vstupenek</h3>
+
+            <!-- Formulář pro druhy vstupenek -->
+            <div id="ticket-types">
+                {{ ticket_formset.management_form }}
+                <!-- Vykreslení každého formuláře ve formsetu -->
+                {% for form in ticket_formset %}
+                    <div class="ticket-type-form form-row">
+                        <div class="form-group col-md-4">
+                            {{ form.ticket_name.label_tag }} {{ form.ticket_name }}
+                        </div>
+                        <div class="form-group col-md-4">
+                            {{ form.price.label_tag }} {{ form.price }}
+                        </div>
+                        <div class="form-group col-md-4">
+                            {{ form.quantity.label_tag }} {{ form.quantity }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Tlačítko na přidání dalších druhů vstupenek -->
+            <button type="button" id="add-ticket-type" class="btn btn-primary my-3">Přidat další vstupenku</button>
+
+            <br><br>
+
+            <!-- Tlačítko pro odeslání formuláře -->
+            <button type="submit" class="btn btn-success">Vytvořit event</button>
+        </form>
+
+        <!-- Zobrazení případných zpráv -->
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
     </div>
+
+    <!-- JavaScript pro dynamické přidávání formulářů -->
+    <script>
+        document.getElementById('add-ticket-type').addEventListener('click', function() {
+            let totalForms = document.getElementById('id_tickettype_set-TOTAL_FORMS');
+            let currentFormCount = parseInt(totalForms.value);
+            
+            // Získání první formy jako šablonu
+            let ticketFormTemplate = document.querySelector('.ticket-type-form').cloneNode(true);
+            
+            // Aktualizace name a id atributů pro nový formulář
+            let regex = new RegExp('tickettype_set-(\\d+)-', 'g');
+            ticketFormTemplate.innerHTML = ticketFormTemplate.innerHTML.replace(regex, 'tickettype_set-' + currentFormCount + '-');
+
+            // Vymazání hodnot v nových inputech
+            let inputs = ticketFormTemplate.querySelectorAll('input');
+            inputs.forEach(function(input) {
+                input.value = '';
+            });
+
+            // Přidání nového formuláře
+            document.getElementById('ticket-types').appendChild(ticketFormTemplate);
+
+            // Aktualizace počtu formulářů
+            totalForms.value = currentFormCount + 1;
+        });
+    </script>
 {% endblock %}

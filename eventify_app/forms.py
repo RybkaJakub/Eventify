@@ -10,21 +10,20 @@ from django.utils.dateformat import format
 CustomUser = get_user_model()
 
 from django import forms
-from .models import Event
-from .models import Organization
+from .models import Event, Organization, TicketType
+from django.forms import modelformset_factory
 
 
 class EventForm(forms.ModelForm):
     class Meta:
         model = Event
-        fields = ['name', 'description', 'day', 'start_time', 'end_time', 'seats', 'image']
+        fields = ['name', 'description', 'day', 'start_time', 'end_time', 'image']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Zadej název eventu'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Zadej popisek eventu'}),
             'day': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'start_time': forms.TimeInput(attrs={'type': 'time', 'class': 'form-control'}),
             'end_time': forms.TimeInput(attrs={'type': 'time', 'class': 'form-control'}),
-            'seats': forms.NumberInput(attrs={'class': 'form-control', 'min': 1, 'max': 10000}),
             'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
         }
         labels = {
@@ -33,7 +32,6 @@ class EventForm(forms.ModelForm):
             'day': 'Datum konání Eventu',
             'start_time': 'Čas začátku eventu',
             'end_time': 'Čas konce eventu',
-            'seats': 'Počet sedadel',
             'image': 'Foto Eventu',
         }
 
@@ -53,29 +51,34 @@ class EventForm(forms.ModelForm):
                 'day',
                 'start_time',
                 'end_time',
-                'seats',
                 'image',
             ),
-            ButtonHolder(
-                Submit('submit', 'Uložit', css_class='btn-primary mr-2'),
-                Button('cancel', 'Storno', css_class='btn-secondary', onclick='window.history.back();')
-            )
         )
+
+class TicketTypeForm(forms.ModelForm):
+    class Meta:
+        model = TicketType
+        fields = ['name', 'price', 'quantity']
+
+TicketTypeFormSet = modelformset_factory(
+    TicketType,
+    form=TicketTypeForm,
+    extra=1,
+    can_delete=True
+)
 
 class EventEditForm(forms.ModelForm):
     class Meta:
         model = Event
-        fields = ['name', 'description', 'seats', 'image']
+        fields = ['name', 'description', 'image']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Zadej název eventu'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Zadej popisek eventu'}),
-            'seats': forms.NumberInput(attrs={'class': 'form-control', 'min': 1, 'max': 10000}),
             'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
         }
         labels = {
             'name': 'Název Eventu',
             'description': 'Popisek Eventu',
-            'seats': 'Počet sedadel',
             'image': 'Foto Eventu',
         }
 
@@ -92,7 +95,6 @@ class EventEditForm(forms.ModelForm):
                 'Informace o eventu',
                 'name',
                 'description',
-                'seats',
                 'image',
             ),
             ButtonHolder(

@@ -64,15 +64,40 @@ class EventManagerView(PermissionRequiredMixin, ListView):
         return context
 
 
+from django.urls import reverse_lazy
+from django.shortcuts import redirect
+from django.forms import modelformset_factory
+from .models import Event, TicketType
+from .forms import EventForm, TicketTypeFormSet
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.urls import resolve
+
+
 class EventCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     model = Event
     form_class = EventForm
     template_name = 'create_event.html'
     permission_required = 'eventify_app.add_event'
 
+    # Přidání vstupenek a přiřazení k eventu
     def form_valid(self, form):
         form.instance.created_by = self.request.user
-        return super().form_valid(form)
+        # Získání formsetu
+        ticket_formset = TicketTypeFormSet(self.request.POST)
+
+        if ticket_formset.is_valid():
+            response = super().form_valid(form)
+
+            # Uložení eventu a následné uložení vstupenek
+            ticket_formset.instance = self.object
+            for ticket_form in ticket_formset:
+                if ticket_form.cleaned_data:
+                    ticket = ticket_form.save(commit=False)
+                    ticket.event = self.object
+                    ticket.save()
+            return response
+        else:
+            return self.form_invalid(form)
 
     def get_success_url(self):
         return reverse_lazy('event_detail', kwargs={'pk': self.object.pk})
@@ -84,8 +109,17 @@ class EventCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        # Inicializace TicketTypeFormSet (dynamických vstupenek)
+        if self.request.POST:
+            context['ticket_formset'] = TicketTypeFormSet(self.request.POST)
+        else:
+            context['ticket_formset'] = TicketTypeFormSet(queryset=TicketType.objects.none())
+
+        # Získání aktuální URL pro lepší navigaci
         current_url_name = resolve(self.request.path_info).url_name
         context['current_url'] = current_url_name
+
         return context
 
 
@@ -133,9 +167,6 @@ class EventDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        seats_taken = UserEventRegistration.objects.filter(event=self.object).count()
-        seats_left = self.object.seats - seats_taken
-        context['seatsLeft'] = seats_left
         context['isAdmin'] = False
         context['userOrganization'] = False
         context['registeredUsers'] = [registration.user for registration in

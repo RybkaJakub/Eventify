@@ -60,7 +60,6 @@
             </div>
             <p><strong>Datum:</strong> {{ event.day }} {{ event.start_time }}</p>
             <p><strong>Místo:</strong> {{ event.location }}</p>
-            <p><strong>Dostupná místa:</strong> {{ seatsLeft }}</p>
             <p><strong>Akci pořádá organizace:</strong> {{ event.organization.name }}</p>
 
             {% if user.is_authenticated %}

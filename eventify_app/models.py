@@ -53,7 +53,6 @@ class Event(models.Model):
                                   default=timezone.now())
     end_time = models.TimeField(verbose_name='Čas konce eventu', help_text='Zadejte čas konce eventu',
                                 default=timezone.now())
-    seats = models.PositiveIntegerField(verbose_name='Počet míst', help_text='Zadejte počet dostupných míst')
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
                                    verbose_name='Vytvořeno uživatelem', help_text='Vyberte uživatele, který událost vytvořil')
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE, null=True,
@@ -75,6 +74,14 @@ class Event(models.Model):
             self.organization = self.created_by.organization
         super(Event, self).save(*args, **kwargs)
 
+class TicketType(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='ticket_types')
+    name = models.CharField(max_length=255, verbose_name='Název vstupenky')
+    price = models.DecimalField(max_digits=8, decimal_places=2, verbose_name='Cena vstupenky')
+    quantity = models.IntegerField(verbose_name='Počet vstupenek')
+
+    def __str__(self):
+        return f"{self.name} - {self.price} Kč - {self.quantity} ks"
 
 class UserEventRegistration(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
