@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 
 from django.contrib import admin
 from django.contrib.auth.views import LogoutView
@@ -9,6 +9,7 @@ urlpatterns = [
     # URL adresa pro zobrazení domovské stránky
     path('', index, name='index'),
     path('admin/', admin.site.urls),
+    path('accounts/', include('allauth.urls')),
     path('eventmanager/', EventManagerView.as_view(), name='event_manager'),
     path('eventmanager/create/', EventCreateView.as_view(), name='create_event'),
     path('eventmanager/edit/<int:pk>/', EventUpdateView.as_view(), name='edit_event'),
