@@ -45,7 +45,7 @@
                                 <h5 class="card-title" style="width: 100%;">{{ registration.event.name }}</h5>
                                 <p class="card-text" style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical;">{{ registration.event.description }}</p>
                             </div>
-                            <div class="card-footer"> <!-- Přidání tlačítka pod kartou -->
+                            <div class="card-footer">
                                 <a href="{% url 'event_detail' registration.event.id %}" class="btn btn-primary">Detail události</a>
                             </div>
                         </div>

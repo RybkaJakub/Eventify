@@ -258,7 +258,6 @@ class MyEventsListView(ListView):
         if (self.request.user.is_authenticated):
             user = self.request.user
 
-            # Najít eventy, na které je uživatel registrován
             registered_events = TicketPurchase.objects.filter(user=user).values_list('event', flat=True)
             context['events'] = Event.objects.filter(id__in=registered_events)
             context['isAuth'] = True
@@ -278,13 +277,10 @@ def purchase_ticket(request, event_id):
         ticket_type_id = request.POST.get('ticket_type')
         quantity = int(request.POST.get('quantity'))
 
-        # Získání typu vstupenky
         ticket_type = get_object_or_404(TicketType, id=ticket_type_id)
 
-        # Výpočet celkové částky
         total_amount = ticket_type.price * quantity
 
-        # Vytvoření záznamu o nákupu
         TicketPurchase.objects.create(
             user=request.user,
             event=event,

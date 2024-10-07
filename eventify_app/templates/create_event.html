@@ -1,11 +1,8 @@
-<!-- product_create_or_update.html -->
-
 {% extends "base.html" %}
 
 {% block content %}
 <form enctype="multipart/form-data" class="container" method="post" id="event_form">
     {% csrf_token %}
-    <!-- main form start --- in our case product form -->
     <div class="card">
         <div class="card-header card-header-secondary">
             <h4 class="card-title">Přidat druh vstupenky</h4>
@@ -48,8 +45,7 @@
                     <th>Cena <span style="color: red;" class="required">*</span></th>
                     <th>Počet <span style="color: red;" class="required">*</span></th>
                 </thead>
-                <tbody id="item-ticket_types">  <!-- id="item-inlineformsetname" -->
-                    <!-- formset non forms errors -->
+                <tbody id="item-ticket_types">
                     {% for error in formset.non_form_errors %}
                         <span style="color: red">{{ error }}</span>
                     {% endfor %}
@@ -69,7 +65,7 @@
                     {% endfor %}
                 </tbody>
             </table>
-            <a href="#" id="add-ticket_types-button" class="btn btn-secondary add-ticket_types">Přidat více</a> <!-- id="add-inlineformsetname-button" -->
+            <a href="#" id="add-ticket_types-button" class="btn btn-secondary add-ticket_types">Přidat více</a>
         </div>
         
         {% endwith %}
@@ -90,7 +86,6 @@
           var compiledTmpl = tmplMarkup.replace(/__prefix__/g, count);
           $('#item-ticket_types').append(compiledTmpl);
   
-          // update form count
           $('#id_ticket_types-TOTAL_FORMS').attr('value', count+1);
       });
   });

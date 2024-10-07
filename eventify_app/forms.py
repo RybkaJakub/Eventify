@@ -11,7 +11,7 @@ CustomUser = get_user_model()
 
 from django import forms
 from .models import Event, Organization, TicketType
-from django.forms import modelformset_factory, inlineformset_factory
+from django.forms import inlineformset_factory
 
 
 class EventForm(forms.ModelForm):

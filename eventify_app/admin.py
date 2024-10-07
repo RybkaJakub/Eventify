@@ -20,7 +20,7 @@ class TicketTypeInline(admin.TabularInline):
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
     form = EventForm
-    readonly_fields = ['image', 'display_logo']  # Přidání display_logo do readonly_fields
+    readonly_fields = ['image', 'display_logo']
     fields = ['name', 'description', 'organization', 'day', 'image', 'display_logo']
     inlines = [TicketTypeInline]
 
