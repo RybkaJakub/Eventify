@@ -62,22 +62,26 @@
             <p><strong>Místo:</strong> {{ event.location }}</p>
             <p><strong>Akci pořádá organizace:</strong> {{ event.organization.name }}</p>
 
-            {% if user.is_authenticated %}
-                {% if not isAdmin %}
-                    {% if seatsLeft > 0 %}
-                        {% if registered %}
-                            <p class="alert alert-success">Jste již zaregistrován na tento event.</p>
-                        {% else %}
-                            <form method="post" action="{% url 'register_for_event' event.id %}">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-primary">Registrovat se</button>
-                            </form>
-                        {% endif %}
-                    {% else %}
-                        <p class="alert alert-danger">Je nám líto, ale tento event je již plně obsazen.</p>
-                    {% endif %}
-                {% endif %}
-            {% endif %}
+            <form method="post" action="{% url 'purchase_ticket' event.id %}">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="ticket_type">Typ vstupenky:</label>
+        <select name="ticket_type" id="ticket_type" required>
+            {% for ticket in ticket_types %}
+                <option value="{{ ticket.id }}">{{ ticket.name }} - {{ ticket.price }} Kč</option>
+            {% empty %}
+                <option value="">Žádné typy vstupenek nejsou k dispozici</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="quantity">Počet:</label>
+        <input type="number" name="quantity" id="quantity" min="1" max="10" value="1" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Koupit vstupenku</button>
+</form>
+
+
         </div>
     </div>
     {% if isAdmin and userOrganization%}

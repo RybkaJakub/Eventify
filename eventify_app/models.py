@@ -49,10 +49,6 @@ class Event(models.Model):
     description = models.TextField(verbose_name='Popis události', help_text='Zadejte popis události')
     day = models.DateField(verbose_name='Den konání eventu', help_text='Zadejte den konání eventu',
                            default=timezone.now)
-    start_time = models.TimeField(verbose_name='Čas začátku eventu', help_text='Zadejte čas začátku eventu',
-                                  default=timezone.now())
-    end_time = models.TimeField(verbose_name='Čas konce eventu', help_text='Zadejte čas konce eventu',
-                                default=timezone.now())
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
                                    verbose_name='Vytvořeno uživatelem', help_text='Vyberte uživatele, který událost vytvořil')
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE, null=True,
@@ -69,7 +65,6 @@ class Event(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        # Pokud je organizace vytvořena uživatelem, nastaví se organizace události na organizaci uživatele
         if self.created_by and not self.organization:
             self.organization = self.created_by.organization
         super(Event, self).save(*args, **kwargs)
@@ -82,6 +77,16 @@ class TicketType(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.price} Kč - {self.quantity} ks"
+
+class TicketPurchase(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    ticket_type = models.ForeignKey(TicketType, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField()
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.event.name} - {self.quantity} tickets"
 
 class UserEventRegistration(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,

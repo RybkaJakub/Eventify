@@ -18,8 +18,7 @@ class Organization(admin.ModelAdmin):
 class EventAdmin(admin.ModelAdmin):
     form = EventForm
     readonly_fields = ['image', 'display_logo']  # Přidání display_logo do readonly_fields
-    fields = ['name', 'description', 'organization', 'day',
-              'start_time', 'end_time', 'seats', 'image', 'display_logo']
+    fields = ['name', 'description', 'organization', 'day', 'image', 'display_logo']
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)

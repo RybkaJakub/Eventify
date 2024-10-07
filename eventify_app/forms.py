@@ -11,27 +11,23 @@ CustomUser = get_user_model()
 
 from django import forms
 from .models import Event, Organization, TicketType
-from django.forms import modelformset_factory
+from django.forms import modelformset_factory, inlineformset_factory
 
 
 class EventForm(forms.ModelForm):
     class Meta:
         model = Event
-        fields = ['name', 'description', 'day', 'start_time', 'end_time', 'image']
+        fields = ['name', 'description', 'day','image']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Zadej název eventu'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Zadej popisek eventu'}),
             'day': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'start_time': forms.TimeInput(attrs={'type': 'time', 'class': 'form-control'}),
-            'end_time': forms.TimeInput(attrs={'type': 'time', 'class': 'form-control'}),
             'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
         }
         labels = {
             'name': 'Název Eventu',
             'description': 'Popisek Eventu',
             'day': 'Datum konání Eventu',
-            'start_time': 'Čas začátku eventu',
-            'end_time': 'Čas konce eventu',
             'image': 'Foto Eventu',
         }
 
@@ -49,8 +45,6 @@ class EventForm(forms.ModelForm):
                 'name',
                 'description',
                 'day',
-                'start_time',
-                'end_time',
                 'image',
             ),
         )
@@ -59,13 +53,13 @@ class TicketTypeForm(forms.ModelForm):
     class Meta:
         model = TicketType
         fields = ['name', 'price', 'quantity']
+        widgets = {
+            'name': forms.TextInput(attrs={'class':'form-control'}),
+            'price': forms.NumberInput(attrs={'class':'form-control'}),
+            'quantity': forms.NumberInput(attrs={'class':'form-control'})
+        }
 
-TicketTypeFormSet = modelformset_factory(
-    TicketType,
-    form=TicketTypeForm,
-    extra=1,
-    can_delete=True
-)
+TicketTypeFormSet = inlineformset_factory(Event, TicketType, fields=('name', 'price', 'quantity'), extra=1, can_delete=True)
 
 class EventEditForm(forms.ModelForm):
     class Meta:

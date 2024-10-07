@@ -8,13 +8,17 @@ from django.contrib import messages
 from django.urls import reverse, reverse_lazy
 from django.views import View
 
-from .models import Event, UserEventRegistration
-from .forms import EventForm, CustomAuthenticationForm, LogoutForm, SignUpForm, EventEditForm
+from .models import Event, UserEventRegistration, TicketPurchase
+from .forms import EventForm, CustomAuthenticationForm, LogoutForm, SignUpForm, TicketTypeFormSet, TicketTypeForm
 from django.utils import timezone
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.views import LoginView
 from django.urls import resolve
 from django.db.models import Q
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+import logging
+import uuid
 
 
 def index(request):
@@ -22,10 +26,10 @@ def index(request):
     divider_rendered = False
 
     now = timezone.now()
-    upcoming_events = Event.objects.filter(
+    """upcoming_events = Event.objects.filter(
         Q(day__gt=now.date()) | (Q(day=now.date()) & Q(start_time__gt=now.time()))
-    ).order_by('day', 'start_time')
-
+    ).order_by('day', 'start_time')"""
+    upcoming_events = Event.objects.all()
     if request.user.is_authenticated:
 
         registered_events = UserEventRegistration.objects.filter(user=request.user)
@@ -63,65 +67,61 @@ class EventManagerView(PermissionRequiredMixin, ListView):
 
         return context
 
-
+from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.shortcuts import redirect
-from django.forms import modelformset_factory
+from django.forms import inlineformset_factory
+from django.views.generic import CreateView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Event, TicketType
 from .forms import EventForm, TicketTypeFormSet
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.urls import resolve
 
 
-class EventCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+class EventCreateView(LoginRequiredMixin, CreateView):
     model = Event
     form_class = EventForm
     template_name = 'create_event.html'
-    permission_required = 'eventify_app.add_event'
+    success_url = reverse_lazy('event_manager')
 
-    # Přidání vstupenek a přiřazení k eventu
     def form_valid(self, form):
         form.instance.created_by = self.request.user
-        # Získání formsetu
+
         ticket_formset = TicketTypeFormSet(self.request.POST)
 
         if ticket_formset.is_valid():
             response = super().form_valid(form)
 
-            # Uložení eventu a následné uložení vstupenek
-            ticket_formset.instance = self.object
-            for ticket_form in ticket_formset:
-                if ticket_form.cleaned_data:
-                    ticket = ticket_form.save(commit=False)
-                    ticket.event = self.object
-                    ticket.save()
+            tickets = ticket_formset.save(commit=False)
+            for ticket in tickets:
+                ticket.event = self.object
+                ticket.save()
+
             return response
         else:
             return self.form_invalid(form)
 
-    def get_success_url(self):
-        return reverse_lazy('event_detail', kwargs={'pk': self.object.pk})
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user
-        return kwargs
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['unique_id'] = str(uuid.uuid4())
 
-        # Inicializace TicketTypeFormSet (dynamických vstupenek)
         if self.request.POST:
             context['ticket_formset'] = TicketTypeFormSet(self.request.POST)
         else:
             context['ticket_formset'] = TicketTypeFormSet(queryset=TicketType.objects.none())
 
-        # Získání aktuální URL pro lepší navigaci
-        current_url_name = resolve(self.request.path_info).url_name
-        context['current_url'] = current_url_name
-
         return context
 
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+
+
+def add_ticket_row(request):
+    form = TicketTypeForm()
+    unique_id = str(uuid.uuid4())
+    rendered_form = render_to_string('partials/ticket.html', {'form': form, 'unique_id': unique_id}, request=request)
+    return HttpResponse(rendered_form)
+
+logger = logging.getLogger(__name__)
+from django.shortcuts import get_object_or_404
 
 class EventUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     model = Event
@@ -173,6 +173,7 @@ class EventDetailView(DetailView):
                                       UserEventRegistration.objects.filter(event=self.object)]
         current_url_name = resolve(self.request.path_info).url_name
         context['current_url'] = current_url_name
+        context['ticket_types'] = TicketType.objects.filter(event=self.object)
         if self.request.user.is_authenticated:
 
             for group in self.request.user.groups.all():
@@ -180,7 +181,6 @@ class EventDetailView(DetailView):
                     context['isAdmin'] = True
                     break
         if self.request.user.is_authenticated:
-            # Zkontroluje, zda je uživatel registrován na daný event
             context['registered'] = UserEventRegistration.objects.filter(
                 user=self.request.user,
                 event=self.object
@@ -270,14 +270,29 @@ class MyEventsListView(ListView):
         return context
 
 @login_required
-def register_for_event(request, event_id):
+def purchase_ticket(request, event_id):
     event = get_object_or_404(Event, id=event_id)
-    # Zkontroluje, zda je uživatel již zaregistrován na tuto událost
-    existing_registration = UserEventRegistration.objects.filter(user=request.user, event=event).exists()
-    if existing_registration:
-        messages.warning(request, f'Již jste registrováni na event "{event.name}".')
-    else:
-        # Vytvoří nový záznam registrace
-        UserEventRegistration.objects.create(user=request.user, event=event)
-        messages.success(request, f'Byli jste úspěšně zaregistrováni na event "{event.name}".')
+
+    if request.method == 'POST':
+        ticket_type_id = request.POST.get('ticket_type')
+        quantity = int(request.POST.get('quantity'))
+
+        # Získání typu vstupenky
+        ticket_type = get_object_or_404(TicketType, id=ticket_type_id)
+
+        # Výpočet celkové částky
+        total_amount = ticket_type.price * quantity
+
+        # Vytvoření záznamu o nákupu
+        TicketPurchase.objects.create(
+            user=request.user,
+            event=event,
+            ticket_type=ticket_type,
+            quantity=quantity,
+            total_amount=total_amount
+        )
+
+        messages.success(request, f'Úspěšně jste zakoupili {quantity} vstupenek na event "{event.name}".')
+        return redirect('event_detail', pk=event_id)
+
     return redirect('event_detail', pk=event_id)
