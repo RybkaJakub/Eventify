@@ -1,39 +1,99 @@
-{% extends 'base.html' %}
+<!-- product_create_or_update.html -->
+
+{% extends "base.html" %}
+
 {% block content %}
-    <div class="container">
-        <h2 class="my-4">Vytvořit nový event</h2>
-
-        {% load crispy_forms_tags %}
-
-        <form method="POST">
-            {% csrf_token %}
-            {{ form|crispy }}
-
-            <h2>Typy vstupenek</h2>
-            <div id="ticket-types-table">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Název</th>
-                            <th>Cena</th>
-                            <th>Množství</th>
-                            <th>Akce</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {{ ticket_formset.management_form }}
-                        {% for form in ticket_formset %}
-                            {% include 'partials/ticket.html' with form=form unique_id=unique_id%}
-                        {% endfor %}
-                    </tbody>
-                </table>
+<form enctype="multipart/form-data" class="container" method="post" id="event_form">
+    {% csrf_token %}
+    <!-- main form start --- in our case product form -->
+    <div class="card">
+        <div class="card-header card-header-secondary">
+            <h4 class="card-title">Přidat druh vstupenky</h4>
+        </div>
+        {% for field in form %}
+            <div class="form-group card-body">
+                <label>{{field.label}}</label>
+                {% if field.field.required %}
+                    <span style="color: red;" class="required">*</span>
+                {% endif %}
+            
+                {{field}}
+                {% if field.help_text %}
+                    <small style="color: grey">{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                    <p style="color: red">{{ error }}</p>
+                {% endfor %}
             </div>
-
-            <button type="button" hx-get="{% url 'add_ticket_row' %}" hx-target="#ticket-types-table tbody"
-        hx-swap="beforeend" class="btn btn-success">Přidat Vstupenku</button>
-
-
-            <button type="submit" class="btn btn-primary">Vytvořit událost</button>
-        </form>
+        {% endfor %}
     </div>
-{% endblock %}
+
+    {% with named_formsets.ticket_types as formset %}
+        {{ formset.management_form }}
+        <script type="text/html" id="ticket_types-template">
+            <tr id="ticket_types-__prefix__" class= hide_all>
+            
+                {% for fields in formset.empty_form.visible_fields %}
+                    <td>{{fields}}</td>
+                {% endfor %}
+            </tr>
+        </script>
+        <div class="table-responsive card mt-4">
+            <div class="card-header card-header-secondary">
+                <h4 class="card-title">Přidat vstupenku</h4>
+            </div>
+            <table class="table card-header">
+                <thead class="text-secondary">
+                    <th>Jméno <span style="color: red;" class="required">*</span></th>
+                    <th>Cena <span style="color: red;" class="required">*</span></th>
+                    <th>Počet <span style="color: red;" class="required">*</span></th>
+                </thead>
+                <tbody id="item-ticket_types">  <!-- id="item-inlineformsetname" -->
+                    <!-- formset non forms errors -->
+                    {% for error in formset.non_form_errors %}
+                        <span style="color: red">{{ error }}</span>
+                    {% endfor %}
+                    {% for formss in formset %}
+                        {{ formss.management_form }}
+                        <tr id="ticket_types-{{ forloop.counter0 }}" class= hide_all>
+                            {{ formss.id }}
+                            {% for field in formss.visible_fields %}
+                                <td>
+                                    {{field}}
+                                    {% for error in field.errors %}
+                                        <span style="color: red">{{ error }}</span>
+                                    {% endfor %}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <a href="#" id="add-ticket_types-button" class="btn btn-secondary add-ticket_types">Přidat více</a> <!-- id="add-inlineformsetname-button" -->
+        </div>
+        
+        {% endwith %}
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-secondary btn-block">Submit</button>
+        </div>
+</form>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+
+<script>
+  $(document).ready(function() {
+      $('.add-ticket_types').click(function(ev) {
+          ev.preventDefault();
+          var count = $('#item-ticket_types').children().length;
+          var tmplMarkup = $('#ticket_types-template').html();
+          var compiledTmpl = tmplMarkup.replace(/__prefix__/g, count);
+          $('#item-ticket_types').append(compiledTmpl);
+  
+          // update form count
+          $('#id_ticket_types-TOTAL_FORMS').attr('value', count+1);
+      });
+  });
+</script>
+        
+{% endblock content %}

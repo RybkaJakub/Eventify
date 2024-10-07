@@ -1,22 +1,19 @@
 
 from django.contrib.auth import logout
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMixin
 from django.contrib import messages
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 from django.views import View
 
-from .models import Event, UserEventRegistration, TicketPurchase
-from .forms import EventForm, CustomAuthenticationForm, LogoutForm, SignUpForm, TicketTypeFormSet, TicketTypeForm
+from .models import Event, TicketType, TicketPurchase
+from .forms import EventForm, CustomAuthenticationForm, LogoutForm, SignUpForm, TicketTypeFormSet
 from django.utils import timezone
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, DetailView, UpdateView, DeleteView
 from django.contrib.auth.views import LoginView
 from django.urls import resolve
-from django.db.models import Q
-from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
 import logging
 import uuid
 
@@ -32,7 +29,7 @@ def index(request):
     upcoming_events = Event.objects.all()
     if request.user.is_authenticated:
 
-        registered_events = UserEventRegistration.objects.filter(user=request.user)
+        """registered_events = UserEventRegistration.objects.filter(user=request.user)"""
 
         for group in request.user.groups.all():
             if group.name == "editor" or group.name == "admin":
@@ -75,72 +72,77 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Event, TicketType
 from .forms import EventForm, TicketTypeFormSet
 
-
-class EventCreateView(LoginRequiredMixin, CreateView):
-    model = Event
+class EventInline():
     form_class = EventForm
-    template_name = 'create_event.html'
-    success_url = reverse_lazy('event_manager')
+    model = Event
+    template_name = "create_event.html"
 
     def form_valid(self, form):
+        named_formsets = self.get_named_formsets()
+        if not all((x.is_valid() for x in named_formsets.values())):
+            return self.render_to_response(self.get_context_data(form=form))
+
         form.instance.created_by = self.request.user
+        self.object = form.save()
 
-        ticket_formset = TicketTypeFormSet(self.request.POST)
+        for name, formset in named_formsets.items():
+            formset_save_func = getattr(self, 'formset_{0}_valid'.format(name), None)
+            if formset_save_func is not None:
+                formset_save_func(formset)
+            else:
+                formset.save()
+        return redirect('event_manager')
 
-        if ticket_formset.is_valid():
-            response = super().form_valid(form)
+    def formset_ticket_types_valid(self, formset):
+        ticket_types = formset.save(commit=False)
+        for ticket_type in ticket_types:
+            ticket_type.event = self.object
+            ticket_type.save()
 
-            tickets = ticket_formset.save(commit=False)
-            for ticket in tickets:
-                ticket.event = self.object
-                ticket.save()
+class EventCreateView(EventInline, CreateView, LoginRequiredMixin, PermissionRequiredMixin):
 
-            return response
-        else:
-            return self.form_invalid(form)
+     def get_context_data(self, **kwargs):
+         ctx = super(EventCreateView, self).get_context_data(**kwargs)
+         ctx['named_formsets'] = self.get_named_formsets()
+         return ctx
 
+     def get_named_formsets(self):
+         if self.request.method == 'GET':
+             return {
+                 'ticket_types': TicketTypeFormSet(prefix='ticket_types')
+             }
+         else:
+             return {
+                 'ticket_types': TicketTypeFormSet(self.request.POST or None, self.request.FILES or None
+                                                   ,prefix='ticket_types')
+             }
+
+class EventUpdateView(EventInline, LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['unique_id'] = str(uuid.uuid4())
+        ctx = super(EventUpdateView, self).get_context_data(**kwargs)
+        ctx['named_formsets'] = self.get_named_formsets()
+        return ctx
 
-        if self.request.POST:
-            context['ticket_formset'] = TicketTypeFormSet(self.request.POST)
-        else:
-            context['ticket_formset'] = TicketTypeFormSet(queryset=TicketType.objects.none())
+    def get_named_formsets(self):
+        return {
+            'ticket_types': TicketTypeFormSet(self.request.POST or None, self.request.FILES or None,
+                                              prefix='ticket_types', instance=self.object)
+        }
 
-        return context
+def delete_ticket_type(request, pk):
+    try:
+        ticket_type = TicketType.objects.get(id=pk)
+    except TicketType.DoesNotExist:
+        messages.success(
+            request, 'Objekt neexistuje.'
+        )
+    ticket_type.delete()
+    messages.success(
+        request, 'Vstupenka byla úspěšně smazána.'
+    )
+    return redirect('edit_event', pk=ticket_type.event.id)
 
-from django.http import HttpResponse
-from django.template.loader import render_to_string
-
-
-def add_ticket_row(request):
-    form = TicketTypeForm()
-    unique_id = str(uuid.uuid4())
-    rendered_form = render_to_string('partials/ticket.html', {'form': form, 'unique_id': unique_id}, request=request)
-    return HttpResponse(rendered_form)
-
-logger = logging.getLogger(__name__)
 from django.shortcuts import get_object_or_404
-
-class EventUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
-    model = Event
-    form_class = EventForm
-    template_name = 'events/event_manager_edit.html'
-    permission_required = 'eventify_app.change_event'
-    success_url = '/'
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs.update({'user': self.request.user})
-        return kwargs
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['event'] = self.object
-        current_url_name = resolve(self.request.path_info).url_name
-        context['current_url'] = current_url_name
-        return context
 
 
 class EventDeleteView(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin, DeleteView):
@@ -169,8 +171,7 @@ class EventDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context['isAdmin'] = False
         context['userOrganization'] = False
-        context['registeredUsers'] = [registration.user for registration in
-                                      UserEventRegistration.objects.filter(event=self.object)]
+        context['purchasedTickets'] = TicketPurchase.objects.filter(event=self.object)
         current_url_name = resolve(self.request.path_info).url_name
         context['current_url'] = current_url_name
         context['ticket_types'] = TicketType.objects.filter(event=self.object)
@@ -181,7 +182,7 @@ class EventDetailView(DetailView):
                     context['isAdmin'] = True
                     break
         if self.request.user.is_authenticated:
-            context['registered'] = UserEventRegistration.objects.filter(
+            context['registered'] = TicketPurchase.objects.filter(
                 user=self.request.user,
                 event=self.object
             ).exists()
@@ -258,7 +259,7 @@ class MyEventsListView(ListView):
             user = self.request.user
 
             # Najít eventy, na které je uživatel registrován
-            registered_events = UserEventRegistration.objects.filter(user=user).values_list('event', flat=True)
+            registered_events = TicketPurchase.objects.filter(user=user).values_list('event', flat=True)
             context['events'] = Event.objects.filter(id__in=registered_events)
             context['isAuth'] = True
         else:

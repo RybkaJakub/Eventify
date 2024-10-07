@@ -2,148 +2,160 @@
 {% load static %}
 
 {% block content %}
-<style>
-    /* Custom styles for the event detail page */
-    .container {
-        max-width: 800px;
-    }
+    <style>
+        /* Custom styles for the event detail page */
+        .container {
+            max-width: 800px;
+        }
 
-    h2 {
-        font-size: 2.5rem;
-    }
+        h2 {
+            font-size: 2.5rem;
+        }
 
-    .text-muted {
-        font-size: 1.2rem;
-        white-space: pre-wrap; /* This will ensure that long text wraps to the next line */
-    }
+        .text-muted {
+            font-size: 1.2rem;
+            white-space: pre-wrap; /* This will ensure that long text wraps to the next line */
+        }
 
-    img {
-        max-width: 100%;
-        height: auto;
-        display: block;
-        margin: 0 auto;
-    }
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
 
-    button {
-        font-size: 1.2rem;
-        padding: 0.75rem 1.5rem;
-    }
+        button {
+            font-size: 1.2rem;
+            padding: 0.75rem 1.5rem;
+        }
 
-    .alert {
-        margin-top: 1rem;
-    }
+        .alert {
+            margin-top: 1rem;
+        }
 
-    /* Style for description with overflow handling */
-    .description-container {
-        position: relative;
-    }
+        /* Style for description with overflow handling */
+        .description-container {
+            position: relative;
+        }
 
-    .description {
-        transition: max-height 0.5s ease;
-        overflow: hidden;
-    }
-</style>
-<div class="container mt-5">
-    <div class="row">
-        <div class="col-md-6">
-            {% if event.image %}
-                <img src="{{ event.image.url }}" class="img-fluid rounded mb-4" alt="{{ event.name }}">
-            {% else %}
-                <img src="{% static 'img/static.jpg' %}" class="img-fluid rounded mb-4" alt="{{ event.name }}">
-            {% endif %}
-        </div>
-        <div class="col-md-6">
-            <h2 class="mb-3">{{ event.name }}</h2>
-            <div class="description-container">
-                <p class="text-muted description">{{ event.description }}</p>
-                <button id="toggleDescription" class="btn btn-link p-0">Zobrazit více</button>
+        .description {
+            transition: max-height 0.5s ease;
+            overflow: hidden;
+        }
+    </style>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-6">
+                {% if event.image %}
+                    <img src="{{ event.image.url }}" class="img-fluid rounded mb-4" alt="{{ event.name }}">
+                {% else %}
+                    <img src="{% static 'img/static.jpg' %}" class="img-fluid rounded mb-4" alt="{{ event.name }}">
+                {% endif %}
             </div>
-            <p><strong>Datum:</strong> {{ event.day }} {{ event.start_time }}</p>
-            <p><strong>Místo:</strong> {{ event.location }}</p>
-            <p><strong>Akci pořádá organizace:</strong> {{ event.organization.name }}</p>
-
-            <form method="post" action="{% url 'purchase_ticket' event.id %}">
-    {% csrf_token %}
-    <div class="form-group">
-        <label for="ticket_type">Typ vstupenky:</label>
-        <select name="ticket_type" id="ticket_type" required>
-            {% for ticket in ticket_types %}
-                <option value="{{ ticket.id }}">{{ ticket.name }} - {{ ticket.price }} Kč</option>
-            {% empty %}
-                <option value="">Žádné typy vstupenek nejsou k dispozici</option>
-            {% endfor %}
-        </select>
-    </div>
-    <div class="form-group">
-        <label for="quantity">Počet:</label>
-        <input type="number" name="quantity" id="quantity" min="1" max="10" value="1" required>
-    </div>
-    <button type="submit" class="btn btn-primary">Koupit vstupenku</button>
-</form>
-
-
+            <div class="col-md-6">
+                <h2 class="mb-3">{{ event.name }}</h2>
+                <div class="description-container">
+                    <p class="text-muted description">{{ event.description }}</p>
+                    <button id="toggleDescription" class="btn btn-link p-0">Zobrazit více</button>
+                </div>
+                <p><strong>Datum:</strong> {{ event.day }} {{ event.start_time }}</p>
+                <p><strong>Místo:</strong> {{ event.location }}</p>
+                <p><strong>Akci pořádá organizace:</strong> {{ event.organization.name }}</p>
+            </div>
         </div>
+        {% if not isAdmin and not userOrganization %}
+            <form method="post" action="{% url 'purchase_ticket' event.id %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="ticket_type">Typ vstupenky:</label>
+                    <select name="ticket_type" id="ticket_type" required>
+                        {% for ticket in ticket_types %}
+                            <option value="{{ ticket.id }}">{{ ticket.name }} - {{ ticket.price }} Kč</option>
+                        {% empty %}
+                            <option value="">Žádné typy vstupenek nejsou k dispozici</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="quantity">Počet:</label>
+                    <input type="number" name="quantity" id="quantity" min="1" max="10" value="1" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Koupit vstupenku</button>
+            </form>
+        {% endif %}
+        {% if isAdmin and userOrganization %}
+            <div class="events-title-wrapper text-center">
+                <h2 class="events-title">Registrovaní uživatelé</h2>
+            </div>
+            {% for ticket in ticket_types %}
+                <div class="table-wrapper">
+                    <h2>{{ ticket.name }}</h2>
+                    <table class="user-data">
+                        <thead class="user-data">
+                        <tr>
+                            <th>ID</th>
+                            <th>Jméno</th>
+                            <th>Email</th>
+                            <th>Tel. číslo</th>
+                            <th>Počet</th>
+                            <th>Celková cena</th>
+                        </tr>
+                        </thead>
+                        <tbody class="user-data">
+                        {% if purchasedTickets %}
+                            {% for purchasedTicket in purchasedTickets %}
+                                {% if purchasedTicket.ticket_type.id == ticket.id %}
+                                    <tr>
+                                        <td>
+                                            <div class="user-data">{{ purchasedTicket.id }}</div>
+                                        </td>
+                                        <td>
+                                            <div class="user-data">{{ purchasedTicket.user.username }} {{ purchasedTicket.user.last_name }}</div>
+                                        </td>
+                                        <td>
+                                            <div class="user-data">{{ purchasedTicket.user.email }}</div>
+                                        </td>
+                                        <td>
+                                            <div class="user-data">{{ purchasedTicket.user.telephone }}</div>
+                                        </td>
+                                        <td>
+                                            <div class="user-data">{{ purchasedTicket.quantity }}</div>
+                                        </td>
+                                        <td>
+                                            <div class="user-data">{{ purchasedTicket.total_amount }} Kč</div>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center">Žádné zakoupené vstupenky nejsou k dispozici</td>
+                            </tr>
+                        {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endfor %}
+        {% endif %}
     </div>
-    {% if isAdmin and userOrganization%}
-        <div class="events-title-wrapper text-center">
-        <h2 class="events-title">Registrovaní uživatelé</h2>
-    </div>
-    <div class="table-wrapper">
-        <table class="user-data">
-            <thead class="user-data">
-            <tr>
-                <th>ID</th>
-                <th>Jméno</th>
-                <th>Email</th>
-                <th>Tel číslo</th>
-            </tr>
-            </thead>
-            <tbody class="user-data">
-            {% if isAdmin %}
-                {% for member in registeredUsers %}
-                    <tr>
-                        <td>
-                            <div class="user-data">{{ member.id }}</div>
-                        </td>
-                        <td>
-                            <div class="user-data">{{ member.first_name }} {{ member.last_name }}</div>
-                        </td>
-                        <td>
-                            <div class="user-data">{{ member.email }}</div>
-                        </td>
-                        <td>
-                            <div class="user-data">{{ member.telephone }}</div>
-                        </td>
-                    </tr>
-                {% endfor %}
-            {% else %}
-                <tr>
-                    <td colspan="4" class="text-center">Žádné události nejsou k dispozici</td>
-                </tr>
-            {% endif %}
-            </tbody>
-        </table>
-    </div>
-    {% endif %}
-</div>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const description = document.querySelector('.description');
-        const toggleButton = document.getElementById('toggleDescription');
-        const maxLines = 3;
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const description = document.querySelector('.description');
+            const toggleButton = document.getElementById('toggleDescription');
+            const maxLines = 3;
 
-        description.style.maxHeight = `${1.5 * maxLines}em`;
-        description.style.overflow = 'hidden';
+            description.style.maxHeight = `${1.5 * maxLines}em`;
+            description.style.overflow = 'hidden';
 
-        toggleButton.addEventListener('click', function () {
-            if (description.style.maxHeight !== 'none') {
-                description.style.maxHeight = 'none';
-                toggleButton.textContent = 'Zobrazit méně';
-            } else {
-                description.style.maxHeight = `${1.5 * maxLines}em`;
-                toggleButton.textContent = 'Zobrazit více';
-            }
+            toggleButton.addEventListener('click', function () {
+                if (description.style.maxHeight !== 'none') {
+                    description.style.maxHeight = 'none';
+                    toggleButton.textContent = 'Zobrazit méně';
+                } else {
+                    description.style.maxHeight = `${1.5 * maxLines}em`;
+                    toggleButton.textContent = 'Zobrazit více';
+                }
+            });
         });
-    });
-</script>
+    </script>
 {% endblock %}

@@ -59,7 +59,9 @@ class TicketTypeForm(forms.ModelForm):
             'quantity': forms.NumberInput(attrs={'class':'form-control'})
         }
 
-TicketTypeFormSet = inlineformset_factory(Event, TicketType, fields=('name', 'price', 'quantity'), extra=1, can_delete=True)
+TicketTypeFormSet = inlineformset_factory(
+    Event, TicketType, form=TicketTypeForm,
+    extra=1, can_delete_extra=True)
 
 class EventEditForm(forms.ModelForm):
     class Meta:

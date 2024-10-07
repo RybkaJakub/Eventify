@@ -70,13 +70,13 @@ class Event(models.Model):
         super(Event, self).save(*args, **kwargs)
 
 class TicketType(models.Model):
-    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='ticket_types')
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
     name = models.CharField(max_length=255, verbose_name='Název vstupenky')
     price = models.DecimalField(max_digits=8, decimal_places=2, verbose_name='Cena vstupenky')
     quantity = models.IntegerField(verbose_name='Počet vstupenek')
 
     def __str__(self):
-        return f"{self.name} - {self.price} Kč - {self.quantity} ks"
+        return self.event.name
 
 class TicketPurchase(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -84,18 +84,7 @@ class TicketPurchase(models.Model):
     ticket_type = models.ForeignKey(TicketType, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    date = models.DateTimeField(verbose_name='Datum vytvoření', default=timezone.now)
 
     def __str__(self):
-        return f"{self.user.username} - {self.event.name} - {self.quantity} tickets"
-
-class UserEventRegistration(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
-                             verbose_name='Uživatel', help_text='Vyberte uživatele, který se zúčastní události')
-    event = models.ForeignKey(Event, on_delete=models.CASCADE,
-                              verbose_name='Událost', help_text='Vyberte událost, na kterou se uživatel registruje')
-    date_registered = models.DateTimeField(auto_now_add=True, verbose_name='Datum registrace')
-
-    class Meta:
-        verbose_name = 'Registrace uživatele na událost'
-        verbose_name_plural = 'Registrace uživatelů na události'
-        unique_together = ('user', 'event')
+        return f"{self.user.username} - {self.event.name} - {self.quantity} vstupenek"
