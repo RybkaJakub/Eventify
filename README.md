@@ -19,13 +19,13 @@
 - **Domovská stránka**: Přehled nadcházejících a doporučených událostí, možnost vytvoření nové události.
 - **Prohlížení událostí**: Filtrace událostí podle data, tématu nebo lokace s podrobnostmi o programu, místě konání a ceně vstupenek.
 - **Registrace na události**: Uživatelé mohou rezervovat místa na událostech pomocí jednoduchého online formuláře.
-- **Správa událostí**: Organizátoři mají rozhraní pro přidávání a úpravu informací o události, sledování registrací a zasílání notifikací účastníkům.
-- **Komunikace s účastníky**: Integrovaný systém e-mailových notifikací, diskusních fór a chatovací funkce pro interakci mezi organizátory a účastníky.
+- **Správa událostí**: Organizátoři mají rozhraní pro přidávání a úpravu informací o události, sledování registrací.
+- **OAuth** pro bezpečné přihlášení.
 
 ### Budoucí vylepšení:
-- **OAuth** pro bezpečné přihlášení.
 - **Platební brána** pro zpracování plateb za vstupenky.
 - **Rezervace konkrétních sedadel**.
+- **Komunikace s účastníky**: Integrovaný systém e-mailových notifikací, diskusních fór a chatovací funkce pro interakci mezi organizátory a účastníky.
 
 ## Technologie
 
