@@ -61,7 +61,8 @@
                 <p><strong>Akci pořádá organizace:</strong> {{ event.organization.name }}</p>
             </div>
         </div>
-        {% if not isAdmin and not userOrganization %}
+
+        {% if not isAdmin and not userOrganization and isAuth %}
             <form method="post" action="{% url 'purchase_ticket' event.id %}">
                 {% csrf_token %}
                 <div class="form-group">
@@ -80,18 +81,26 @@
                 </div>
                 <button type="submit" class="btn btn-primary">Koupit vstupenku</button>
             </form>
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-{{ message.tags }}{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
         {% endif %}
+
         {% if isAdmin and userOrganization %}
             <div class="events-title-wrapper text-center">
                 <h2 class="events-title">Registrovaní uživatelé</h2>
             </div>
-            {% for ticket in ticket_types %}
                 <div class="table-wrapper">
                     <h2>{{ ticket.name }}</h2>
                     <table class="user-data">
                         <thead class="user-data">
                         <tr>
                             <th>ID</th>
+                            <th>Typ Vstupenky</th>
                             <th>Jméno</th>
                             <th>Email</th>
                             <th>Tel. číslo</th>
@@ -100,12 +109,14 @@
                         </tr>
                         </thead>
                         <tbody class="user-data">
-                        {% if purchasedTickets %}
-                            {% for purchasedTicket in purchasedTickets %}
-                                {% if purchasedTicket.ticket_type.id == ticket.id %}
+                            {% if purchasedTickets %}
+                                {% for purchasedTicket in purchasedTickets %}
                                     <tr>
                                         <td>
                                             <div class="user-data">{{ purchasedTicket.id }}</div>
+                                        </td>
+                                        <td>
+                                            <div class="user-data">{{ purchasedTicket.ticket_type.name }}</div>
                                         </td>
                                         <td>
                                             <div class="user-data">{{ purchasedTicket.user.username }} {{ purchasedTicket.user.last_name }}</div>
@@ -123,19 +134,60 @@
                                             <div class="user-data">{{ purchasedTicket.total_amount }} Kč</div>
                                         </td>
                                     </tr>
-                                {% endif %}
                             {% endfor %}
                         {% else %}
                             <tr>
-                                <td colspan="6" class="text-center">Žádné zakoupené vstupenky nejsou k dispozici</td>
+                                <td colspan="7" class="text-center">Žádné zakoupené vstupenky nejsou k dispozici</td>
                             </tr>
                         {% endif %}
                         </tbody>
                     </table>
                 </div>
-            {% endfor %}
+        {% endif %}
+
+        {% if isAuth and not isAdmin %}
+            <div class="events-title-wrapper text-center">
+                <h2 class="events-title">Tvé vstupenky</h2>
+            </div>
+            <div class="table-wrapper">
+                <table class="user-data">
+                    <thead class="user-data">
+                        <tr>
+                            <th>ID</th>
+                            <th>Typ vstupenky</th>
+                            <th>Počet</th>
+                            <th>Celková cena</th>
+                        </tr>
+                    </thead>
+                    <tbody class="user-data">
+                        {% if userTickets %}
+                            {% for userTicket in userTickets %}
+                                <tr>
+                                    <td>
+                                        <div class="user-data">{{ userTicket.id }}</div>
+                                    </td>
+                                    <td>
+                                        <div class="user-data">{{ userTicket.ticket_type.name }}</div>
+                                    </td>
+                                    <td>
+                                        <div class="user-data">{{ userTicket.quantity }}</div>
+                                    </td>
+                                    <td>
+                                        <div class="user-data">{{ userTicket.total_amount }} Kč</div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="4" class="text-center">Žádné zakoupené vstupenky nejsou k dispozici</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
         {% endif %}
     </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const description = document.querySelector('.description');

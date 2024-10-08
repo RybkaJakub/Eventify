@@ -97,6 +97,7 @@ class EventInline():
         ticket_types = formset.save(commit=False)
         for ticket_type in ticket_types:
             ticket_type.event = self.object
+            ticket_type.left = ticket_type.quantity
             ticket_type.save()
 
 class EventCreateView(EventInline, CreateView, LoginRequiredMixin, PermissionRequiredMixin):
@@ -172,16 +173,21 @@ class EventDetailView(DetailView):
         context['isAdmin'] = False
         context['userOrganization'] = False
         context['purchasedTickets'] = TicketPurchase.objects.filter(event=self.object)
+        context['userTickets'] = TicketPurchase.objects.filter(
+            user=self.request.user,
+            event=self.object
+        )
         current_url_name = resolve(self.request.path_info).url_name
         context['current_url'] = current_url_name
         context['ticket_types'] = TicketType.objects.filter(event=self.object)
-        if self.request.user.is_authenticated:
+        auth = self.request.user.is_authenticated
+        if auth:
 
             for group in self.request.user.groups.all():
                 if group.name == "editor" or group.name == "admin":
                     context['isAdmin'] = True
                     break
-        if self.request.user.is_authenticated:
+        if auth:
             context['registered'] = TicketPurchase.objects.filter(
                 user=self.request.user,
                 event=self.object
@@ -190,6 +196,8 @@ class EventDetailView(DetailView):
                 context['userOrganization'] = True
         else:
             context['registered'] = False
+        context['isAuth'] = auth
+        context['stop'] = False
         return context
 
 
@@ -279,6 +287,10 @@ def purchase_ticket(request, event_id):
 
         ticket_type = get_object_or_404(TicketType, id=ticket_type_id)
 
+        if (ticket_type.left < quantity):
+            messages.error(request, f'Nedostatečný počet vstupenek typu {ticket_type.name}. Zbývá pouze {ticket_type.left} vstupenek.')
+            return redirect('event_detail', pk=event_id)
+
         total_amount = ticket_type.price * quantity
 
         TicketPurchase.objects.create(
@@ -290,6 +302,8 @@ def purchase_ticket(request, event_id):
         )
 
         messages.success(request, f'Úspěšně jste zakoupili {quantity} vstupenek na event "{event.name}".')
+        ticket_type.left -= quantity
+        ticket_type.save()
         return redirect('event_detail', pk=event_id)
 
     return redirect('event_detail', pk=event_id)

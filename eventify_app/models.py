@@ -74,6 +74,7 @@ class TicketType(models.Model):
     name = models.CharField(max_length=255, verbose_name='Název vstupenky')
     price = models.DecimalField(max_digits=8, decimal_places=2, verbose_name='Cena vstupenky')
     quantity = models.IntegerField(verbose_name='Počet vstupenek')
+    left = models.IntegerField(verbose_name='Počet zbývajících vstupenek', default=0, editable=False)
 
     def __str__(self):
         return self.event.name
