@@ -173,31 +173,35 @@ class EventDetailView(DetailView):
         context['isAdmin'] = False
         context['userOrganization'] = False
         context['purchasedTickets'] = TicketPurchase.objects.filter(event=self.object)
-        context['userTickets'] = TicketPurchase.objects.filter(
-            user=self.request.user,
-            event=self.object
-        )
         current_url_name = resolve(self.request.path_info).url_name
         context['current_url'] = current_url_name
         context['ticket_types'] = TicketType.objects.filter(event=self.object)
-        auth = self.request.user.is_authenticated
-        if auth:
 
-            for group in self.request.user.groups.all():
-                if group.name == "editor" or group.name == "admin":
-                    context['isAdmin'] = True
-                    break
+        auth = self.request.user.is_authenticated
+        context['isAuth'] = auth
+
         if auth:
+            # Pouze pro přihlášené uživatele
+            context['userTickets'] = TicketPurchase.objects.filter(
+                user=self.request.user,
+                event=self.object
+            )
             context['registered'] = TicketPurchase.objects.filter(
                 user=self.request.user,
                 event=self.object
             ).exists()
-            if self.object.organization == self.request.user.organization:
+            if self.object.organization == getattr(self.request.user, 'organization', None):
                 context['userOrganization'] = True
+
+            # Kontrola skupinového oprávnění
+            for group in self.request.user.groups.all():
+                if group.name in ["editor", "admin"]:
+                    context['isAdmin'] = True
+                    break
         else:
+            context['userTickets'] = None
             context['registered'] = False
-        context['isAuth'] = auth
-        context['stop'] = False
+
         return context
 
 
