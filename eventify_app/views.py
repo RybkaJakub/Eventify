@@ -193,7 +193,6 @@ class EventDetailView(DetailView):
             if self.object.organization == getattr(self.request.user, 'organization', None):
                 context['userOrganization'] = True
 
-            # Kontrola skupinového oprávnění
             for group in self.request.user.groups.all():
                 if group.name in ["editor", "admin"]:
                     context['isAdmin'] = True
