@@ -22,6 +22,9 @@ class CustomUser(AbstractUser):
     organization = models.ForeignKey('Organization', on_delete=models.CASCADE, null=True, blank=True,
                                      verbose_name='Organizace', help_text='Vyberte organizaci uživatele')
     email = models.EmailField(unique=True, verbose_name='E-mail', help_text='Zadejte e-mail uživatele')
+    image = models.ImageField(upload_to='user_images/', blank=True, null=True,
+                              verbose_name='Obrázek uživatele', help_text='Vyberte obrázek uživatele')
+    date_birth = models.DateField(default='2000-01-01', verbose_name='Datum narození', help_text='Zadejte datum narození')
     phone_validator = RegexValidator(
         regex=r'^\d{9}$',
         message="Telefonní číslo musí obsahovat přesně 9 číslic."
@@ -43,6 +46,15 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.email
 
+class Address(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    street = models.CharField(max_length=255, verbose_name='Ulice', help_text='Zadejte ulici')
+    city = models.CharField(max_length=255, verbose_name='Město', help_text='Zadejte město')
+    postal_code = models.CharField(max_length=6, verbose_name='PSČ', help_text='Zadejte PSČ')
+    country = models.CharField(max_length=255, verbose_name='Země', help_text='Zadejte zemi')
+
+    def __str__(self):
+        return f"{self.street}, {self.city}, {self.postal_code}, {self.country}"
 
 class Event(models.Model):
     name = models.CharField(max_length=200, verbose_name='Název události', help_text='Zadejte název události')

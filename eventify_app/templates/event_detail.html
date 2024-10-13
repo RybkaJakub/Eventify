@@ -111,7 +111,7 @@
                         <tbody class="user-data">
                             {% if purchasedTickets %}
                                 {% for purchasedTicket in purchasedTickets %}
-                                    <tr>
+                                    <tr onclick="window.location.href='{% url 'profile' purchasedTicket.user.id %}';">
                                         <td>
                                             <div class="user-data">{{ purchasedTicket.id }}</div>
                                         </td>

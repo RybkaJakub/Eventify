@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Můj profil{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Můj profil</h1>
+    <div class="card">
+        <div class="card-body">
+            <!-- Profilový obrázek -->
+            {% if profile_picture %}
+                <img src="{{ profile_picture }}" alt="Profilový obrázek" class="img-fluid rounded-circle" style="width: 100px; height: 100px;">
+            {% elif user.image %}
+                <img src="{{ user.image.url }}" alt="Profilový obrázek" class="img-fluid rounded-circle" style="width: 100px; height: 100px;">
+            {% else %}
+                <img src="{% static "img/default_profile.jpg"%}" alt="Profilový obrázek" class="img-fluid rounded-circle" style="width: 100px; height: 100px;">
+            {% endif %}
+            
+            <!-- Informace o uživateli -->
+            <h5 class="card-title">{{ user.username }}</h5>
+            <p class="card-text"><strong>Email:</strong> {{ user.email }}</p>
+            <p class="card-text"><strong>Jméno:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+            <p class="card-text"><strong>Email ověřen:</strong>
+                {% if email_confirmed %}
+                    <span class="text-success">Ano</span>
+                {% else %}
+                    <span class="text-danger">Ne</span>
+                {% endif %}
+            </p>
+            <p class="card-text"><strong>Přezdívka:</strong> {{ user.username }}</p>
+            <p class="card-text"><strong>Telefon:</strong> {{ user.telephone }}</p>
+            
+            <!-- Adresa uživatele -->
+            {% if address %}
+                <p class="card-text">
+                    <strong>Adresa:</strong> {{ address.street }}, {{ address.city }}, {{ address.postal_code }}, {{ address.country }}
+                </p>
+            {% else %}
+                <p class="card-text"><em>Adresa nenastavena.</em></p>
+            {% endif %}
+            
+            <p class="card-text"><strong>Datum narození:</strong> {{ user.date_birth }}</p>
+            
+            <h6 class="mt-4">Propojené služby:</h6>
+            {% if social_accounts %}
+                <ul>
+                    {% for account in social_accounts %}
+                        {% if account.provider == 'github' %}
+                            <li>{{ account.provider }}: {{ account.extra_data.login }}</li>
+                        {% elif account.provider == 'google' %}
+                            <li>{{ account.provider }}: {{ account.extra_data.name }}</li>
+                        {% elif account.provider == 'discord' %}
+                            <li>{{ account.provider }}: {{ account.extra_data.global_name }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Žádné propojené služby.</p>
+            {% endif %}
+
+            
+            <a href="{% url 'account_change_password' %}" class="btn btn-primary">Změnit heslo</a>
+            <a href="{% url 'account_logout' %}" class="btn btn-danger">Odhlásit se</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

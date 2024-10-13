@@ -8,7 +8,8 @@ from django.contrib import messages
 from django.urls import reverse
 from django.views import View
 
-from .models import Event, TicketType, TicketPurchase
+from .models import Event, TicketType, TicketPurchase, Address, CustomUser
+from allauth.socialaccount.models import SocialAccount
 from .forms import EventForm, CustomAuthenticationForm, LogoutForm, SignUpForm, TicketTypeFormSet
 from django.utils import timezone
 from django.views.generic import ListView, DetailView, UpdateView, DeleteView
@@ -16,6 +17,8 @@ from django.contrib.auth.views import LoginView
 from django.urls import resolve
 import logging
 import uuid
+from django.views.generic import TemplateView
+from allauth.account.models import EmailAddress
 
 
 def index(request):
@@ -203,6 +206,73 @@ class EventDetailView(DetailView):
 
         return context
 
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import TemplateView
+from allauth.socialaccount.models import SocialAccount
+from allauth.account.models import EmailAddress
+from .models import Address  # Import your Address model
+
+class MyProfileView(LoginRequiredMixin, TemplateView):
+    template_name = 'account/myprofile.html'
+
+    def get_user_profile_picture(self, social_accounts):
+        # Získání profilového obrázku podle priorit
+        if social_accounts:
+            for account in social_accounts:
+                extra_data = account.extra_data  # Uložení extra_data do proměnné
+                if account.provider == 'discord':
+                    # Opraveno: Přístup k hodnotám slovníku
+                    url = f'https://cdn.discordapp.com/avatars/{extra_data["id"]}/{extra_data["avatar"]}.png?size=240'
+                    return url
+                if account.provider == 'github':
+                    url = f'https://avatars.githubusercontent.com/u/{extra_data["id"]}'
+                    return url
+                if account.provider == 'google':
+                    return extra_data.get("picture", '')  # Použij get pro bezpečný přístup k hodnotě
+
+        return ''  # Pokud nemá žádný sociální účet, vrátí se uživatelský obrázek
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.clear()
+        user = self.request.user
+        context['user'] = user
+        context['address'] = Address.objects.filter(user=user)
+        context['email_confirmed'] = EmailAddress.objects.filter(user=user, verified=True).exists()
+        context['social_accounts'] = SocialAccount.objects.filter(user=user)
+        context['profile_picture'] = self.get_user_profile_picture(context['social_accounts'])
+        return context
+
+class UserProfileView(LoginRequiredMixin, TemplateView):
+    template_name = 'account/profile.html'
+
+    def get_user_profile_picture(self, social_accounts):
+        # Získání profilového obrázku podle priorit
+        if social_accounts:
+            for account in social_accounts:
+                extra_data = account.extra_data  # Uložení extra_data do proměnné
+                if account.provider == 'discord':
+                    # Opraveno: Přístup k hodnotám slovníku
+                    url = f'https://cdn.discordapp.com/avatars/{extra_data["id"]}/{extra_data["avatar"]}.png?size=240'
+                    return url
+                if account.provider == 'github':
+                    url = f'https://avatars.githubusercontent.com/u/{extra_data["id"]}'
+                    return url
+                if account.provider == 'google':
+                    return extra_data.get("picture", '')  # Použij get pro bezpečný přístup k hodnotě
+
+        return ''  # Pokud nemá žádný sociální účet, vrátí se uživatelský obrázek
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.clear()
+        user = get_object_or_404(CustomUser, pk=self.kwargs['pk'])
+        context['user'] = user
+        context['address'] = Address.objects.filter(user=user)
+        context['email_confirmed'] = EmailAddress.objects.filter(user=user, verified=True).exists()
+        context['social_accounts'] = SocialAccount.objects.filter(user=user)
+        context['profile_picture'] = self.get_user_profile_picture(context['social_accounts'])
+        return context
 
 class CustomLoginView(LoginView):
     authentication_form = CustomAuthenticationForm
