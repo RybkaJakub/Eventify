@@ -10,7 +10,8 @@ from django.utils.dateformat import format
 CustomUser = get_user_model()
 
 from django import forms
-from .models import Event, Organization, TicketType
+from .models import Event, Organization, TicketType, CustomUser
+from django.contrib.auth import get_user_model
 from django.forms import inlineformset_factory
 
 
@@ -147,3 +148,11 @@ class SignUpForm(forms.ModelForm):
         if password1 and password2 and password1 != password2:
             raise forms.ValidationError("Passwords don't match")
         return password2
+
+class UserProfileEditForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ['first_name', 'last_name', 'email', 'telephone', 'date_birth', 'organization', 'image']
+        widgets = {
+            'date_birth': forms.DateInput(attrs={'type': 'date'}),
+        }

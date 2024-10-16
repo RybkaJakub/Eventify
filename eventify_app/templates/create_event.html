@@ -1,25 +1,23 @@
 {% extends "base.html" %}
 
 {% block content %}
-<form enctype="multipart/form-data" class="container" method="post" id="event_form">
+<form enctype="multipart/form-data" class="container mx-auto mt-8" method="post" id="event_form">
     {% csrf_token %}
-    <div class="card">
-        <div class="card-header card-header-secondary">
-            <h4 class="card-title">Přidat druh vstupenky</h4>
-        </div>
+    <div class="bg-white shadow-md rounded-lg p-6">
+        <h4 class="text-xl font-semibold mb-4">Přidat druh vstupenky</h4>
         {% for field in form %}
-            <div class="form-group card-body">
-                <label>{{field.label}}</label>
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700">{{ field.label }}</label>
                 {% if field.field.required %}
-                    <span style="color: red;" class="required">*</span>
+                    <span class="text-red-500">*</span>
                 {% endif %}
-            
-                {{field}}
+                
+                {{ field }}
                 {% if field.help_text %}
-                    <small style="color: grey">{{ field.help_text }}</small>
+                    <small class="text-gray-500">{{ field.help_text }}</small>
                 {% endif %}
                 {% for error in field.errors %}
-                    <p style="color: red">{{ error }}</p>
+                    <p class="text-red-500 text-sm">{{ error }}</p>
                 {% endfor %}
             </div>
         {% endfor %}
@@ -28,36 +26,41 @@
     {% with named_formsets.ticket_types as formset %}
         {{ formset.management_form }}
         <script type="text/html" id="ticket_types-template">
-            <tr id="ticket_types-__prefix__" class= hide_all>
-            
+            <tr id="ticket_types-__prefix__">
                 {% for fields in formset.empty_form.visible_fields %}
-                    <td>{{fields}}</td>
+                    <td class="p-4 border-b">
+                        {{ fields }}
+                        {% for error in fields.errors %}
+                            <span class="text-red-500 text-sm">{{ error }}</span>
+                        {% endfor %}
+                    </td>
                 {% endfor %}
             </tr>
         </script>
-        <div class="table-responsive card mt-4">
-            <div class="card-header card-header-secondary">
-                <h4 class="card-title">Přidat vstupenku</h4>
-            </div>
-            <table class="table card-header">
-                <thead class="text-secondary">
-                    <th>Jméno <span style="color: red;" class="required">*</span></th>
-                    <th>Cena <span style="color: red;" class="required">*</span></th>
-                    <th>Počet <span style="color: red;" class="required">*</span></th>
+        <div class="bg-white shadow-md rounded-lg mt-4 p-6">
+            <h4 class="text-xl font-semibold mb-4">Přidat vstupenku</h4>
+            <table class="min-w-full">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="p-4 border-b">Jméno <span class="text-red-500">*</span></th>
+                        <th class="p-4 border-b">Cena <span class="text-red-500">*</span></th>
+                        <th class="p-4 border-b">Počet <span class="text-red-500">*</span></th>
+                    </tr>
                 </thead>
                 <tbody id="item-ticket_types">
                     {% for error in formset.non_form_errors %}
-                        <span style="color: red">{{ error }}</span>
+                        <tr>
+                            <td colspan="3" class="text-red-500">{{ error }}</td>
+                        </tr>
                     {% endfor %}
                     {% for formss in formset %}
                         {{ formss.management_form }}
-                        <tr id="ticket_types-{{ forloop.counter0 }}" class= hide_all>
-                            {{ formss.id }}
+                        <tr id="ticket_types-{{ forloop.counter0 }}" class="border-b">
                             {% for field in formss.visible_fields %}
-                                <td>
-                                    {{field}}
+                                <td class="p-4">
+                                    {{ field }}
                                     {% for error in field.errors %}
-                                        <span style="color: red">{{ error }}</span>
+                                        <span class="text-red-500 text-sm">{{ error }}</span>
                                     {% endfor %}
                                 </td>
                             {% endfor %}
@@ -65,13 +68,14 @@
                     {% endfor %}
                 </tbody>
             </table>
-            <a href="#" id="add-ticket_types-button" class="btn btn-secondary add-ticket_types">Přidat více</a>
+            <a href="#" id="add-ticket_types-button" class="mt-4 inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-500">
+                Přidat více
+            </a>
         </div>
-        
         {% endwith %}
 
-        <div class="form-group">
-            <button type="submit" class="btn btn-secondary btn-block">Submit</button>
+        <div class="mt-6">
+            <button type="submit" class="w-full py-2 bg-blue-600 text-white rounded hover:bg-blue-500">Odeslat</button>
         </div>
 </form>
 
@@ -79,14 +83,14 @@
 
 <script>
   $(document).ready(function() {
-      $('.add-ticket_types').click(function(ev) {
+      $('#add-ticket_types-button').click(function(ev) {
           ev.preventDefault();
           var count = $('#item-ticket_types').children().length;
           var tmplMarkup = $('#ticket_types-template').html();
           var compiledTmpl = tmplMarkup.replace(/__prefix__/g, count);
           $('#item-ticket_types').append(compiledTmpl);
-  
-          $('#id_ticket_types-TOTAL_FORMS').attr('value', count+1);
+
+          $('#id_ticket_types-TOTAL_FORMS').attr('value', count + 1);
       });
   });
 </script>

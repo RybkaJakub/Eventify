@@ -3,11 +3,16 @@
 {% block title %}Smazání eventu{% endblock %}
 
 {% block content %}
-    <h1>Smazání eventu</h1>
-    <p>Opravdu chcete smazat event "{{ event.name }}"?</p>
+    <div class="container mx-auto mt-5">
+        <h1 class="text-3xl font-bold mb-4">Smazání eventu</h1>
+        <p class="mb-4">Opravdu chcete smazat event "<strong>{{ event.name }}</strong>"?</p>
 
-    <form method="post">
-        {% csrf_token %}
-        <button type="submit">Ano</button>
-    </form>
+        <form method="post" class="bg-white p-6 rounded shadow-md">
+            {% csrf_token %}
+            <div class="flex justify-between">
+                <button type="submit" class="bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700">Ano</button>
+                <a href="{% url 'my_events_list' %}" class="bg-gray-300 text-gray-700 py-2 px-4 rounded hover:bg-gray-400">Ne</a>
+            </div>
+        </form>
+    </div>
 {% endblock %}

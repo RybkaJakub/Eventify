@@ -4,7 +4,7 @@ from django.utils.safestring import mark_safe
 from django import forms
 
 from .forms import EventForm, OrganizationForm
-from .models import Event, CustomUser, Organization, TicketType
+from .models import Event, CustomUser, Organization, TicketType, EventAddress
 
 admin.site.register(CustomUser)
 
@@ -16,13 +16,16 @@ class Organization(admin.ModelAdmin):
 class TicketTypeInline(admin.TabularInline):
     model = TicketType
 
+class EventAddressInline(admin.TabularInline):
+    model = EventAddress
+
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
     form = EventForm
     readonly_fields = ['image', 'display_logo']
     fields = ['name', 'description', 'organization', 'day', 'image', 'display_logo']
-    inlines = [TicketTypeInline]
+    inlines = [TicketTypeInline, EventAddressInline]
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)

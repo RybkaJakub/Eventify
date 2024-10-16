@@ -81,6 +81,16 @@ class Event(models.Model):
             self.organization = self.created_by.organization
         super(Event, self).save(*args, **kwargs)
 
+class EventAddress(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    street = models.CharField(max_length=255, verbose_name='Ulice', help_text='Zadejte ulici')
+    city = models.CharField(max_length=255, verbose_name='Město', help_text='Zadejte město')
+    postal_code = models.CharField(max_length=6, verbose_name='PSČ', help_text='Zadejte PSČ')
+    country = models.CharField(max_length=255, verbose_name='Země', help_text='Zadejte zemi')
+
+    def __str__(self):
+        return f"{self.street}, {self.city}, {self.postal_code}, {self.country}"
+
 class TicketType(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     name = models.CharField(max_length=255, verbose_name='Název vstupenky')

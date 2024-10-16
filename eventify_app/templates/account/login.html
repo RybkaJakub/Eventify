@@ -1,54 +1,38 @@
 {% extends "base.html" %}
-
 {% load i18n %}
 {% load account socialaccount %}
+{% load crispy_forms_tags %}
 
-{% load crispy_forms_filters %}
-
-{% block head_title %}{% trans "Sign In" %}{% endblock %}
+{% block head_title %}{% trans "Přihlášení" %}{% endblock %}
 
 {% block content %}
-
-  <div class="text-center">
-    <h1>{% trans "Sign In" %}</h1>
+<div class="flex flex-col items-center mt-16">
+    <h1 class="text-4xl font-extrabold text-gray-900 mb-6">{% trans "Přihlášení" %}</h1>
 
     {% get_providers as socialaccount_providers %}
 
     {% if socialaccount_providers %}
-    <p>{% blocktrans with site.name as site_name %}Please sign in with one
-    of your existing third party accounts.<br>Or, <a href="{{ signup_url }}">sign up</a>
-    for a {{ site_name }} account and sign in below:{% endblocktrans %}</p>
+    <p class="text-gray-500 text-center mb-8 max-w-lg leading-relaxed">
+        {% blocktrans with site.name as site_name %}
+        Přihlaste se pomocí jednoho z vašich existujících účtů třetích stran nebo si <a href="{{ signup_url }}" class="text-indigo-500 hover:underline">vytvořte nový účet</a> na {{ site_name }}:
+        {% endblocktrans %}
+    </p>
 
-    <div class="socialaccount_ballot">
-
-      <div class="socialaccount_providers">
-        {% include "socialaccount/snippets/provider_list.html" with process="login" %}
-      </div>
-
-      <div class="login-or border-top border-bottom my-3">{% trans 'OR' %}</div>
-
+    <div class="w-full max-w-md mb-6">
+        <div class="bg-white shadow-lg rounded-lg px-4 py-6">
+            {% include "socialaccount/snippets/provider_list.html" with process="login" %}
+        </div>
+        <div class="flex items-center justify-center my-6">
+            <span class="text-gray-400 text-sm font-semibold px-4">NEBO</span>
+        </div>
+        {% include "socialaccount/snippets/login_extra.html" %}
     </div>
-
-    {% include "socialaccount/snippets/login_extra.html" %}
 
     {% else %}
-    <p>{% blocktrans %}If you have not created an account yet, then please
-    <a href="{{ signup_url }}">sign up</a> first.{% endblocktrans %}</p>
+    <p class="text-gray-500 text-center mb-8 max-w-lg leading-relaxed">
+        {% blocktrans %}Pokud jste si ještě nevytvořili účet, <a href="{{ signup_url }}" class="text-indigo-500 hover:underline">zaregistrujte se</a> a pak se přihlaste níže.{% endblocktrans %}
+    </p>
     {% endif %}
-  </div>
-  <div class="row">
-    <div class="col-md-6 offset-md-3">
-      <form class="login" method="POST" action="{% url 'account_login' %}">
-          {% csrf_token %}
-          {{ form|crispy }}
-          {% if redirect_field_value %}
-          <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-          {% endif %}
-          <div class="d-grid">
-            <button class="primaryAction mt-3 btn btn-dark" type="submit">{% trans "Sign In" %}</button><br>
-            <a class="button secondaryAction text-dark text-center" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
-          </div>
-        </form>
-    </div>
-  </div>
+</div>
+    
 {% endblock %}

@@ -1,55 +1,52 @@
 {% load static %}
-<nav class="navbar navbar-expand-sm navbar-light nav-style">
-    <a class="navbar-brand" href="#"><img height="64px"
-                                          width="64px" src="{% static 'img/eventify_logo_rounded.png' %}"
-                                          alt="Eventify"></a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavId">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="collapsibleNavId">
-        <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-            <li class="nav-item {% if current_url is empty %}active{% endif %}">
-                <a class="nav-link" href="{% url 'index' %}">Úvodní stránka <span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item {% if current_url == 'my_events_list' %}active{% endif %}">
-                <a class="nav-link" href="{% url 'my_events_list' %}">Eventy</a>
-            </li>
-            <li class="nav-item {% if current_url == 'calendar' %}active{% endif %}">
-                <a class="nav-link" href="">Kalendář</a>
-            </li>
-        </ul>
-        <ul class="nav navbar-nav navbar-right">
-            {% if user.is_authenticated %}
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="user-profile" data-toggle="dropdown">
-                        {{ user.get_username }}
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right">
-                        {% if divider_rendered %}
-                            <div class="dropdown-divider"></div>
-                        {% endif %}
-                        {% for group in user.groups.all %}
-                            {% if group.name == "editor" or group.name == "admin"%}
-                                <a class="dropdown-item" href="{% url 'event_manager' %}">Správa eventů</a>
-                            {% endif %}
-                            {% if group.name == "admin" %}
-                                <a class="dropdown-item" href="{% url 'admin:index' %}">Administrace</a>
-                            {% endif %}
-                        {% endfor %}
-
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{% url 'myprofile' %}">Můj profil</a>
-                        <a class="dropdown-item" href="">Mé eventy</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="">Změnit heslo</a>
-                        <a class="dropdown-item" href="{% url 'logout' %}">Odhlásit se </a>
-                        <div class="dropdown-divider"></div>
-                    </div>
+<nav class="bg-indigo-600 shadow-md w-full">
+    <div class="px-4 py-4 flex justify-between items-center">
+        <a class="navbar-brand" href="#">
+            <img height="64px" width="64px" src="{% static 'img/eventify_logo_rounded.png' %}" alt="Eventify">
+        </a>
+        <div class="flex items-center space-x-4">
+            <ul class="flex space-x-4">
+                <li class="{% if current_url is empty %}font-bold text-white{% endif %}">
+                    <a class="nav-link text-white hover:text-gray-300" href="{% url 'index' %}">Úvodní stránka</a>
                 </li>
-            {% else %}
-                <li class="nav-item"><a href="{% url 'login' %}?next={{ request.path }}" class="nav-link">Přihlásit
-                    se</a></li>
+                <li class="{% if current_url == 'my_events_list' %}font-bold text-white{% endif %}">
+                    <a class="nav-link text-white hover:text-gray-300" href="{% url 'my_events_list' %}">Eventy</a>
+                </li>
+                <li class="{% if current_url == 'calendar' %}font-bold text-white{% endif %}">
+                    <a class="nav-link text-white hover:text-gray-300" href="#">Kalendář</a>
+                </li>
+            </ul>
+            <div x-data="{ open: false }" class="relative">
+                <button @click="open = !open" class="flex items-center space-x-2 text-white hover:text-gray-300">
+                    <span>{{ user.get_username }}</span>
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8l8 8 8-8" />
+                    </svg>
+                </button>
+                <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-20">
+                    {% if divider_rendered %}
+                        <div class="border-b border-gray-200"></div>
+                    {% endif %}
+                    {% for group in user.groups.all %}
+                        {% if group.name == "editor" or group.name == "admin"%}
+                            <a class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" href="{% url 'event_manager' %}">Správa eventů</a>
+                        {% endif %}
+                        {% if group.name == "admin" %}
+                            <a class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" href="{% url 'admin:index' %}">Administrace</a>
+                        {% endif %}
+                    {% endfor %}
+                    <div class="border-b border-gray-200"></div>
+                    <a class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" href="{% url 'myprofile' %}">Můj profil</a>
+                    <a class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" href="#">Mé eventy</a>
+                    <div class="border-b border-gray-200"></div>
+                    <a class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" href="#">Změnit heslo</a>
+                    <a class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" href="{% url 'account_logout' %}">Odhlásit se</a>
+                    <div class="border-b border-gray-200"></div>
+                </div>
+            </div>
+            {% if not user.is_authenticated %}
+                <a href="{% url 'account_login' %}" class="text-white hover:text-gray-300">Přihlásit se</a>
             {% endif %}
-        </ul>
+        </div>
     </div>
 </nav>

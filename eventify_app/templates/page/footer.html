@@ -1,19 +1,34 @@
-<footer class="container-fluid p-3 border-top" style="background-color: rgb(128,128,128)" id="main-footer">
-    <p class="text-center text-dark">Copyright &copy;<script>document.write(new Date().getFullYear());</script>
-                        Rybka Jakub | All rights reserved | Made with <i class="fa fa-heart-o"></i> by Jakub Rybka</p>
+<footer class="bg-gray-700 p-6 text-center text-white ">
+    <div class="container mx-auto">
+        <div class="flex justify-center mb-4">
+            <a href="https://github.com/" target="_blank" class="mx-2">
+                <i class="fa-brands fa-github h-8 w-8"></i>
+            </a>
+            <a href="https://www.instagram.com/" target="_blank" class="mx-2">
+                <i class="fa-brands fa-instagram h-8 w-8"></i>
+            </a>
+            <a href="https://www.facebook.com/" target="_blank" class="mx-2">
+                <i class="fa-brands fa-facebook h-8 w-8"></i>
+            </a>
+            <!-- Přidejte další odkazy na sociální média, jak potřebujete -->
+        </div>
+        <p class="text-gray-300">
+            Copyright &copy; <script>document.write(new Date().getFullYear());</script> Rybka Jakub | All rights reserved | Made with <i class="fa fa-heart" aria-hidden="true"></i> by Jakub Rybka
+        </p>
+    </div>
 </footer>
 
 <script>
     window.addEventListener('load', function() {
-  var footer = document.getElementById('main-footer');
-  var windowHeight = window.innerHeight;
-  var documentHeight = document.body.scrollHeight;
+        var footer = document.getElementById('main-footer');
+        var windowHeight = window.innerHeight;
+        var documentHeight = document.body.scrollHeight;
 
-  if (documentHeight < windowHeight) {
-    footer.style.position = 'fixed';
-    footer.style.bottom = '0';
-  } else {
-    footer.style.position = 'static';
-  }
-});
+        if (documentHeight < windowHeight) {
+            footer.style.position = 'fixed';
+            footer.style.bottom = '0';
+        } else {
+            footer.style.position = 'static';
+        }
+    });
 </script>

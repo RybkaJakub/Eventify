@@ -3,12 +3,12 @@
 
 {% block content %}
 <div>
-    <div class="welcome-section py-5">
-        <div class="welcome-section-overlay">
-            <div class="row justify-content-center">
-                <div class="col-lg-8 text-center welcome-card">
-                    <h1 class="welcome-heading mb-4">Vítej na <span class="eventify-text">eventify</span></h1>
-                    <p class="welcome-description lead">
+    <div class="welcome-section py-5 bg-gray-800 text-white">
+        <div class="bg-black bg-opacity-50 p-6 rounded-lg">
+            <div class="flex justify-center">
+                <div class="text-center max-w-3xl">
+                    <h1 class="text-4xl font-bold mb-4">Vítej na <span class="text-indigo-400">Eventify</span></h1>
+                    <p class="text-lg leading-relaxed">
                         Vítejte na Eventify - vašem průvodci světem událostí a zážitků! Jsme zde, abychom vám
                         přinesli ten nejaktuálnější přehled nadcházejících událostí ve vašem okolí, od koncertů a
                         festivalů po sportovní akce a kulturní akce.
@@ -23,76 +23,76 @@
                 </div>
             </div>
         </div>
-        <div class="gradient-overlay"></div>
     </div>
 </div>
+
 {% if user.is_authenticated %}
-    <div class="container mt-5">
-        <div class="events-title-wrapper text-center">
-            <h2 class="events-title">Moje události</h2>
+    <div class="container mx-auto mt-5">
+        <div class="text-center my-6">
+            <h2 class="text-2xl font-semibold">Moje události</h2>
         </div>
-        <div class="row">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {% if registered_events %}
                 {% for registration in registered_events %}
-                    <div class="col-lg-3 col-md-6 col-sm-12 mb-4">
-                        <div class="card h-100">
-                            {% if registration.event.image %}
-                                <img src="{{ registration.event.image.url }}" class="card-img-top" alt="{{ registration.event.name }}">
-                            {% else %}
-                                <img src="{% static 'img/static.jpg' %}" class="card-img-top" alt="{{ event.name }}">
-                            {% endif %}
-                            <div class="card-body">
-                                <h5 class="card-title" style="width: 100%;">{{ registration.event.name }}</h5>
-                                <p class="card-text" style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical;">{{ registration.event.description }}</p>
-                            </div>
-                            <div class="card-footer">
-                                <a href="{% url 'event_detail' registration.event.id %}" class="btn btn-primary">Detail události</a>
-                            </div>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        {% if registration.event.image %}
+                            <img src="{{ registration.event.image.url }}" class="w-full h-48 object-cover" alt="{{ registration.event.name }}">
+                        {% else %}
+                            <img src="{% static 'img/static.jpg' %}" class="w-full h-48 object-cover" alt="{{ registration.event.name }}">
+                        {% endif %}
+                        <div class="p-4">
+                            <h5 class="font-bold text-lg">{{ registration.event.name }}</h5>
+                            <p class="text-gray-700 text-sm mt-2 line-clamp-4">{{ registration.event.description }}</p>
+                        </div>
+                        <div class="p-4 bg-gray-100">
+                            <a href="{% url 'event_detail' registration.event.id %}" class="text-indigo-500 font-medium">Detail události</a>
                         </div>
                     </div>
                 {% endfor %}
             {% else %}
-                <div class="col-lg-12 mb-4">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">Není registrován na žádném eventu</h5>
-                        </div>
+                <div class="col-span-1 lg:col-span-4 text-center">
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h5 class="text-gray-700">Není registrován na žádném eventu</h5>
                     </div>
                 </div>
             {% endif %}
         </div>
     </div>
 {% endif %}
-<div class="container mt-5">
-    <div class="events-title-wrapper text-center">
-        <h2 class="events-title">Nadcházející události</h2>
+
+<div class="container mx-auto mt-5">
+    <div class="text-center my-6">
+        <h2 class="text-2xl font-semibold">Nadcházející události</h2>
     </div>
-    <div class="row">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {% if upcoming_events %}
             {% for event in upcoming_events %}
-                <div class="col-lg-3 col-md-6 col-sm-12 mb-4">
-                    <div class="card h-100">
-                        {% if event.image %}
-                            <img src="{{ event.image.url }}" class="card-img-top" alt="{{ event.name }}">
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    {% if event.image %}
+                        <img src="{{ event.image.url }}" class="w-full h-48 object-cover" alt="{{ event.name }}">
+                    {% else %}
+                        <img src="{% static 'img/static.jpg' %}" class="w-full h-48 object-cover" alt="{{ event.name }}">
+                    {% endif %}
+                    <div class="p-4">
+                        <h5 class="font-bold text-lg">{{ event.name }}</h5>
+                        <p class="text-gray-700 text-sm mt-2 line-clamp-4">{{ event.description }}</p>
+                        {% if event.eventaddress_set.exists %}
+                            <p class="text-gray-600 text-sm mt-1">
+                                Adresa: {{ event.eventaddress_set.first }}
+                            </p>
                         {% else %}
-                            <img src="{% static 'img/static.jpg' %}" class="card-img-top" alt="{{ event.name }}">
+                            <p class="text-gray-600 text-sm mt-1">Adresa není k dispozici.</p>
                         {% endif %}
-                        <div class="card-body">
-                            <h5 class="card-title" style="width: 100%;">{{ event.name }}</h5>
-                            <p class="card-text" style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical;">{{ event.description }}</p>
-                        </div>
-                        <div class="card-footer">
-                            <a href="{% url 'event_detail' event.id %}" class="btn btn-primary">Detail události</a>
-                        </div>
+                    </div>
+                    <div class="p-4 bg-gray-100">
+                        <a href="{% url 'event_detail' event.id %}" class="text-indigo-500 font-medium">Detail události</a>
                     </div>
                 </div>
             {% endfor %}
         {% else %}
-            <div class="col-lg-12 mb-4">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">Není žádná nadcházející událost</h5>
-                    </div>
+            <div class="col-span-1 lg:col-span-4 text-center">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h5 class="text-gray-700">Není žádná nadcházející událost</h5>
                 </div>
             </div>
         {% endif %}

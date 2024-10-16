@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Upravit profil{% endblock %}
+
+{% block content %}
+<div class="container mx-auto mt-5">
+    <h1 class="text-3xl font-semibold mb-4">Upravit profil</h1>
+
+    {% if messages %}
+        <div class="mb-4">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} mb-2 p-3 rounded {{ message.tags == 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" class="bg-white p-6 rounded-lg shadow-md">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <div class="flex justify-between mt-4">
+            <button type="submit" class="btn btn-primary bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-500 transition duration-200">Uložit změny</button>
+            <a href="{% url 'myprofile' %}" class="btn btn-secondary bg-gray-600 text-white py-2 px-4 rounded hover:bg-gray-500 transition duration-200">Zrušit</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

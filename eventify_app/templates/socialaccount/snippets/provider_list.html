@@ -1,28 +1,29 @@
 {% load socialaccount %}
 {% load static %}
+{% load i18n %}
 
 {% get_providers as socialaccount_providers %}
 
-{% for provider in socialaccount_providers %}
-{% if provider.id == "openid" %}
-{% for brand in provider.get_brands %}
-<div>
-  <a title="{{brand.name}}" 
-     class="socialaccount_provider {{provider.id}} {{brand.id}}" 
-     href="{% provider_login_url provider.id openid=brand.openid_url process=process %}"
-     >{{brand.name}}</a>
+<div class="flex flex-col items-center">
+    {% for provider in socialaccount_providers %}
+        <div class="my-2">
+            <a title="{{ provider.name }}" 
+               class="flex items-center justify-center w-full max-w-xs px-4 py-2 text-white rounded-lg transition duration-200 
+                      {% if provider.id == 'github' %} bg-gray-800 hover:bg-gray-900 {% elif provider.id == 'google' %} bg-green-600 hover:bg-green-700 {% elif provider.id == 'discord' %} bg-purple-600 hover:bg-purple-700 {% else %} bg-gray-600 hover:bg-gray-700 {% endif %}"
+               href="{% provider_login_url provider.id process=process %}">
+                <span class="mr-2">
+                    {% if provider.id == "github" %}
+                        <i class="fab fa-github"></i>
+                    {% elif provider.id == "google" %}
+                        <i class="fab fa-google"></i>
+                    {% elif provider.id == "discord" %}
+                        <i class="fab fa-discord"></i>
+                    {% else %}
+                        <i class="fas fa-plug"></i> {# Obecná ikona pro jiné providery #}
+                    {% endif %}
+                </span>
+                <span>{{ provider.name }}</span>
+            </a>
+        </div>
+    {% endfor %}
 </div>
-{% endfor %}
-{% endif %}
-<div class="my-2">
-  <a title="{{provider.name}}" class="socialaccount_provider {{provider.id}}" 
-     href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}">
-     <img 
-      src="
-     {% with 'img/'|add:provider.name|add:'.png' as image %}
-      {% static image %}
-     {% endwith %}
-     " alt="{{ provider.name }}" height="50" width="300"/>
-     </a>
-</div>
-{% endfor %}

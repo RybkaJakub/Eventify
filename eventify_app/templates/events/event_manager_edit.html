@@ -1,17 +1,19 @@
 {% extends 'base.html' %}
 
-
 {% block content %}
-    <div class="container">
-  <h2 class="my-4">Upravit event</h2>
-  {% load crispy_forms_tags %}
-    {% crispy form %}
-  {% if messages %}
-    <ul class="messages">
-      {% for message in messages %}
-        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-      {% endfor %}
-    </ul>
-  {% endif %}
+    <div class="container mx-auto my-6">
+        <h2 class="text-2xl font-bold mb-4">Upravit event</h2>
+        {% load crispy_forms_tags %}
+        {% crispy form %}
+        
+        {% if messages %}
+            <ul class="mt-4">
+                {% for message in messages %}
+                    <li class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded relative mb-2">
+                        {{ message }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
     </div>
 {% endblock %}

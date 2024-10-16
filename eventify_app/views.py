@@ -10,7 +10,7 @@ from django.views import View
 
 from .models import Event, TicketType, TicketPurchase, Address, CustomUser
 from allauth.socialaccount.models import SocialAccount
-from .forms import EventForm, CustomAuthenticationForm, LogoutForm, SignUpForm, TicketTypeFormSet
+from .forms import EventForm, CustomAuthenticationForm, LogoutForm, SignUpForm, UserProfileEditForm
 from django.utils import timezone
 from django.views.generic import ListView, DetailView, UpdateView, DeleteView
 from django.contrib.auth.views import LoginView
@@ -26,13 +26,10 @@ def index(request):
     divider_rendered = False
 
     now = timezone.now()
-    """upcoming_events = Event.objects.filter(
-        Q(day__gt=now.date()) | (Q(day=now.date()) & Q(start_time__gt=now.time()))
-    ).order_by('day', 'start_time')"""
-    upcoming_events = Event.objects.all()
-    if request.user.is_authenticated:
+    upcoming_events = Event.objects.all() # Use prefetch_related for reverse relationships
 
-        """registered_events = UserEventRegistration.objects.filter(user=request.user)"""
+    if request.user.is_authenticated:
+        registered_events = TicketPurchase.objects.filter(user=request.user).distinct('event')
 
         for group in request.user.groups.all():
             if group.name == "editor" or group.name == "admin":
@@ -42,7 +39,8 @@ def index(request):
     context = {
         'divider_rendered': divider_rendered,
         'upcoming_events': upcoming_events,
-        'registered_events': registered_events
+        'registered_events': registered_events,
+        'user': request.user
     }
     return render(request, 'index.html', context=context)
 
@@ -121,7 +119,7 @@ class EventCreateView(EventInline, CreateView, LoginRequiredMixin, PermissionReq
                                                    ,prefix='ticket_types')
              }
 
-class EventUpdateView(EventInline, LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+class EventUpdateView(EventInline, LoginRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         ctx = super(EventUpdateView, self).get_context_data(**kwargs)
         ctx['named_formsets'] = self.get_named_formsets()
@@ -266,13 +264,28 @@ class UserProfileView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.clear()
-        user = get_object_or_404(CustomUser, pk=self.kwargs['pk'])
+        vieweduser = get_object_or_404(CustomUser, pk=self.kwargs['pk'])
+        user = self.request.user
         context['user'] = user
-        context['address'] = Address.objects.filter(user=user)
-        context['email_confirmed'] = EmailAddress.objects.filter(user=user, verified=True).exists()
-        context['social_accounts'] = SocialAccount.objects.filter(user=user)
+        context['vieweduser'] = vieweduser
+        context['address'] = Address.objects.filter(user=vieweduser)
+        context['email_confirmed'] = EmailAddress.objects.filter(user=vieweduser, verified=True).exists()
+        context['social_accounts'] = SocialAccount.objects.filter(user=vieweduser)
         context['profile_picture'] = self.get_user_profile_picture(context['social_accounts'])
         return context
+
+class UserProfileEditView(UpdateView):
+    model = CustomUser
+    form_class = UserProfileEditForm
+    template_name = 'account/edit_my_profile.html'
+    success_url = reverse_lazy('myprofile')
+
+    def get_object(self):
+        return self.request.user
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Opravit chyby ve formuláři.")
+        return super().form_invalid(form)
 
 class CustomLoginView(LoginView):
     authentication_form = CustomAuthenticationForm
@@ -351,16 +364,16 @@ class MyEventsListView(ListView):
         return context
 
 @login_required
-def purchase_ticket(request, event_id):
-    event = get_object_or_404(Event, id=event_id)
-
+def purchase_ticket(request, pk):
     if request.method == 'POST':
+        event_id = pk # Získej event_id z formuláře
         ticket_type_id = request.POST.get('ticket_type')
         quantity = int(request.POST.get('quantity'))
 
+        event = get_object_or_404(Event, id=event_id)
         ticket_type = get_object_or_404(TicketType, id=ticket_type_id)
 
-        if (ticket_type.left < quantity):
+        if ticket_type.left < quantity:
             messages.error(request, f'Nedostatečný počet vstupenek typu {ticket_type.name}. Zbývá pouze {ticket_type.left} vstupenek.')
             return redirect('event_detail', pk=event_id)
 
@@ -379,4 +392,4 @@ def purchase_ticket(request, event_id):
         ticket_type.save()
         return redirect('event_detail', pk=event_id)
 
-    return redirect('event_detail', pk=event_id)
+    return redirect('index')
