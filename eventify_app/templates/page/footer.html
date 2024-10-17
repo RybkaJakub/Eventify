@@ -1,14 +1,14 @@
-<footer class="bg-gray-700 p-6 text-center text-white ">
+<footer class="bg-gray-700 p-6 text-center text-white" id="main-footer">
     <div class="container mx-auto">
         <div class="flex justify-center mb-4">
-            <a href="https://github.com/" target="_blank" class="mx-2">
+            <a href="https://github.com/RybkaJakub" target="_blank" class="mx-2">
                 <i class="fa-brands fa-github h-8 w-8"></i>
             </a>
-            <a href="https://www.instagram.com/" target="_blank" class="mx-2">
+            <a href="https://www.instagram.com/__k.u.b.i.k__/" target="_blank" class="mx-2">
                 <i class="fa-brands fa-instagram h-8 w-8"></i>
             </a>
-            <a href="https://www.facebook.com/" target="_blank" class="mx-2">
-                <i class="fa-brands fa-facebook h-8 w-8"></i>
+            <a href="http://discordapp.com/users/668163706005487616" target="_blank" class="mx-2">
+                <i class="fa-brands fa-discord h-8 w-8"></i>
             </a>
             <!-- Přidejte další odkazy na sociální média, jak potřebujete -->
         </div>
@@ -20,9 +20,9 @@
 
 <script>
     window.addEventListener('load', function() {
-        var footer = document.getElementById('main-footer');
-        var windowHeight = window.innerHeight;
-        var documentHeight = document.body.scrollHeight;
+        const footer = document.getElementById('main-footer');
+        const windowHeight = window.innerHeight;
+        const documentHeight = document.body.scrollHeight;
 
         if (documentHeight < windowHeight) {
             footer.style.position = 'fixed';
