@@ -3,7 +3,7 @@ from django.urls import path, include
 from django.contrib import admin
 from django.contrib.auth.views import LogoutView
 from .views import index, purchase_ticket, EventManagerView, EventCreateView, EventDeleteView, EventDetailView, \
-    EventUpdateView, CustomLoginView, CustomLogoutView, SignUpView, MyEventsListView, delete_ticket_type, \
+    EventUpdateView, MyEventsListView, delete_ticket_type, \
     UserProfileView, MyProfileView, UserProfileEditView
 
 urlpatterns = [

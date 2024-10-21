@@ -4,15 +4,17 @@ from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit, Button
 from django import forms
 from .models import Event, Organization
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, login
 from django.utils.dateformat import format
 
+from django.shortcuts import redirect
 CustomUser = get_user_model()
 
 from django import forms
 from .models import Event, Organization, TicketType, CustomUser
 from django.contrib.auth import get_user_model
 from django.forms import inlineformset_factory
+from allauth.account.forms import SignupForm
 
 
 class EventForm(forms.ModelForm):
@@ -117,37 +119,62 @@ class CustomAuthenticationForm(AuthenticationForm):
             Submit('submit', 'Přihlásit se', css_class='btn-primary mr-2')
         )
 
-class LogoutForm(forms.Form):
-    pass
 
-class SignUpForm(forms.ModelForm):
-    password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
-    password2 = forms.CharField(label='Password confirmation', widget=forms.PasswordInput)
+from django import forms
+from allauth.account.forms import SignupForm
+from django.core.exceptions import ValidationError
 
-    class Meta:
-        model = CustomUser
-        fields = ('first_name', 'last_name', 'username', 'telephone', 'email', 'password1', 'password2')
 
-    def __init__(self, *args, **kwargs):
-        super(SignUpForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.layout = Layout(
-            'first_name',
-            'last_name',
-            'username',
-            'telephone',
-            'email',
-            'password1',
-            'password2',
-            Submit('submit', 'Sign Up', css_class='btn-success')
-        )
+from django.core.exceptions import ValidationError
+from allauth.account.forms import SignupForm
+from django import forms
 
-    def clean_password2(self):
-        password1 = self.cleaned_data.get("password1")
-        password2 = self.cleaned_data.get("password2")
-        if password1 and password2 and password1 != password2:
-            raise forms.ValidationError("Passwords don't match")
-        return password2
+from django.core.exceptions import ValidationError
+from allauth.account.forms import SignupForm
+from django import forms
+
+class CustomSignupForm(SignupForm):
+    username = forms.CharField(max_length=30, label='Uživatelské jméno', required=True)
+    first_name = forms.CharField(max_length=30, label='Jméno', required=True)
+    last_name = forms.CharField(max_length=30, label='Příjmení', required=True)
+    email = forms.EmailField(max_length=254, label='Email', required=True)
+    telephone = forms.CharField(max_length=9, label='Telefon', required=True)
+    date_birth = forms.DateField(label='Datum narození', required=True, widget=forms.DateInput(attrs={'type': 'date'}))
+    image = forms.ImageField(label='Foto', required=False)
+    password1 = forms.CharField(label='Heslo', widget=forms.PasswordInput, required=True)
+    password2 = forms.CharField(label='Potvrdit heslo', widget=forms.PasswordInput, required=True)
+
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if CustomUser.objects.filter(username=username).exists():
+            raise ValidationError("Toto uživatelské jméno je již zaregistrováno.")
+        return username
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if CustomUser.objects.filter(email=email).exists():
+            raise ValidationError("Tento email je již zaregistrován.")
+        return email
+
+    def clean_telephone(self):
+        telephone = self.cleaned_data.get('telephone')
+        if CustomUser.objects.filter(telephone=telephone).exists():
+            raise ValidationError("Toto telefonní číslo je již zaregistrováno.")
+        return telephone
+
+    def save(self, request):
+        user = super().save(request)
+        user.username = self.cleaned_data['username']
+        user.first_name = self.cleaned_data['first_name']
+        user.last_name = self.cleaned_data['last_name']
+        user.telephone = self.cleaned_data['telephone']
+        user.date_birth = self.cleaned_data['date_birth']
+        user.image = self.cleaned_data['image']
+        user.save()
+
+        # Automaticky přihlásit uživatele
+        return user
+
 
 class UserProfileEditForm(forms.ModelForm):
     class Meta:

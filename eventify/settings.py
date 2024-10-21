@@ -52,6 +52,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     #'allauth.socialaccount.providers.instagram',
     #'allauth.socialaccount.providers.microsoft',
+
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [
@@ -190,7 +192,8 @@ ACCOUNT_FORMS = {
     'reset_password': 'allauth.account.forms.ResetPasswordForm',
     'reset_password_from_key': 'allauth.account.forms.ResetPasswordKeyForm',
     'set_password': 'allauth.account.forms.SetPasswordForm',
-    'signup': 'allauth.account.forms.SignupForm',
+    #'signup': 'allauth.account.forms.SignupForm',
+    'signup': 'eventify_app.forms.CustomSignupForm',
     'user_token': 'allauth.account.forms.UserTokenForm',
 }
 

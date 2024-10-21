@@ -14,7 +14,7 @@
     {% if socialaccount_providers %}
     <p class="text-gray-500 text-center mb-8 max-w-lg leading-relaxed">
         {% blocktrans with site.name as site_name %}
-        Přihlaste se pomocí jednoho z vašich existujících účtů třetích stran nebo si <a href="{{ signup_url }}" class="text-indigo-500 hover:underline">vytvořte nový účet</a> na {{ site_name }}:
+        Přihlaste se pomocí jednoho z vašich existujících účtů třetích stran nebo si <a href="{{ signup_url }}" class="text-indigo-500 hover:underline">vytvořte nový účet</a> na {{ site_name }}.
         {% endblocktrans %}
     </p>
 
@@ -27,11 +27,6 @@
         </div>
         {% include "socialaccount/snippets/login_extra.html" %}
     </div>
-
-    {% else %}
-    <p class="text-gray-500 text-center mb-8 max-w-lg leading-relaxed">
-        {% blocktrans %}Pokud jste si ještě nevytvořili účet, <a href="{{ signup_url }}" class="text-indigo-500 hover:underline">zaregistrujte se</a> a pak se přihlaste níže.{% endblocktrans %}
-    </p>
     {% endif %}
 </div>
     

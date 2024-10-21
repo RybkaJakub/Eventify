@@ -1,0 +1,39 @@
+{% load i18n %}
+
+<div class="flex justify-center">
+    <div class="w-full max-w-md bg-white shadow-lg rounded-lg p-10">
+        <form class="register space-y-6 signup" id="signup_form" method="POST" action="{% url 'socialaccount_signup' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="space-y-4">
+                {% for field in form %}
+                    <div class="flex flex-col">
+                        {{ field.label_tag }}
+                        {{ field }}
+                    </div>
+                    <style>
+                        .register input {
+                            background-color: #f7f8fa;
+                            border: 1px solid #d1d5db;
+                            border-radius: 8px;
+                            padding: 12px;
+                            color: #4a5568;
+                            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+                            transition: border-color 0.2s ease-in-out;
+                        }
+                        .register input:focus {
+                            border-color: #5a67d8;
+                            outline: none;
+                        }
+                    </style>
+                {% endfor %}
+            </div>
+            {% if redirect_field_value %}
+                <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+            {% endif %}
+            <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition duration-200 font-semibold shadow-md hover:shadow-lg">
+                {% trans "Registrovat se" %}
+
+            </button>
+        </form>
+    </div>
+</div>

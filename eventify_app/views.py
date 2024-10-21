@@ -10,7 +10,7 @@ from django.views import View
 
 from .models import Event, TicketType, TicketPurchase, Address, CustomUser
 from allauth.socialaccount.models import SocialAccount
-from .forms import EventForm, CustomAuthenticationForm, LogoutForm, SignUpForm, UserProfileEditForm
+from .forms import UserProfileEditForm
 from django.utils import timezone
 from django.views.generic import ListView, DetailView, UpdateView, DeleteView
 from django.contrib.auth.views import LoginView
@@ -286,60 +286,6 @@ class UserProfileEditView(UpdateView):
     def form_invalid(self, form):
         messages.error(self.request, "Opravit chyby ve formuláři.")
         return super().form_invalid(form)
-
-class CustomLoginView(LoginView):
-    authentication_form = CustomAuthenticationForm
-    template_name = 'login.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        current_url_name = resolve(self.request.path_info).url_name
-        context['current_url'] = current_url_name
-        return context
-
-
-class CustomLogoutView(View):
-    template_name = 'logged_out.html'
-    form_class = LogoutForm
-
-    def get(self, request, *args, **kwargs):
-        form = self.form_class()
-        return render(request, self.template_name, {'form': form})
-
-    def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST)
-        if form.is_valid():
-            logout(request)
-            return HttpResponseRedirect(reverse('index'))
-        return render(request, self.template_name, {'form': form})
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        current_url_name = resolve(self.request.path_info).url_name
-        context['current_url'] = current_url_name
-        return context
-
-
-class SignUpView(CreateView):
-    form_class = SignUpForm
-    success_url = reverse_lazy('login')
-    template_name = 'signup.html'
-
-    def form_valid(self, form):
-        password = form.cleaned_data.get('password1')
-
-        user = form.save(commit=False)
-        user.set_password(password)
-        user.save()
-
-        return super().form_valid(form)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        current_url_name = resolve(self.request.path_info).url_name
-        context['current_url'] = current_url_name
-        return context
-
 
 class MyEventsListView(ListView):
     model = Event
