@@ -2,29 +2,6 @@
 {% load static %}
 
 {% block content %}
-<div>
-    <div class="welcome-section py-5 bg-gray-800 text-white">
-        <div class="bg-black bg-opacity-50 p-6 rounded-lg">
-            <div class="flex justify-center">
-                <div class="text-center max-w-3xl">
-                    <h1 class="text-4xl font-bold mb-4">Vítej na <span class="text-indigo-400">Eventify</span></h1>
-                    <p class="text-lg leading-relaxed">
-                        Vítejte na Eventify - vašem průvodci světem událostí a zážitků! Jsme zde, abychom vám
-                        přinesli ten nejaktuálnější přehled nadcházejících událostí ve vašem okolí, od koncertů a
-                        festivalů po sportovní akce a kulturní akce.
-                        <br/>
-                        Náš cíl je propojit lidi s těmi nejzajímavějšími událostmi ve vašem regionu a umožnit vám
-                        objevovat nové zážitky, setkávat se s lidmi se stejnými zájmy a tvořit nezapomenutelné
-                        vzpomínky.
-                        <br/>
-                        Procházejte naší stránkou, objevujte nové události, registrujte se k odběru novinek a nechte
-                        se unést do světa zábavy, kultury a dobrodružství s Eventify!
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 {% if user.is_authenticated %}
     <div class="container mx-auto mt-5">

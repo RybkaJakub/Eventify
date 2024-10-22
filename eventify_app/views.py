@@ -13,17 +13,14 @@ from allauth.socialaccount.models import SocialAccount
 from .forms import UserProfileEditForm
 from django.utils import timezone
 from django.views.generic import ListView, DetailView, UpdateView, DeleteView
-from django.contrib.auth.views import LoginView
 from django.urls import resolve
-import logging
-import uuid
-from django.views.generic import TemplateView
-from allauth.account.models import EmailAddress
-
 
 def index(request):
+
     registered_events = []
     divider_rendered = False
+    profile_picture = ''
+    has_picture = False
 
     now = timezone.now()
     upcoming_events = Event.objects.all() # Use prefetch_related for reverse relationships
@@ -31,15 +28,23 @@ def index(request):
     if request.user.is_authenticated:
         registered_events = TicketPurchase.objects.filter(user=request.user).distinct('event')
 
+        social_accounts = SocialAccount.objects.filter(user=request.user)
+        profile_picture = UserProfileView.get_user_profile_picture(request, social_accounts)
+        if profile_picture:
+            has_picture = True
         for group in request.user.groups.all():
             if group.name == "editor" or group.name == "admin":
                 divider_rendered = True
                 break
 
+
+
     context = {
         'divider_rendered': divider_rendered,
         'upcoming_events': upcoming_events,
         'registered_events': registered_events,
+        'profile_picture': profile_picture,
+        'has_picture': has_picture,
         'user': request.user
     }
     return render(request, 'index.html', context=context)

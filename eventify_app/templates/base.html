@@ -11,16 +11,16 @@
     <!-- Vlastní styly -->
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
-    
+
     <!-- Ikona -->
     <link rel="icon" type="image/x-icon" href="{% static 'img/eventify_logo_rounded.png' %}">
-    
+
     <!-- Fonty Google -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@100..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- OpenLayers CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/openlayers/9.2.2/ol.css">
@@ -31,10 +31,14 @@
 <body class="bg-gray-100 text-gray-800 font-sans">
     {% include 'page/navbar.html' %}
     
-    <main class="container mx-auto p-4">
+    {% if request.path == '/eventify_app/' %}
+        {% include 'page/header.html' %}
+    {% endif %}
+
+    <main class="container mx-auto p-4 pt-16"> <!-- Přidán padding-top místo margin-top -->
         {% block content %}{% endblock %}
     </main>
-    
+
     {% include 'page/footer.html' %}
 
     <!-- htmx -->
