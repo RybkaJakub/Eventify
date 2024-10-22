@@ -11,6 +11,7 @@
     {% if user.is_authenticated %}
         <button type="button" class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button" aria-expanded="false">
         <span class="sr-only">Otevrit uzivatelske menu</span>
+        <p class="text-white m-1">{{ user.first_name }} {{ user.last_name }}</p>
         {% if has_picture %}
             <img class="w-8 h-8 rounded-full" src="{{ profile_picture }}" alt="user photo">
         {% elif user.image %}
@@ -26,6 +27,9 @@
           <span class="block text-sm text-gray-500 truncate dark:text-gray-400">{{ user.email }}</span>
         </div>
         <ul class="py-2" aria-labelledby="user-menu-button">
+        <li>
+            <a href="{% url 'cart' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Košík</a>
+        </li>
         {% for group in user.groups.all %}
             {% if group.name == "editor" or group.name == "admin" %}
             <li>

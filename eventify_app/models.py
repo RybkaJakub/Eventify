@@ -111,3 +111,10 @@ class TicketPurchase(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.event.name} - {self.quantity} vstupenek"
+
+class Cart(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    ticket_type = models.ForeignKey(TicketType, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField()
+    total_amount = models.DecimalField(decimal_places=2, max_digits=10)

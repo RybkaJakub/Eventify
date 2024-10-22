@@ -8,8 +8,8 @@
     <h1 class="text-3xl font-semibold mb-6 text-center">Profil uživatele {{ vieweduser.username }}</h1>
     <div class="flex flex-col items-center">
         <!-- Profilový obrázek -->
-        {% if profile_picture %}
-            <img src="{{ profile_picture }}" alt="Profilový obrázek" class="w-24 h-24 rounded-full mb-4">
+        {% if viewed_picture %}
+            <img src="{{ viewed_picture }}" alt="Profilový obrázek" class="w-24 h-24 rounded-full mb-4">
         {% elif vieweduser.image %}
             <img src="{{ vieweduser.image.url }}" alt="Profilový obrázek" class="w-24 h-24 rounded-full mb-4">
         {% else %}

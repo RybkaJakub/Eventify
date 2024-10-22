@@ -1,3 +1,4 @@
+from lib2to3.fixes.fix_input import context
 
 from django.contrib.auth import logout
 from django.http import HttpResponseRedirect
@@ -8,7 +9,7 @@ from django.contrib import messages
 from django.urls import reverse
 from django.views import View
 
-from .models import Event, TicketType, TicketPurchase, Address, CustomUser
+from .models import Event, TicketType, TicketPurchase, Address, CustomUser, Cart
 from allauth.socialaccount.models import SocialAccount
 from .forms import UserProfileEditForm
 from django.utils import timezone
@@ -58,12 +59,19 @@ class EventManagerView(PermissionRequiredMixin, ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
+        has_picture = False
         organization = user.organization
 
         in_organization = True if organization else False
 
+        profile_picture = UserProfileView.get_user_profile_picture(self.request, SocialAccount.objects.filter(user=self.request.user))
+        if profile_picture:
+            has_picture = True
+
         context['organization'] = organization
         context['in_organization'] = in_organization
+        context['has_picture'] = has_picture
+        context['profile_picture'] = profile_picture
         context['events'] = Event.objects.filter(organization=organization)
         current_url_name = resolve(self.request.path_info).url_name
         context['current_url'] = current_url_name
@@ -111,6 +119,12 @@ class EventCreateView(EventInline, CreateView, LoginRequiredMixin, PermissionReq
      def get_context_data(self, **kwargs):
          ctx = super(EventCreateView, self).get_context_data(**kwargs)
          ctx['named_formsets'] = self.get_named_formsets()
+         has_picture = False
+         profile_picture = UserProfileView.get_user_profile_picture(self.request, SocialAccount.objects.filter(user=self.request.user))
+         if profile_picture:
+             has_picture = True
+         ctx['profile_picture'] = profile_picture
+         ctx['has_picture'] = has_picture
          return ctx
 
      def get_named_formsets(self):
@@ -128,6 +142,13 @@ class EventUpdateView(EventInline, LoginRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         ctx = super(EventUpdateView, self).get_context_data(**kwargs)
         ctx['named_formsets'] = self.get_named_formsets()
+        has_picture = False
+        profile_picture = UserProfileView.get_user_profile_picture(self.request,
+                                                                   SocialAccount.objects.filter(user=self.request.user))
+        if profile_picture:
+            has_picture = True
+        ctx['has_picture'] = has_picture
+        ctx['profile_picture'] = profile_picture
         return ctx
 
     def get_named_formsets(self):
@@ -166,6 +187,13 @@ class EventDeleteView(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTes
         context = super().get_context_data(**kwargs)
         current_url_name = resolve(self.request.path_info).url_name
         context['current_url'] = current_url_name
+        has_picture = False
+        profile_picture = UserProfileView.get_user_profile_picture(self.request,
+                                                                   SocialAccount.objects.filter(user=self.request.user))
+        if profile_picture:
+            has_picture = True
+        context['has_picture'] = has_picture
+        context['profile_picture'] = profile_picture
         return context
 
 
@@ -182,6 +210,14 @@ class EventDetailView(DetailView):
         current_url_name = resolve(self.request.path_info).url_name
         context['current_url'] = current_url_name
         context['ticket_types'] = TicketType.objects.filter(event=self.object)
+
+        has_picture = False
+        profile_picture = UserProfileView.get_user_profile_picture(self.request,
+                                                                   SocialAccount.objects.filter(user=self.request.user))
+        if profile_picture:
+            has_picture = True
+        context['has_picture'] = has_picture
+        context['profile_picture'] = profile_picture
 
         auth = self.request.user.is_authenticated
         context['isAuth'] = auth
@@ -243,7 +279,13 @@ class MyProfileView(LoginRequiredMixin, TemplateView):
         context['address'] = Address.objects.filter(user=user)
         context['email_confirmed'] = EmailAddress.objects.filter(user=user, verified=True).exists()
         context['social_accounts'] = SocialAccount.objects.filter(user=user)
-        context['profile_picture'] = self.get_user_profile_picture(context['social_accounts'])
+        has_picture = False
+        profile_picture = UserProfileView.get_user_profile_picture(self.request,
+                                                                   SocialAccount.objects.filter(user=self.request.user))
+        if profile_picture:
+            has_picture = True
+        context['has_picture'] = has_picture
+        context['profile_picture'] = profile_picture
         return context
 
 class UserProfileView(LoginRequiredMixin, TemplateView):
@@ -276,7 +318,14 @@ class UserProfileView(LoginRequiredMixin, TemplateView):
         context['address'] = Address.objects.filter(user=vieweduser)
         context['email_confirmed'] = EmailAddress.objects.filter(user=vieweduser, verified=True).exists()
         context['social_accounts'] = SocialAccount.objects.filter(user=vieweduser)
-        context['profile_picture'] = self.get_user_profile_picture(context['social_accounts'])
+        viewed_picture = UserProfileView.get_user_profile_picture(self.request, SocialAccount.objects.filter(user=vieweduser))
+        has_picture = False
+        profile_picture = UserProfileView.get_user_profile_picture(self.request, SocialAccount.objects.filter(user=self.request.user))
+        if profile_picture:
+            has_picture = True
+        context['has_picture'] = has_picture
+        context['profile_picture'] = profile_picture
+        context['viewed_picture'] = viewed_picture
         return context
 
 class UserProfileEditView(UpdateView):
@@ -312,6 +361,15 @@ class MyEventsListView(ListView):
         current_url_name = resolve(self.request.path_info).url_name
         context['current_url'] = current_url_name
 
+        has_picture = False
+        profile_picture = UserProfileView.get_user_profile_picture(self.request,
+                                                                   SocialAccount.objects.filter(user=self.request.user))
+        if profile_picture:
+            has_picture = True
+
+        context['has_picture'] = has_picture
+        context['profile_picture'] = profile_picture
+
         return context
 
 @login_required
@@ -330,7 +388,7 @@ def purchase_ticket(request, pk):
 
         total_amount = ticket_type.price * quantity
 
-        TicketPurchase.objects.create(
+        Cart.objects.create(
             user=request.user,
             event=event,
             ticket_type=ticket_type,
@@ -338,9 +396,41 @@ def purchase_ticket(request, pk):
             total_amount=total_amount
         )
 
-        messages.success(request, f'Úspěšně jste zakoupili {quantity} vstupenek na event "{event.name}".')
-        ticket_type.left -= quantity
-        ticket_type.save()
+        messages.success(request, f'Úspěšně jste přidali do košíku {quantity} vstupenek na event "{event.name}".')
         return redirect('event_detail', pk=event_id)
 
     return redirect('index')
+
+class CartView(LoginRequiredMixin, TemplateView):
+    template_name = "account/cart.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context['user'] = user
+        items = Cart.objects.filter(user=user)
+        context['items'] = items
+        total_price = sum(item.total_amount for item in items)
+        context['total_price'] = total_price
+
+        has_picture = False
+        profile_picture = UserProfileView.get_user_profile_picture(self.request,
+                                                                   SocialAccount.objects.filter(user=self.request.user))
+        if profile_picture:
+            has_picture = True
+
+        context['has_picture'] = has_picture
+        context['profile_picture'] = profile_picture
+
+        return context
+
+class RemoveItemView(LoginRequiredMixin, View):
+    def post(self, request, item_id):
+        item = get_object_or_404(Cart, id=item_id, user=request.user)
+        item.delete()
+        return redirect('cart')
+
+class ClearCartView(LoginRequiredMixin, View):
+    def post(self, request):
+        Cart.objects.filter(user=request.user).delete()
+        return redirect('cart')  # Přesměrování zpět na stránku s košíkem
