@@ -12,7 +12,8 @@ from django.urls import reverse
 from django.utils.html import strip_tags
 from django.views import View
 
-from .models import Event, TicketType, TicketPurchase, Address, CustomUser, Cart, DeliveryAddress, PaymentMethod
+from .models import Event, TicketType, TicketPurchase, Address, CustomUser, Cart, DeliveryAddress, PaymentMethod, \
+    EventAddress
 from allauth.socialaccount.models import SocialAccount
 from .forms import UserProfileEditForm, DeliveryAddressForm, CustomUserForm, PaymentMethodForm
 from django.utils import timezone
@@ -26,6 +27,9 @@ from django.core.mail import EmailMessage, send_mail
 import logging
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
+
+from geopy.distance import geodesic
+from geopy.geocoders import Nominatim
 
 logger = logging.getLogger(__name__)
 
@@ -638,3 +642,46 @@ class ClearCartView(LoginRequiredMixin, View):
     def post(self, request):
         Cart.objects.filter(user=request.user).delete()
         return redirect('cart')  # Přesměrování zpět na stránku s košíkem
+
+def event_list(request):
+    events = Event.objects.all()
+    name_filter = request.GET.get('name')
+    date_filter = request.GET.get('date')
+    time_filter = request.GET.get('time')
+    location_filter = request.GET.get('location')
+    filtered_events = events
+
+    # Filtrování dle názvu
+    if name_filter:
+        filtered_events = filtered_events.filter(name__icontains=name_filter)
+
+    # Filtrování dle data
+    if date_filter:
+        filtered_events = filtered_events.filter(date=date_filter)
+
+    # Filtrování dle času
+    if time_filter:
+        filtered_events = filtered_events.filter(time=time_filter)
+
+    # Filtrování dle města (EventAddress) s využitím geopy
+    if location_filter:
+        geolocator = Nominatim(user_agent="eventify")
+        location = geolocator.geocode(location_filter)
+        if location:
+            user_location = (location.latitude, location.longitude)
+            event_addresses = EventAddress.objects.all()
+            nearby_events = []
+            for address in event_addresses:
+                if address.latitude and address.longitude:
+                    event_location = (address.latitude, address.longitude)
+                    if geodesic(user_location, event_location).km <= 20:
+                        nearby_events.append(address.event.id)
+            filtered_events = filtered_events.filter(id__in=nearby_events)
+
+    return render(request, 'events/events_list.html', {
+        'events': filtered_events,
+        'name_filter': name_filter,
+        'date_filter': date_filter,
+        'time_filter': time_filter,
+        'location_filter': location_filter,
+    })

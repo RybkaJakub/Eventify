@@ -4,21 +4,24 @@ from django.utils.safestring import mark_safe
 from django import forms
 
 from .forms import EventForm, OrganizationForm
-from .models import Event, CustomUser, Organization, TicketType, EventAddress
+from .models import Event, CustomUser, Organization, TicketType, EventAddress, OrganizationAddress
 
 admin.site.register(CustomUser)
+
+class OrganizationAddressInline(admin.TabularInline):
+    model = OrganizationAddress
 
 @admin.register(Organization)
 class Organization(admin.ModelAdmin):
     form = OrganizationForm
     fields = ['name']
+    inlines = [OrganizationAddressInline]
 
 class TicketTypeInline(admin.TabularInline):
     model = TicketType
 
 class EventAddressInline(admin.TabularInline):
     model = EventAddress
-
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):

@@ -1,52 +1,51 @@
 {% extends 'base.html' %}
-{% load static %}
-
-{% block title %}Mé události {% endblock %}
 
 {% block content %}
-    <div class="container mx-auto mt-5">
+<div class="container mx-auto p-6">
+    <h1 class="text-3xl font-bold text-center mb-8">Seznam eventů</h1>
+
+    <!-- Filtrovací formulář -->
+    <form method="get" class="bg-white p-6 rounded-lg shadow-md mb-6">
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label for="name" class="block text-gray-700">Název</label>
+                <input type="text" name="name" id="name" value="{{ name_filter|default_if_none:'' }}" placeholder="Hledat podle názvu" class="w-full p-2 border border-gray-300 rounded-lg">
+            </div>
+            <div>
+                <label for="date" class="block text-gray-700">Datum</label>
+                <input type="date" name="date" id="date" value="{{ date_filter|default_if_none:'' }}" class="w-full p-2 border border-gray-300 rounded-lg">
+            </div>
+            <div>
+                <label for="time" class="block text-gray-700">Čas</label>
+                <input type="time" name="time" id="time" value="{{ time_filter|default_if_none:'' }}" class="w-full p-2 border border-gray-300 rounded-lg">
+            </div>
+            <div>
+                <label for="location" class="block text-gray-700">Lokace</label>
+                <input type="text" name="location" id="location" value="{{ location_filter|default_if_none:'' }}" placeholder="Např. Ostrava" class="w-full p-2 border border-gray-300 rounded-lg">
+            </div>
+        </div>
+        <button type="submit" class="mt-4 w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600">Filtrovat</button>
+    </form>
+
+    <!-- Výpis eventů -->
+    <div class="bg-white rounded-lg shadow-md p-4">
         {% if events %}
-            <div class="text-center mb-6">
-                <h2 class="text-2xl font-bold">Moje události</h2>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="min-w-full bg-white border border-gray-300">
-                    <thead>
-                        <tr class="bg-gray-200 text-gray-700">
-                            <th class="py-2 px-4 border-b">ID eventu</th>
-                            <th class="py-2 px-4 border-b">Jméno eventu</th>
-                            <th class="py-2 px-4 border-b">Popisek eventu</th>
-                            <th class="py-2 px-4 border-b">Datum eventu</th>
-                            <th class="py-2 px-4 border-b">Začátek eventu</th>
-                            <th class="py-2 px-4 border-b">Konec eventu</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for event in events %}
-                            <tr class="hover:bg-gray-100">
-                                <td class="py-2 px-4 border-b">{{ event.id }}</td>
-                                <td class="py-2 px-4 border-b">{{ event.name }}</td>
-                                <td class="py-2 px-4 border-b">{{ event.description }}</td>
-                                <td class="py-2 px-4 border-b">{{ event.day }}</td>
-                                <td class="py-2 px-4 border-b">{{ event.start_time }}</td>
-                                <td class="py-2 px-4 border-b">{{ event.end_time }}</td>
-                            </tr>
-                        {% empty %}
-                            <tr>
-                                <td colspan="6" class="text-center py-4">Žádné události nejsou k dispozici</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        {% elif not isAuth %}
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mt-4" role="alert">
-                Nejprve se musíš přihlásit
-            </div>
+            <ul>
+                {% for event in events %}
+                    <li class="p-4 border-b border-gray-200 last:border-b-0">
+                        <h2 class="text-xl font-semibold text-gray-800">{{ event.name }}</h2>
+                        <p class="text-gray-600">{{ event.date }} | {{ event.time }}</p>
+                        {% if event.eventaddress_set.exists %}
+                            <p class="text-gray-600">
+                                {{ event.eventaddress_set.first.city }}, {{ event.eventaddress_set.first.street }} {{ event.eventaddress_set.first.number }}
+                            </p>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
         {% else %}
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mt-4" role="alert">
-                Nejprve se musíš na nějaký event registrovat
-            </div>
+            <p class="text-center text-gray-500">Žádné eventy nenalezeny.</p>
         {% endif %}
     </div>
+</div>
 {% endblock %}

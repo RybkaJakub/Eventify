@@ -119,16 +119,6 @@ class CustomAuthenticationForm(AuthenticationForm):
             Submit('submit', 'Přihlásit se', css_class='btn-primary mr-2')
         )
 
-
-from django import forms
-from allauth.account.forms import SignupForm
-from django.core.exceptions import ValidationError
-
-
-from django.core.exceptions import ValidationError
-from allauth.account.forms import SignupForm
-from django import forms
-
 from django.core.exceptions import ValidationError
 from allauth.account.forms import SignupForm
 from django import forms

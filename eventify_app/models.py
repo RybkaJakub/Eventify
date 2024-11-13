@@ -5,6 +5,8 @@ from django.conf import settings
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 import re
+from geopy.geocoders import Nominatim
+from geopy.exc import GeopyError
 
 from django.utils.functional import empty
 
@@ -128,6 +130,8 @@ class EventAddress(models.Model):
     city = models.TextField(verbose_name="Město", help_text="Zadejte město")
     postal_code = models.TextField(validators=[validate_postal_code], verbose_name="PSČ", help_text="Zadejte PSČ")
     country = models.CharField(max_length=255, verbose_name="Stát", help_text="Zadejte stát", default="Česká republika")
+    latitude = models.FloatField(blank=True, null=True)
+    longitude = models.FloatField(blank=True, null=True)
 
     class Meta:
         verbose_name = 'Adresa Eventu'
@@ -135,6 +139,19 @@ class EventAddress(models.Model):
 
     def __str__(self):
         return f"{self.street}, {self.city}, {self.country}"
+
+    def save(self, *args, **kwargs):
+        if not self.latitude or not self.longitude:
+            address = f"{self.street} {self.number}, {self.city}, {self.postal_code}, {self.country}"
+            geolocator = Nominatim(user_agent="eventify")
+            try:
+                location = geolocator.geocode(address)
+                if location:
+                    self.latitude = location.latitude
+                    self.longitude = location.longitude
+            except GeopyError:
+                pass
+        super().save(*args, **kwargs)
 
 
 class TicketType(models.Model):
