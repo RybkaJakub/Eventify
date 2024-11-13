@@ -47,13 +47,11 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
 
     'allauth.socialaccount.providers.discord',
-    #'allauth.socialaccount.providers.facebook',
     'allauth.socialaccount.providers.github',
     'allauth.socialaccount.providers.google',
-    #'allauth.socialaccount.providers.instagram',
-    #'allauth.socialaccount.providers.microsoft',
 
     'widget_tweaks',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -160,7 +158,7 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 # Redirect to home URL after login (Default redirects to /accounts/profile/)
 LOGIN_REDIRECT_URL = '/'
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 
 AUTHENTICATION_BACKENDS = [
@@ -199,3 +197,10 @@ ACCOUNT_FORMS = {
 
 ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
 ACCOUNT_EMAIL_REQUIRED = True
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 465
+EMAIL_USE_SSL = True
+EMAIL_HOST_USER = 'ev3ntify@gmail.com'
+EMAIL_HOST_PASSWORD = 'umwp zzar njra tzco'

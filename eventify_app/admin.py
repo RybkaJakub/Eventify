@@ -11,7 +11,7 @@ admin.site.register(CustomUser)
 @admin.register(Organization)
 class Organization(admin.ModelAdmin):
     form = OrganizationForm
-    fields = ['name', 'address']
+    fields = ['name']
 
 class TicketTypeInline(admin.TabularInline):
     model = TicketType

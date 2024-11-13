@@ -1,0 +1,363 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block head_title %}Údaje o nákupu{% endblock %}
+
+{% block content %}
+    
+    <div class="container mx-auto px-4 py-8">
+        <!-- Title -->
+        <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Tvůj košík</h2>
+
+        <!-- Progress Tracker -->
+        <div id="progress" class="flex justify-center items-center mb-8">
+            <ol class="flex w-full max-w-4xl justify-between items-center space-x-4">
+                <li class="flex-1">
+                <div class="flex flex-col items-center">
+                    <a href="{% url 'cart' %}" class="flex items-center justify-center w-8 h-8 bg-blue-600 rounded-full ring-8 ring-blue-300 dark:bg-cyan-700 dark:ring-cyan-900">
+                        <svg class="w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5"/>
+                        </svg>
+                    </a>
+                    <h3 class="mt-4 text-center font-medium text-blue-900 dark:text-cyan-600">Položky v košíku</h3>
+                </div>
+            </li>
+                <li class="flex-1">
+                <div class="flex flex-col items-center">
+                    <div class="flex items-center justify-center w-8 h-8 bg-yellow-500 rounded-full ring-8 ring-yellow-200 dark:bg-yellow-600 dark:ring-yellow-800">
+                        <span class="text-white font-bold">2</span>
+                    </div>
+                    <h3 class="mt-4 text-center font-medium text-yellow-900 dark:text-yellow-600">Doručovací údaje</h3>
+                </div>
+            </li>
+                <li class="flex-1">
+                    <div class="flex flex-col items-center">
+                        <div class="flex items-center justify-center w-8 h-8 bg-gray-200 rounded-full ring-8 ring-gray-300 dark:bg-gray-700 dark:ring-gray-900">
+                            <span class="text-gray-500 dark:text-gray-400 font-bold">3</span>
+                        </div>
+                        <h3 class="mt-4 text-center font-medium text-gray-500 dark:text-gray-400">Platební metoda</h3>
+                    </div>
+                </li>
+                <li class="flex-1">
+                    <div class="flex flex-col items-center">
+                        <div class="flex items-center justify-center w-8 h-8 bg-gray-200 rounded-full ring-8 ring-gray-300 dark:bg-gray-700 dark:ring-gray-900">
+                            <span class="text-gray-500 dark:text-gray-400 font-bold">4</span>
+                        </div>
+                        <h3 class="mt-4 text-center font-medium text-gray-500 dark:text-gray-400">Potvrzení
+                            objednávky</h3>
+                    </div>
+                </li>
+            </ol>
+        </div>
+
+        <!-- Main Content Section -->
+        <div class="flex justify-center w-full max-w-4xl bg-white shadow-lg rounded-lg p-10 mt-10 overflow-auto">
+            {% if delivery_address %}
+                <!-- Display Address Card -->
+                <div id="address-card"
+                     class="w-full bg-white border border-gray-200 rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-700 p-8">
+                    <div class="flex items-center mb-6">
+                        <img class="w-24 h-24 mr-4 rounded-full shadow-lg" src="{{ profile_picture }}"
+                             alt="Profilová fotka"/>
+                        <div>
+                            <h5 class="text-2xl font-semibold text-gray-900 dark:text-white">{{ user.first_name }} {{ user.last_name }}</h5>
+                            <span class="text-sm text-gray-500 dark:text-gray-400 block mt-1">
+                                {{ delivery_address.street }} {{ delivery_address.number }}, {{ delivery_address.city }} {{ delivery_address.postal_code }}
+                            </span>
+                        </div>
+                    </div>
+                    <!-- Action Buttons -->
+                    <div class="flex justify-between mt-8">
+                        <button type="button" onclick="toggleForm()"
+                                class="text-gray-600 hover:text-yellow-600 font-semibold">
+                            Upravit údaje
+                        </button>
+                        <a href="{% url 'cart' %}"
+                           class="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded-md">
+                            Zpět
+                        </a>
+                        <a href="{% url 'cart_payment' %}"
+                           class="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded-md">
+                            Pokračovat k platbě
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Edit Address Form (Initially Hidden) -->
+                <div id="edit-address-form" class="hidden w-full bg-white shadow-md rounded-lg p-8">
+                    <form class="space-y-6" method="post" action="{% url 'cart_informations' %}">
+                        {% csrf_token %}
+
+                        <h2 class="text-2xl font-semibold mb-4">Osobní údaje</h2>
+
+                        <!-- Jméno a Příjmení na jednom řádku -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="flex flex-col w-full">
+                                {{ user_form.first_name.label_tag }}
+                                <input type="text" name="{{ user_form.first_name.name }}"
+                                       id="{{ user_form.first_name.id_for_label }}"
+                                       class="border border-gray-300 rounded-md p-2 w-full"
+                                       placeholder="Jméno" required
+                                       value="{{ user_form.first_name.value|default_if_none:'' }}">
+                            </div>
+                            <div class="flex flex-col w-full">
+                                {{ user_form.last_name.label_tag }}
+                                <input type="text" name="{{ user_form.last_name.name }}"
+                                       id="{{ user_form.last_name.id_for_label }}"
+                                       class="border border-gray-300 rounded-md p-2 w-full"
+                                       placeholder="Příjmení" required
+                                       value="{{ user_form.last_name.value|default_if_none:'' }}">
+                            </div>
+                        </div>
+
+                        <!-- Telefonní číslo a Email na jednom řádku -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="flex flex-col w-full">
+                                {{ user_form.telephone.label_tag }}
+                                <input type="tel" name="{{ user_form.telephone.name }}"
+                                       id="{{ user_form.telephone.id_for_label }}"
+                                       class="border border-gray-300 rounded-md p-2 w-full"
+                                       placeholder="Telefonní číslo" required
+                                       value="{{ user_form.telephone.value|default_if_none:'' }}">
+                            </div>
+                            <div class="flex flex-col w-full">
+                                {{ user_form.email.label_tag }}
+                                <input type="email" name="{{ user_form.email.name }}"
+                                       id="{{ user_form.email.id_for_label }}"
+                                       class="border border-gray-300 rounded-md p-2 w-full"
+                                       placeholder="Email" required
+                                       value="{{ user_form.email.value|default_if_none:'' }}">
+                            </div>
+                        </div>
+
+                        <!-- Datum narození -->
+                        <div class="flex flex-col w-full">
+                            {{ user_form.date_birth.label_tag }}
+                            <input type="date" name="{{ user_form.date_birth.name }}"
+                                   id="{{ user_form.date_birth.id_for_label }}"
+                                   class="border border-gray-300 rounded-md p-2 w-full" required
+                                   value="{{ user_form.instance.date_birth|date:'Y-m-d' }}">
+                        </div>
+
+
+                        <h2 class="text-2xl font-semibold mt-6 mb-4">Doručovací adresa</h2>
+
+                        <!-- Ulice a Číslo na jednom řádku (70% a 30%) -->
+                        <div class="grid grid-cols-7 gap-4">
+                            <div class="col-span-5 flex flex-col w-full">
+                                {{ address_form.street.label_tag }}
+                                <input type="text" name="{{ address_form.street.name }}"
+                                       id="{{ address_form.street.id_for_label }}"
+                                       class="border border-gray-300 rounded-md p-2 w-full"
+                                       placeholder="Ulice" required
+                                       value="{{ address_form.street.value|default_if_none:'' }}">
+                            </div>
+                            <div class="col-span-2 flex flex-col w-full">
+                                {{ address_form.number.label_tag }}
+                                <input type="text" name="{{ address_form.number.name }}"
+                                       id="{{ address_form.number.id_for_label }}"
+                                       class="border border-gray-300 rounded-md p-2 w-full"
+                                       placeholder="Číslo" required
+                                       value="{{ address_form.number.value|default_if_none:'' }}">
+                            </div>
+                        </div>
+
+                        <!-- Město a PSČ na jednom řádku (70% a 30%) -->
+                        <div class="grid grid-cols-7 gap-4">
+                            <div class="col-span-2 flex flex-col w-full">
+                                {{ address_form.city.label_tag }}
+                                <input type="text" name="{{ address_form.city.name }}"
+                                       id="{{ address_form.city.id_for_label }}"
+                                       class="border border-gray-300 rounded-md p-2 w-full"
+                                       placeholder="Město" required
+                                       value="{{ address_form.city.value|default_if_none:'' }}">
+                            </div>
+                            <div class="col-span-2 flex flex-col w-full">
+                                {{ address_form.postal_code.label_tag }}
+                                <input type="text" name="{{ address_form.postal_code.name }}"
+                                       id="{{ address_form.postal_code.id_for_label }}"
+                                       class="border border-gray-300 rounded-md p-2 w-full"
+                                       placeholder="PSČ" required
+                                       value="{{ address_form.postal_code.value|default_if_none:'' }}">
+                            </div>
+                            <div class="col-span-3 flex flex-col w-full">
+                            {{ address_form.country.label_tag }}
+                            <input type="text" name="{{ address_form.country.name }}" 
+                                   id="id_country" 
+                                   autocomplete="off" 
+                                   class="border border-gray-300 rounded-md p-2 w-full"
+                                   placeholder="Začněte psát stát" required
+                                   value="{{ address_form.country.value|default_if_none:'' }}">
+                        </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit"
+                                class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md mt-6">
+                            Uložit změny
+                        </button>
+                    </form>
+                </div>
+            {% else %}
+                <div id="edit-address-form" class="w-full bg-white shadow-md rounded-lg p-8">
+                    <form class="space-y-6" method="post" action="{% url 'cart_informations' %}">
+                        {% csrf_token %}
+
+                        <h2 class="text-2xl font-semibold mb-4">Osobní údaje</h2>
+
+                        <!-- Jméno a Příjmení na jednom řádku -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="flex flex-col w-full">
+                                {{ user_form.first_name.label_tag }}
+                                <input type="text" name="{{ user_form.first_name.name }}"
+                                       id="{{ user_form.first_name.id_for_label }}"
+                                       class="border border-gray-300 rounded-md p-2 w-full"
+                                       placeholder="Jméno" required
+                                       value="{{ user_form.first_name.value|default_if_none:'' }}">
+                            </div>
+                            <div class="flex flex-col w-full">
+                                {{ user_form.last_name.label_tag }}
+                                <input type="text" name="{{ user_form.last_name.name }}"
+                                       id="{{ user_form.last_name.id_for_label }}"
+                                       class="border border-gray-300 rounded-md p-2 w-full"
+                                       placeholder="Příjmení" required
+                                       value="{{ user_form.last_name.value|default_if_none:'' }}">
+                            </div>
+                        </div>
+
+                        <!-- Telefonní číslo a Email na jednom řádku -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="flex flex-col w-full">
+                                {{ user_form.telephone.label_tag }}
+                                <input type="tel" name="{{ user_form.telephone.name }}"
+                                       id="{{ user_form.telephone.id_for_label }}"
+                                       class="border border-gray-300 rounded-md p-2 w-full"
+                                       placeholder="Telefonní číslo" required
+                                       value="{{ user_form.telephone.value|default_if_none:'' }}">
+                            </div>
+                            <div class="flex flex-col w-full">
+                                {{ user_form.email.label_tag }}
+                                <input type="email" name="{{ user_form.email.name }}"
+                                       id="{{ user_form.email.id_for_label }}"
+                                       class="border border-gray-300 rounded-md p-2 w-full"
+                                       placeholder="Email" required
+                                       value="{{ user_form.email.value|default_if_none:'' }}">
+                            </div>
+                        </div>
+
+                        <!-- Datum narození -->
+                        <div class="flex flex-col w-full">
+                            {{ user_form.date_birth.label_tag }}
+                            <input type="date" name="{{ user_form.date_birth.name }}"
+                                   id="{{ user_form.date_birth.id_for_label }}"
+                                   class="border border-gray-300 rounded-md p-2 w-full" required
+                                   value="{{ user_form.instance.date_birth|date:'Y-m-d' }}">
+                        </div>
+
+
+                        <h2 class="text-2xl font-semibold mt-6 mb-4">Doručovací adresa</h2>
+
+                        <!-- Ulice a Číslo na jednom řádku (70% a 30%) -->
+                        <div class="grid grid-cols-7 gap-4">
+                            <div class="col-span-5 flex flex-col w-full">
+                                {{ address_form.street.label_tag }}
+                                <input type="text" name="{{ address_form.street.name }}"
+                                       id="{{ address_form.street.id_for_label }}"
+                                       class="border border-gray-300 rounded-md p-2 w-full"
+                                       placeholder="Ulice" required
+                                       value="{{ address_form.street.value|default_if_none:'' }}">
+                            </div>
+                            <div class="col-span-2 flex flex-col w-full">
+                                {{ address_form.number.label_tag }}
+                                <input type="text" name="{{ address_form.number.name }}"
+                                       id="{{ address_form.number.id_for_label }}"
+                                       class="border border-gray-300 rounded-md p-2 w-full"
+                                       placeholder="Číslo" required
+                                       value="{{ address_form.number.value|default_if_none:'' }}">
+                            </div>
+                        </div>
+
+                        <!-- Město a PSČ na jednom řádku (70% a 30%) -->
+                        <div class="grid grid-cols-7 gap-4">
+                            <div class="col-span-2 flex flex-col w-full">
+                                {{ address_form.city.label_tag }}
+                                <input type="text" name="{{ address_form.city.name }}"
+                                       id="{{ address_form.city.id_for_label }}"
+                                       class="border border-gray-300 rounded-md p-2 w-full"
+                                       placeholder="Město" required
+                                       value="{{ address_form.city.value|default_if_none:'' }}">
+                            </div>
+                            <div class="col-span-2 flex flex-col w-full">
+                                {{ address_form.postal_code.label_tag }}
+                                <input type="text" name="{{ address_form.postal_code.name }}"
+                                       id="{{ address_form.postal_code.id_for_label }}"
+                                       class="border border-gray-300 rounded-md p-2 w-full"
+                                       placeholder="PSČ" required
+                                       value="{{ address_form.postal_code.value|default_if_none:'' }}">
+                            </div>
+                            <div class="col-span-3 flex flex-col w-full">
+                            {{ address_form.country.label_tag }}
+                            <input type="text" name="{{ address_form.country.name }}" 
+                                   id="id_country" 
+                                   autocomplete="off" 
+                                   class="border border-gray-300 rounded-md p-2 w-full"
+                                   placeholder="Začněte psát stát" required
+                                   value="{{ address_form.country.value|default_if_none:'' }}">
+                        </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit"
+                                class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md mt-6">
+                            Uložit změny
+                        </button>
+                    </form>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        // Toggle the form visibility
+        function toggleForm() {
+            var form = document.getElementById('edit-address-form');
+            var card = document.getElementById('address-card');
+            form.classList.toggle('hidden');
+            card.classList.toggle('hidden');
+        }
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script>
+    $(document).ready(function() {
+        $("#id_country").autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: "https://restcountries.com/v3.1/all",
+                    dataType: "json",
+                    success: function(data) {
+                        var filteredCountries = data.filter(function(country) {
+                            // Filtrace na základě názvu státu
+                            return country.name.common.toLowerCase().startsWith(request.term.toLowerCase());
+                        });
+
+                        var countries = filteredCountries.map(function(item) {
+                            // Použití českého názvu pokud je k dispozici
+                            var nameInCzech = item.translations && item.translations.ces ? item.translations.ces.common : item.name.common;
+                            return nameInCzech; // Vracíme pouze název státu, ne celý objekt
+                        });
+
+                        // Vrátíme seznam českých názvů států
+                        response(countries);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Chyba při načítání dat:", status, error);
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+{% endblock %}

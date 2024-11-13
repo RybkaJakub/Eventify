@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Platební metoda</h2>
+    
+    <div id="progress" class="flex justify-center items-center">
+        <ol class="flex w-full max-w-4xl justify-between items-center space-x-4">
+            <li class="flex-1">
+                <div class="flex flex-col items-center">
+                    <a href="{% url 'cart' %}" class="flex items-center justify-center w-8 h-8 bg-blue-600 rounded-full ring-8 ring-blue-300 dark:bg-cyan-700 dark:ring-cyan-900">
+                        <svg class="w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5"/>
+                        </svg>
+                    </a>
+                    <h3 class="mt-4 text-center font-medium text-blue-900 dark:text-cyan-600">Položky v košíku</h3>
+                </div>
+            </li>
+
+            <li class="flex-1">
+                <div class="flex flex-col items-center">
+                    <a href="{% url 'cart_informations' %}" class="flex items-center justify-center w-8 h-8 bg-blue-600 rounded-full ring-8 ring-blue-300 dark:bg-cyan-700 dark:ring-cyan-900">
+                        <svg class="w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5"/>
+                        </svg>
+                    </a>
+                    <h3 class="mt-4 text-center font-medium text-blue-900 dark:text-cyan-600">Doručovací údaje</h3>
+                </div>
+            </li>
+
+            <li class="flex-1">
+                <div class="flex flex-col items-center">
+                    <div class="flex items-center justify-center w-8 h-8 bg-yellow-500 rounded-full ring-8 ring-yellow-200 dark:bg-yellow-600 dark:ring-yellow-800">
+                        <span class="text-white font-bold">3</span>
+                    </div>
+                    <h3 class="mt-4 text-center font-medium text-yellow-900 dark:text-yellow-600">Platební metoda</h3>
+                </div>
+            </li>
+
+            <li class="flex-1">
+                <div class="flex flex-col items-center">
+                    <div class="flex items-center justify-center w-8 h-8 bg-gray-200 rounded-full ring-8 ring-gray-300 dark:bg-gray-700 dark:ring-gray-900">
+                        <span class="text-gray-500 dark:text-gray-400 font-bold">4</span>
+                    </div>
+                    <h3 class="mt-4 text-center font-medium text-gray-500 dark:text-gray-400">Potvrzení objednávky</h3>
+                </div>
+            </li>
+        </ol>
+    </div>
+
+    <!-- Main Content Section -->
+        <div class="flex justify-center w-full max-w-4xl bg-white shadow-lg rounded-lg p-10 mt-10 overflow-auto">
+            {% if payment_method %}
+                <!-- Display Address Card -->
+                <div id="payment-card"
+                     class="w-full bg-white border border-gray-200 rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-700 p-8">
+                    <div class="flex items-center mb-6">
+                        <img class="w-24 h-24 mr-4 rounded-full shadow-lg" src="{{ profile_picture }}"
+                             alt="Profilová fotka"/>
+                        <div>
+                            <h5 class="text-2xl font-semibold text-gray-900 dark:text-white">{{ user.first_name }} {{ user.last_name }}</h5>
+                            <span class="text-sm text-gray-500 dark:text-gray-400 block mt-1">
+                                {{ payment_method.name_on_card }}
+                            </span>
+                            <span class="text-sm text-gray-500 dark:text-gray-400 block mt-1">
+                                {{ payment_method.card_number }}, {{ payment_method.cvv }}
+                            </span>
+                            <span class="text-sm text-gray-500 dark:text-gray-400 block mt-1">
+                                {{ payment_method.expiration_date }}
+                            </span>
+                        </div>
+                    </div>
+                    <!-- Action Buttons -->
+                    <div class="flex justify-between mt-8">
+                        <button type="button" onclick="toggleForm()"
+                                class="text-gray-600 hover:text-yellow-600 font-semibold">
+                            Upravit údaje
+                        </button>
+                        <a href="{% url 'cart_informations' %}"
+                           class="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded-md">
+                            Zpět
+                        </a>
+                        <a href="{% url 'cart_confirmation' %}"
+                           class="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded-md">
+                            Pokračovat k potvrzení
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Edit Address Form (Initially Hidden) -->
+                <div id="edit-payment-form" class="hidden w-full bg-white shadow-md rounded-lg p-8">
+                    <form class="space-y-6" method="post" action="{% url 'cart_payment' %}">
+                        {% csrf_token %}
+
+                        <h2 class="text-2xl font-semibold mt-6 mb-4">Platební údaje</h2>
+                        
+                        <div class="flex flex-col w-full">
+                            {{ payment_form.name_on_card.label_tag }}
+                                <input type="text" name="{{ payment_form.name_on_card.name }}"
+                                       id="{{ payment_form.name_on_card.id_for_label }}"
+                                       class="border border-gray-300 rounded-md p-2 w-full"
+                                       placeholder="Jméno na kartě" required
+                                       value="{{ payment_form.name_on_card.value|default_if_none:'' }}">
+                        </div>
+                        
+                        <div class="grid grid-cols-7 gap-4">
+                            <div class="col-span-5 flex flex-col w-full">
+                                {{ payment_form.card_number.label_tag }}
+                                <input type="text" name="{{ payment_form.card_number.name }}"
+                                       id="{{ payment_form.card_number.id_for_label }}"
+                                       class="border border-gray-300 rounded-md p-2 w-full"
+                                       placeholder="Číslo karty" required
+                                       value="{{ payment_form.card_number.value|default_if_none:'' }}">
+                            </div>
+                            <div class="col-span-2 flex flex-col w-full">
+                                {{ payment_form.cvv.label_tag }}
+                                <input type="text" name="{{ payment_form.cvv.name }}"
+                                       id="{{ payment_form.cvv.id_for_label }}"
+                                       class="border border-gray-300 rounded-md p-2 w-full"
+                                       placeholder="CVV" required
+                                       value="{{ payment_form.cvv.value|default_if_none:'' }}">
+                            </div>
+                        </div>
+                        <div class="flex flex-col w-full">
+                            {{ payment_form.expiration_date.label_tag }}
+                            <input type="date" name="{{ payment_form.expiration_date.name }}"
+                                   id="{{ payment_form.expiration_date.id_for_label }}"
+                                   class="border border-gray-300 rounded-md p-2 w-full" required
+                                   value="{{ payment_form.instance.expiration_date|date:'Y-m-d' }}">
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit"
+                                class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md mt-6">
+                            Uložit změny
+                        </button>
+                    </form>
+                </div>
+            {% else %}
+                <div id="edit-payment-form" class="w-full bg-white shadow-md rounded-lg p-8">
+                    <form class="space-y-6" method="post" action="{% url 'cart_payment' %}">
+                        {% csrf_token %}
+
+                        <h2 class="text-2xl font-semibold mt-6 mb-4">Platební údaje</h2>
+                        
+                        <div class="flex flex-col w-full">
+                            {{ payment_form.name_on_card.label_tag }}
+                                <input type="text" name="{{ payment_form.name_on_card.name }}"
+                                       id="{{ payment_form.name_on_card.id_for_label }}"
+                                       class="border border-gray-300 rounded-md p-2 w-full"
+                                       placeholder="Jméno na kartě" required
+                                       value="{{ payment_form.name_on_card.value|default_if_none:'' }}">
+                        </div>
+                        
+                        <div class="grid grid-cols-7 gap-4">
+                            <div class="col-span-5 flex flex-col w-full">
+                                {{ payment_form.card_number.label_tag }}
+                                <input type="text" name="{{ payment_form.card_number.name }}"
+                                       id="{{ payment_form.card_number.id_for_label }}"
+                                       class="border border-gray-300 rounded-md p-2 w-full"
+                                       placeholder="Číslo karty" required
+                                       value="{{ payment_form.card_number.value|default_if_none:'' }}">
+                            </div>
+                            <div class="col-span-2 flex flex-col w-full">
+                                {{ payment_form.cvv.label_tag }}
+                                <input type="text" name="{{ payment_form.cvv.name }}"
+                                       id="{{ payment_form.cvv.id_for_label }}"
+                                       class="border border-gray-300 rounded-md p-2 w-full"
+                                       placeholder="CVV" required
+                                       value="{{ payment_form.cvv.value|default_if_none:'' }}">
+                            </div>
+                        </div>
+                        <div class="flex flex-col w-full">
+                            {{ payment_form.expiration_date.label_tag }}
+                            <input type="date" name="{{ payment_form.expiration_date.name }}"
+                                   id="{{ payment_form.expiration_date.id_for_label }}"
+                                   class="border border-gray-300 rounded-md p-2 w-full" required
+                                   value="{{ payment_form.instance.expiration_date|date:'Y-m-d' }}">
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit"
+                                class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md mt-6">
+                            Uložit změny
+                        </button>
+                    </form>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        // Toggle the form visibility
+        function toggleForm() {
+            var form = document.getElementById('edit-payment-form');
+            var card = document.getElementById('payment-card');
+            form.classList.toggle('hidden');
+            card.classList.toggle('hidden');
+        }
+    </script>
+{% endblock %}

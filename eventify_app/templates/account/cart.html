@@ -1,83 +1,160 @@
 {% extends "base.html" %}
 {% load static %}
 
+
 {% block content %}
 <div class="container mx-auto px-4 py-8">
     <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Tvůj košík</h2>
     
-    <div class="overflow-x-auto">
-        <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow custom-table">
-            <thead>
-                <tr class="bg-gray-200 text-gray-600 uppercase text-sm tracking-wider">
-                    <th class="py-3 px-4 text-left font-semibold">Event</th>
-                    <th class="py-3 px-4 text-left font-semibold">Typ</th>
-                    <th class="py-3 px-2 text-center font-semibold w-16">Počet</th>
-                    <th class="py-3 px-4 text-right font-semibold whitespace-nowrap">Jednotková cena</th>
-                    <th class="py-3 px-4 text-right font-semibold whitespace-nowrap">Celková cena</th>
-                    <th class="py-3 px-4 text-center font-semibold">Akce</th>
-                </tr>
-            </thead>
-            <tbody class="text-gray-800 text-sm">
-                {% if items %}
-                {% for item in items %}
-                <tr class="border-b border-gray-200 hover:bg-gray-100 transition ease-in-out duration-100" id="{{ item.id }}">
-                    <td class="py-4 px-4 text-left truncate event-cell" title="{{ item.event.name }}">{{ item.event.name }}</td>
-                    <td class="py-4 px-4 text-left truncate type-cell" title="{{ item.ticket_type.name }}">{{ item.ticket_type.name }}</td>
-                    <td class="py-4 px-2 text-center">{{ item.quantity }}</td>
-                    <td class="py-4 px-4 text-right">{{ item.ticket_type.price }} Kč</td>
-                    <td class="py-4 px-4 text-right font-semibold">{{ item.total_amount }} Kč</td>
-                    <td class="py-4 px-4 text-center">
-                        <form action="{% url 'remove_item' item.id %}" method="POST" style="display: inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="text-red-500 hover:text-red-700">Odstranit</button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
-            {% else %}
+    <div id="progress" class="flex justify-center items-center">
+        <ol class="flex w-full max-w-4xl justify-between items-center space-x-4">
+            <li class="flex-1">
+                <div class="flex flex-col items-center">
+                    <div class="flex items-center justify-center w-8 h-8 bg-yellow-500 rounded-full ring-8 ring-yellow-200 dark:bg-yellow-600 dark:ring-yellow-800">
+                        <span class="text-white font-bold">1</span>
+                    </div>
+                    <h3 class="mt-4 text-center font-medium text-yellow-900 dark:text-yellow-600">Položky v košíku</h3>
+                </div>
+            </li>
+
+            <li class="flex-1">
+                <div class="flex flex-col items-center">
+                    <div class="flex items-center justify-center w-8 h-8 bg-gray-200 rounded-full ring-8 ring-gray-300 dark:bg-gray-700 dark:ring-gray-900">
+                        <span class="text-gray-500 dark:text-gray-400 font-bold">2</span>
+                    </div>
+                    <h3 class="mt-4 text-center font-medium text-gray-500 dark:text-gray-400">Doručovací údaje</h3>
+                </div>
+            </li>
+
+            <li class="flex-1">
+                <div class="flex flex-col items-center">
+                    <div class="flex items-center justify-center w-8 h-8 bg-gray-200 rounded-full ring-8 ring-gray-300 dark:bg-gray-700 dark:ring-gray-900">
+                        <span class="text-gray-500 dark:text-gray-400 font-bold">3</span>
+                    </div>
+                    <h3 class="mt-4 text-center font-medium text-gray-500 dark:text-gray-400">Platební metoda</h3>
+                </div>
+            </li>
+
+            <li class="flex-1">
+                <div class="flex flex-col items-center">
+                    <div class="flex items-center justify-center w-8 h-8 bg-gray-200 rounded-full ring-8 ring-gray-300 dark:bg-gray-700 dark:ring-gray-900">
+                        <span class="text-gray-500 dark:text-gray-400 font-bold">4</span>
+                    </div>
+                    <h3 class="mt-4 text-center font-medium text-gray-500 dark:text-gray-400">Potvrzení objednávky</h3>
+                </div>
+            </li>
+        </ol>
+    </div>
+
+    <div class="overflow-x-auto mt-10">
+        <form method="POST">
+            {% csrf_token %}
+            <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow custom-table">
+                <thead>
+                    <tr class="bg-gray-200 text-gray-600 uppercase text-sm tracking-wider">
+                        <th class="py-3 px-4 text-left font-semibold">Event</th>
+                        <th class="py-3 px-2 text-left font-semibold w-16">Typ</th>
+                        <th class="py-3 px-2 text-center font-semibold w-12">Počet</th>
+                        <th class="py-3 px-2 text-right font-semibold w-24">Jedn. cena</th>
+                        <th class="py-3 px-2 text-right font-semibold w-24">Celková cena</th>
+                        <th class="py-3 px-2 text-center font-semibold">Akce</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-800 text-sm">
+                    {% if items %}
+                    {% for item in items %}
+                    <tr class="border-b border-gray-200 hover:bg-gray-100 transition ease-in-out duration-100" id="{{ item.id }}">
+                        <td class="py-4 px-4 text-left truncate event-cell" title="{{ item.event.name }}">{{ item.event.name }}</td>
+                        <td class="py-4 px-2 text-left truncate type-cell" title="{{ item.ticket_type.name }}">{{ item.ticket_type.name }}</td>
+                        <td class="py-4 px-2 text-center">
+                            <input type="number" name="quantity_{{ item.id }}" value="{{ item.quantity }}" min="1" max="{{ item.ticket_type.left }}" class="quantity-input w-16 text-center border border-gray-300 rounded">
+                        </td>
+                        <td class="py-4 px-2 text-right">{{ item.ticket_type.price }} Kč</td>
+                        <td class="py-4 px-2 text-right font-semibold">{{ item.total_amount }} Kč</td>
+                        <td class="py-4 px-2 text-center">
+                            <form action="{% url 'remove_item' item.id %}" method="POST" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="text-red-500 hover:text-red-700">Odstranit</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
                     <tr class="border-b border-gray-200 hover:bg-gray-100 transition ease-in-out duration-100" id="NONE">
                         <td class="py-4 px-4 text-center truncate" title="No Tickets" colspan="6">Nemáte žádné vstupenky v košíku.</td>
                     </tr>
-            {% endif %}  
-            </tbody>
-        </table>
-    
-        <div class="flex justify-between mt-16">
-            <p class="font-semibold">Celková cena:</p>
-            <p class="font-semibold">{{ total_price }} Kč</p>
-        </div>
+                    {% endif %}  
+                </tbody>
+            </table>
 
-        <div class="flex justify-between mt-20">
-    <div class="justify-start" style="margin-left: 0"> <!-- Zarovnání tlačítka doleva -->
-        <form action="{% url 'clear_cart' %}" method="POST" style="display: inline;">
-            {% csrf_token %}
-            <button type="submit" class="text-gray-600 border border-gray-600 py-2 px-4 rounded hover:bg-gray-100">Vymazat košík</button>
+            <div class="flex justify-end mt-4">
+                <button type="submit" id="update-button" class="bg-gray-600 text-white py-2 px-4 rounded hover:bg-gray-700" style="display:none;">Aktualizovat košík</button>
+            </div>
+
         </form>
-    </div>
+            <div class="flex justify-between mt-16">
+                <p class="font-semibold">Celková cena:</p>
+                <p class="font-semibold">{{ total_price }} Kč</p>
+            </div>
 
-    <button type="submit" form="checkout-form" class="bg-gray-600 text-white py-2 px-4 rounded hover:bg-gray-700">Koupit</button>
-</div>
+            <div class="flex justify-between mt-20">
+                <div class="justify-start" style="margin-left: 0">
+                    <form action="{% url 'clear_cart' %}" method="POST" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="text-gray-600 border border-gray-600 py-2 px-4 rounded hover:bg-gray-100">Vymazat košík</button>
+                    </form>
+                </div>
+
+                <button type="button" onclick="location.href='{% url 'cart_informations' %}'" class="bg-gray-600 text-white py-2 px-4 rounded hover:bg-gray-700">Další</button>
+            </div>
     </div>
 </div>
 
 <style>
-    /* Přizpůsobení šířek sloupců */
-    .custom-table .event-cell {
-        max-width: 150px; /* Šířka pro Event */
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-    }
+th:first-child,
+td:first-child {
+    width: 10%;
+}
 
-    .custom-table .type-cell {
-        max-width: 100px; /* Šířka pro Typ */
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-    }
+th:nth-child(2),
+td:nth-child(2) {
+    width: 5%;
+}
 
-    .custom-table th.w-16, .custom-table td.w-16 {
-        width: 50px; /* Nastavení šířky pro Počet */
-    }
+th:nth-child(3),
+td:nth-child(3) {
+    width: 5%;
+}
+
+th:nth-child(4),
+td:nth-child(4) {
+    width: 5%;
+}
+
+th:nth-child(5),
+td:nth-child(5) {
+    width: 8%;
+}
+
+th:last-child,
+td:last-child {
+    width: 8%;
+}
+.quantity-input + div {
+    transform: translateX(-50%);
+    white-space: nowrap;
+}
 </style>
+
+<script>
+    // JavaScript to show the update button when input values change
+    const quantityInputs = document.querySelectorAll('.quantity-input');
+    const updateButton = document.getElementById('update-button');
+
+    quantityInputs.forEach(input => {
+        input.addEventListener('input', () => {
+            updateButton.style.display = 'inline-block'; // Show the button
+        });
+    });
+</script>
 {% endblock %}

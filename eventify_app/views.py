@@ -1,5 +1,7 @@
 from lib2to3.fixes.fix_input import context
 
+from allauth.account.views import SignupView
+from django.conf import settings
 from django.contrib.auth import logout
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
@@ -7,14 +9,49 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMixin
 from django.contrib import messages
 from django.urls import reverse
+from django.utils.html import strip_tags
 from django.views import View
 
-from .models import Event, TicketType, TicketPurchase, Address, CustomUser, Cart
+from .models import Event, TicketType, TicketPurchase, Address, CustomUser, Cart, DeliveryAddress, PaymentMethod
 from allauth.socialaccount.models import SocialAccount
-from .forms import UserProfileEditForm
+from .forms import UserProfileEditForm, DeliveryAddressForm, CustomUserForm, PaymentMethodForm
 from django.utils import timezone
 from django.views.generic import ListView, DetailView, UpdateView, DeleteView
 from django.urls import resolve
+
+import logging
+from django.template.loader import render_to_string
+from django.core.mail import EmailMessage, send_mail
+
+import logging
+from django.template.loader import render_to_string
+from django.core.mail import EmailMessage
+
+logger = logging.getLogger(__name__)
+
+def send_email(html_template, context):
+    from_email = settings.EMAIL_HOST_USER
+    subject = context.get('subject')
+    to_email = context.get('to_email')
+    cc = context.get('cc')
+    bcc = context.get('bcc')
+    attachments = context.get('attachments')
+
+    if not to_email:
+        raise ValueError("The 'to_email' address must be provided and cannot be empty.")
+    elif not isinstance(to_email, list):
+        to_email = [to_email]
+
+    try:
+        html_message = render_to_string(html_template, context)
+        message = EmailMessage(subject=subject, body=html_message, from_email=from_email, to=to_email, cc=cc, bcc=bcc,
+                               attachments=attachments)
+        message.content_subtype = 'html'
+        result = message.send()
+        logger.info(f"Sending email to {', '.join(to_email)} with subject: {subject} - Status {result}")
+    except Exception as e:
+        logger.info(f"Sending email to {', '.join(to_email)} with subject: {subject} - Status 0")
+        logger.exception(e)
 
 def index(request):
 
@@ -372,10 +409,11 @@ class MyEventsListView(ListView):
 
         return context
 
+
 @login_required
 def purchase_ticket(request, pk):
     if request.method == 'POST':
-        event_id = pk # Získej event_id z formuláře
+        event_id = pk  # Získej event_id z formuláře
         ticket_type_id = request.POST.get('ticket_type')
         quantity = int(request.POST.get('quantity'))
 
@@ -383,23 +421,35 @@ def purchase_ticket(request, pk):
         ticket_type = get_object_or_404(TicketType, id=ticket_type_id)
 
         if ticket_type.left < quantity:
-            messages.error(request, f'Nedostatečný počet vstupenek typu {ticket_type.name}. Zbývá pouze {ticket_type.left} vstupenek.')
+            messages.error(request,
+                           f'Nedostatečný počet vstupenek typu {ticket_type.name}. Zbývá pouze {ticket_type.left} vstupenek.')
             return redirect('event_detail', pk=event_id)
 
         total_amount = ticket_type.price * quantity
 
-        Cart.objects.create(
-            user=request.user,
-            event=event,
-            ticket_type=ticket_type,
-            quantity=quantity,
-            total_amount=total_amount
-        )
+        # Zjisti, jestli už položka existuje v košíku
+        cart_item = Cart.objects.filter(user=request.user, event=event, ticket_type=ticket_type).first()
+
+        if cart_item:
+            # Aktualizuj existující položku
+            cart_item.quantity += quantity
+            cart_item.total_amount += total_amount
+            cart_item.save()
+        else:
+            # Vytvoř novou položku v košíku
+            Cart.objects.create(
+                user=request.user,
+                event=event,
+                ticket_type=ticket_type,
+                quantity=quantity,
+                total_amount=total_amount
+            )
 
         messages.success(request, f'Úspěšně jste přidali do košíku {quantity} vstupenek na event "{event.name}".')
         return redirect('event_detail', pk=event_id)
 
     return redirect('index')
+
 
 class CartView(LoginRequiredMixin, TemplateView):
     template_name = "account/cart.html"
@@ -423,6 +473,160 @@ class CartView(LoginRequiredMixin, TemplateView):
         context['profile_picture'] = profile_picture
 
         return context
+
+    def post(self, request, *args, **kwargs):
+        items = Cart.objects.filter(user=request.user)
+        for item in items:
+            quantity = request.POST.get(f'quantity_{item.id}')
+            if quantity:
+                quantity = int(quantity)
+                if quantity > item.ticket_type.left:
+                    messages.error(request, f'Nemůžete si objednat více než {item.ticket_type.left} vstupenek pro {item.ticket_type.name}.')
+                    return redirect('cart')
+                item.quantity = quantity
+                item.total_amount = item.ticket_type.price * quantity
+                item.save()
+
+        messages.success(request, 'Košík byl úspěšně aktualizován.')
+        return redirect('cart')
+
+
+from django.contrib import messages
+from django.shortcuts import redirect, render
+from django.views.generic import TemplateView
+from allauth.socialaccount.models import SocialAccount
+from .forms import CustomUserForm, DeliveryAddressForm
+
+class CartInformationsView(LoginRequiredMixin, TemplateView):
+    """Opravit chyby s tím že když uživatel zadá neplatnou hodnotu tak se neuloží např číslo popisné 632/7"""
+    template_name = "account/cart_informations.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context['user'] = user
+        delivery_address = DeliveryAddress.objects.filter(user=user).first()
+        context['delivery_address'] = delivery_address
+        context['user_form'] = CustomUserForm(instance=user)
+        context['address_form'] = DeliveryAddressForm(instance=DeliveryAddress.objects.filter(user=user).first())
+
+
+        # Kontrola pro profilový obrázek
+        has_picture = False
+        profile_picture = UserProfileView.get_user_profile_picture(self.request,
+                                                                   SocialAccount.objects.filter(user=self.request.user))
+        if profile_picture:
+            has_picture = True
+
+        context['has_picture'] = has_picture
+        context['profile_picture'] = profile_picture
+
+        return context
+
+    def post(self, request, *args, **kwargs):
+        user_form = CustomUserForm(request.POST, instance=request.user)
+        address_form = DeliveryAddressForm(request.POST, instance=DeliveryAddress.objects.filter(user=request.user).first())
+
+        if user_form.is_valid() and address_form.is_valid():
+            user_form.save()
+            address_form.instance.user = request.user
+            address_form.save()
+            messages.success(request, 'Vaše informace byly úspěšně aktualizovány.')
+            return redirect('cart_informations')
+        else:
+            messages.error(request, 'Chyba při aktualizaci informací. Zkontrolujte zadání.')
+
+        # V případě neplatného formuláře znovu načti formuláře s chybami
+        context = self.get_context_data()
+        context['user_form'] = user_form  # Zahrnout formuláře s chybami
+        context['address_form'] = address_form
+        return render(request, self.template_name, context)
+
+
+class CartPaymentView(LoginRequiredMixin, TemplateView):
+    template_name = "account/cart_payment.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context['user'] = user
+        # Načítání metody platby a formuláře pro zobrazení a úpravy
+        payment_method = PaymentMethod.objects.filter(user=user).first()
+        context['payment_method'] = payment_method
+        context['payment_form'] = PaymentMethodForm(instance=payment_method)
+
+        # Načítání profilové fotografie
+        profile_picture = UserProfileView.get_user_profile_picture(
+            self.request, SocialAccount.objects.filter(user=user)
+        )
+        context['profile_picture'] = profile_picture
+        context['has_picture'] = bool(profile_picture)
+
+        return context
+
+    def post(self, request, *args, **kwargs):
+        # Získání nebo vytvoření metody platby, pokud neexistuje
+        payment_method, created = PaymentMethod.objects.get_or_create(user=request.user)
+        payment_form = PaymentMethodForm(request.POST, instance=payment_method)
+
+        if payment_form.is_valid():
+            payment_form.save()
+            messages.success(request, 'Vaše informace byly úspěšně aktualizovány.')
+            return redirect('cart_payment')
+        else:
+            messages.error(request, 'Chyba při aktualizaci informací. Zkontrolujte zadání.')
+
+        # V případě neplatného formuláře znovu načítání kontextu
+        context = self.get_context_data()
+        context['payment_form'] = payment_form
+        return render(request, self.template_name, context)
+
+class CartConfirmationView(LoginRequiredMixin, TemplateView):
+    template_name = "account/cart_confirmation.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context['user'] = user
+        items = Cart.objects.filter(user=user)
+        context['items'] = items
+        total_price = sum(item.total_amount for item in items)
+        context['total_price'] = total_price
+
+        payment_method = PaymentMethod.objects.filter(user=user).first()
+        context['payment_method'] = payment_method
+        delivery_address = DeliveryAddress.objects.filter(user=user).first()
+        context['delivery_address'] = delivery_address
+
+        has_picture = False
+        profile_picture = UserProfileView.get_user_profile_picture(self.request,
+                                                                   SocialAccount.objects.filter(user=self.request.user))
+        if profile_picture:
+            has_picture = True
+
+        context['has_picture'] = has_picture
+        context['profile_picture'] = profile_picture
+
+        return context
+
+    def post(self, request, *args, **kwargs):
+        address = "jakubekrybka@gmail.com"
+        subject = "Objednávka vstupenek"
+        message = ("Dobrý den,\n\n"
+                   "Děkujeme za vaši objednávku vstupenek. V příloze naleznete detaily objednávky.\n\n"
+                   "S pozdravem,\n"
+                   "Tým Eventify")
+        tickets = Cart.objects.filter(user=request.user)
+
+        if address and subject and message:
+            subject = 'Potvrzení nákupu vstupenek - Eventify'
+            html_message = render_to_string('email/email.html',
+                                            {'tickets': tickets, 'user_name': 'Jakub Rybka'})
+            plain_message = strip_tags(html_message)
+            from_email = 'ev3ntify@gmail.com'
+
+            send_mail(subject, plain_message, from_email, [address], html_message=html_message)
+        return redirect('index')
 
 class RemoveItemView(LoginRequiredMixin, View):
     def post(self, request, item_id):

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Potvrzení nákupu vstupenek - Eventify</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .main-container {
+            width: 100%;
+            padding: 20px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .email-container {
+            max-width: 600px;
+            width: 100%;
+            background-color: #ffffff;
+            border: 1px solid #dcdcdc;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            background-color: #4a90e2;
+            color: #ffffff;
+            text-align: center;
+            padding: 20px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .content {
+            padding: 20px;
+            color: #333;
+            font-size: 16px;
+        }
+        .content p {
+            margin: 10px 0;
+        }
+        .ticket-info {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .ticket-info table {
+            width: 100%;
+        }
+        .ticket-info td {
+            padding: 8px;
+            font-size: 16px;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 14px;
+            color: #888;
+            background-color: #f4f4f4;
+            border-top: 1px solid #dcdcdc;
+        }
+        .footer a {
+            color: #4a90e2;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+<div class="main-container">
+    <div class="email-container">
+        <div class="header">
+            Eventify - Potvrzení nákupu vstupenek
+        </div>
+        <div class="content">
+            <p>Vážený/á {{ user_name }},</p>
+            <p>Děkujeme za váš nákup vstupenek na Eventify! Zde jsou detaily vašeho nákupu:</p>
+            
+            <!-- Dynamicky generovaný seznam vstupenek -->
+            {% for ticket in tickets %}
+                <div class="ticket-info">
+                    <table>
+                        <tr>
+                            <td><strong>Název akce:</strong></td>
+                            <td>{{ ticket.event.name }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Datum a čas:</strong></td>
+                            <td>{{ ticket.event_date }} {{ ticket.event_time }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Místo konání:</strong></td>
+                            <td>{{ ticket.event.address}}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Druh vstupenky:</strong></td>
+                            <td>{{ ticket.ticket_type.name }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Počet vstupenek:</strong></td>
+                            <td>{{ ticket.quantity }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cena:</strong></td>
+                            <td>{{ ticket.total_amount }}</td>
+                        </tr>
+                    </table>
+                </div>
+            {% endfor %}
+
+            <p>Vaše vstupenky byly odeslány na vaši emailovou adresu. V případě dotazů nebo potřebné podpory nás neváhejte kontaktovat.</p>
+            <p>Přejeme vám příjemný zážitek!</p>
+            <p>S pozdravem,<br>tým Eventify</p>
+        </div>
+        <div class="footer">
+            Eventify, s.r.o., Václavské náměstí 17, 110 00 Praha<br>
+            <a href="https://www.eventify.cz/obchodni-podminky" target="_blank" rel="noopener">Obchodní podmínky</a> |
+            <a href="https://www.eventify.cz/ochrana-osobnich-udaju" target="_blank" rel="noopener">Ochrana osobních údajů</a> |
+            <a href="https://www.eventify.cz/podpora" target="_blank" rel="noopener">Podpora</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

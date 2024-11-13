@@ -2,7 +2,7 @@ from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit, Button
 from django import forms
-from .models import Event, Organization
+from .models import Event, Organization, DeliveryAddress, PaymentMethod
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import get_user_model, login
 from django.utils.dateformat import format
@@ -106,7 +106,7 @@ class EventEditForm(forms.ModelForm):
 class OrganizationForm(forms.ModelForm):
     class Meta:
         model = Organization
-        fields = ['name', "address"]
+        fields = ['name']
 
 class CustomAuthenticationForm(AuthenticationForm):
     class Meta:
@@ -132,6 +132,21 @@ from django import forms
 from django.core.exceptions import ValidationError
 from allauth.account.forms import SignupForm
 from django import forms
+
+class CustomUserForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ['first_name', 'last_name', 'telephone', 'email', 'date_birth']
+
+class DeliveryAddressForm(forms.ModelForm):
+    class Meta:
+        model = DeliveryAddress
+        fields = ['street', 'number', 'city', 'postal_code', 'country']
+
+class PaymentMethodForm(forms.ModelForm):
+    class Meta:
+        model = PaymentMethod
+        fields = ['card_number', 'name_on_card', 'cvv', 'expiration_date']
 
 class CustomSignupForm(SignupForm):
     username = forms.CharField(max_length=30, label='Uživatelské jméno', required=True)

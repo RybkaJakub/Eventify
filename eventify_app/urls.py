@@ -1,10 +1,13 @@
+from tkinter.font import names
+
 from django.urls import path, include
 
 from django.contrib import admin
 from django.contrib.auth.views import LogoutView
 from .views import index, purchase_ticket, EventManagerView, EventCreateView, EventDeleteView, EventDetailView, \
     EventUpdateView, MyEventsListView, delete_ticket_type, \
-    UserProfileView, MyProfileView, UserProfileEditView, CartView, RemoveItemView, ClearCartView
+    UserProfileView, MyProfileView, UserProfileEditView, CartView, RemoveItemView, ClearCartView, CartInformationsView, \
+    CartPaymentView, CartConfirmationView
 
 urlpatterns = [
     path('', index, name='index'),
@@ -22,6 +25,9 @@ urlpatterns = [
     path('cart/', CartView.as_view(), name='cart'),
     path('cart/remove/<int:item_id>/', RemoveItemView.as_view(), name='remove_item'),
     path('cart/clear', ClearCartView.as_view(), name='clear_cart'),
+    path('cart/informations/', CartInformationsView.as_view(), name='cart_informations'),
+    path('cart/payment/', CartPaymentView.as_view(), name='cart_payment'),
+    path('cart/confirmation/', CartConfirmationView.as_view(), name='cart_confirmation'),
     path('event_detail/<int:pk>/', EventDetailView.as_view(), name='event_detail'),
-    path('purchase_ticket/<int:pk>', purchase_ticket, name='purchase_ticket'),
+    path('purchase_ticket/<int:pk>/', purchase_ticket, name='purchase_ticket'),
 ]
