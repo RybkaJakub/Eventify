@@ -1,0 +1,64 @@
+<!-- DODĚLAT OTÁZKY TAK AŤ DÁVAJÍ SMYSL -->
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-10">
+    <h1 class="text-4xl font-semibold text-gray-800 text-center mb-8">Často kladené dotazy (FAQ)</h1>
+    
+    <div class="max-w-4xl mx-auto">
+        <div x-data="{ open: null }">
+            <!-- FAQ 1 -->
+            <div class="mb-4">
+                <button @click="open = open === 1 ? null : 1" class="w-full text-left text-xl font-semibold text-gray-800 py-3 px-4 border-b-2 border-gray-200 hover:bg-gray-100 focus:outline-none transition duration-300">
+                    Jak mohu změnit své heslo?
+                </button>
+                <div x-show="open === 1" x-transition.duration.500ms class="px-4 py-2 text-gray-600">
+                    <p>Pro změnu hesla přejděte do sekce "Můj profil", klikněte na "Změnit heslo" a postupujte podle pokynů. Ujistěte se, že nové heslo je silné a unikátní.</p>
+                </div>
+            </div>
+
+            <!-- FAQ 2 -->
+            <div class="mb-4">
+                <button @click="open = open === 2 ? null : 2" class="w-full text-left text-xl font-semibold text-gray-800 py-3 px-4 border-b-2 border-gray-200 hover:bg-gray-100 focus:outline-none transition duration-300">
+                    Jak mohu zrušit svou objednávku?
+                </button>
+                <div x-show="open === 2" x-transition.duration.500ms class="px-4 py-2 text-gray-600">
+                    <p>Pokud chcete zrušit svou objednávku, kontaktujte nás co nejdříve prostřednictvím našeho zákaznického servisu. Objednávky, které byly již odeslány, nelze zrušit.</p>
+                </div>
+            </div>
+
+            <!-- FAQ 3 -->
+            <div class="mb-4">
+                <button @click="open = open === 3 ? null : 3" class="w-full text-left text-xl font-semibold text-gray-800 py-3 px-4 border-b-2 border-gray-200 hover:bg-gray-100 focus:outline-none transition duration-300">
+                    Kde najdu fakturu za svou objednávku?
+                </button>
+                <div x-show="open === 3" x-transition.duration.500ms class="px-4 py-2 text-gray-600">
+                    <p>Fakturu za svou objednávku naleznete v sekci "Moje objednávky", kde si můžete stáhnout PDF verzi faktury pro účely účetnictví.</p>
+                </div>
+            </div>
+
+            <!-- FAQ 4 -->
+            <div class="mb-4">
+                <button @click="open = open === 4 ? null : 4" class="w-full text-left text-xl font-semibold text-gray-800 py-3 px-4 border-b-2 border-gray-200 hover:bg-gray-100 focus:outline-none transition duration-300">
+                    Jak mohu kontaktovat zákaznickou podporu?
+                </button>
+                <div x-show="open === 4" x-transition.duration.500ms class="px-4 py-2 text-gray-600">
+                    <p>Zákaznickou podporu můžete kontaktovat prostřednictvím našeho kontaktního formuláře na stránce "Kontaktujte nás", nebo na e-mailové adrese support@nasastranka.cz.</p>
+                </div>
+            </div>
+
+            <!-- FAQ 5 -->
+            <div class="mb-4">
+                <button @click="open = open === 5 ? null : 5" class="w-full text-left text-xl font-semibold text-gray-800 py-3 px-4 border-b-2 border-gray-200 hover:bg-gray-100 focus:outline-none transition duration-300">
+                    Jak mohu sledovat stav své objednávky?
+                </button>
+                <div x-show="open === 5" x-transition.duration.500ms class="px-4 py-2 text-gray-600">
+                    <p>Stav své objednávky můžete sledovat v sekci "Moje objednávky", kde uvidíte aktuální stav doručení a podrobnosti o vaší objednávce.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

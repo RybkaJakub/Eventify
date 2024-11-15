@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block title %}Kontakt{% endblock %}
+
+{% block content %}
+<div class="container mx-auto my-10 px-4">
+    <h1 class="text-4xl font-semibold text-gray-800 mb-6">Kontaktujte nás</h1>
+
+    <div class="bg-white shadow-md rounded-lg p-8 mb-6">
+        <p class="text-lg text-gray-700 mb-6">Máte-li otázky nebo potřebujete pomoc, vyplňte prosím tento formulář.</p>
+
+        <!-- Kontaktní formulář -->
+        <form method="POST" action="{% url 'contact' %}" class="space-y-6">
+            {% csrf_token %}
+
+            <!-- Jméno -->
+            <div class="form-group">
+                <label for="id_name" class="block text-sm font-medium text-gray-700">Vaše jméno</label>
+                <input type="text" name="name" id="id_name" 
+                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 {% if form.name.errors %}border-red-500{% endif %}" placeholder="Jméno">
+                {% if form.name.errors %}
+                    <p class="mt-2 text-xs text-red-500">{{ form.name.errors }}</p>
+                {% endif %}
+            </div>
+
+            <!-- E-mail -->
+            <div class="form-group">
+                <label for="id_email" class="block text-sm font-medium text-gray-700">Váš e-mail</label>
+                <input type="email" name="email" id="id_email" 
+                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 {% if form.email.errors %}border-red-500{% endif %}" placeholder="E-mail">
+                {% if form.email.errors %}
+                    <p class="mt-2 text-xs text-red-500">{{ form.email.errors }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Zpráva -->
+            <div class="form-group">
+                <label for="id_message" class="block text-sm font-medium text-gray-700">Vaše zpráva</label>
+                <textarea name="message" id="id_message" 
+                          class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 {% if form.message.errors %}border-red-500{% endif %}" placeholder="Popište svůj problém"></textarea>
+                {% if form.message.errors %}
+                    <p class="mt-2 text-xs text-red-500">{{ form.message.errors }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Odeslání -->
+            <button type="submit" class="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                Odeslat zprávu
+            </button>
+
+            <!-- Zobrazí úspěšné nebo chybové zprávy -->
+            {% if messages %}
+                <div class="mt-4">
+                    {% for message in messages %}
+                        {% if message.tags == 'success' %}
+                            <div class="p-4 rounded-md bg-green-100 text-green-700">
+                                {{ message }}
+                            </div>
+                        {% else %}
+                            <div class="p-4 rounded-md bg-red-100 text-red-700">
+                                {{ message }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </form>
+    </div>
+
+    <!-- Kontaktní údaje a mapa -->
+    <div class="grid md:grid-cols-2 gap-6">
+        <!-- Kontaktní informace -->
+        <div>
+            <h2 class="text-xl font-semibold mb-2">Kontaktní údaje</h2>
+            <ul class="space-y-2">
+                <li><strong>Adresa:</strong> Olomoucká 32, 74601 Opava</li>
+                <li><strong>Telefon:</strong> +420 123 456 789</li>
+                <li><strong>E-mail:</strong> kontakt@priklad.cz</li>
+                <li><strong>Pracovní doba:</strong> Po - Pá: 9:00 - 17:00</li>
+            </ul>
+        </div>
+
+        <!-- Mapa -->
+        <div>
+            <h2 class="text-xl font-semibold mb-2">Naše lokalita</h2>
+            <iframe 
+                loading="lazy" 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2598.2261291823065!2d14.380682976750526!3d49.366794071405565!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x470b5f2cc9dee8bb%3A0x22639489ab84c910!2sZa%20Humny%20268%2F23%2C%20398%2043%20Bernartice%20u%20Milevska!5e0!3m2!1scs!2scz!4v1731669279971!5m2!1scs!2scz&amp;t=m&amp;z=10&amp;output=embed&amp;iwloc=near" 
+                title="Za humny 1352, 39843  Bernartice U Milevska" 
+                aria-label="Za humny 1352, 39843  Bernartice U Milevska" 
+                width="100%" 
+                height="300" 
+                frameborder="0" 
+                style="border:0;" 
+                allowfullscreen>
+            </iframe>
+        </div>
+    </div>
+</div>
+{% endblock %}

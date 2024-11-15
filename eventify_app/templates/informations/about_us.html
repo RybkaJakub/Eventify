@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}O nás{% endblock %}
+
+{% block content %}
+<div class="container mx-auto my-10 px-4">
+    <!-- Hlavní nadpis -->
+    <h1 class="text-4xl font-semibold text-gray-800 mb-6 text-center">O nás</h1>
+
+    <!-- Sekce mise -->
+    <div class="bg-gradient-to-r from-blue-500 to-blue-700 text-white shadow-md rounded-lg p-8 mb-6 transition-transform hover:scale-105">
+        <h2 class="text-3xl font-semibold mb-4">Naše mise</h2>
+        <p class="text-lg leading-relaxed">
+            Naším cílem je poskytovat nejlepší služby v oblasti organizace eventů, spojovat lidi a vytvářet nezapomenutelné zážitky. 
+            Věříme, že s každým eventem můžeme přinést něco výjimečného a inspirovat ostatní.
+        </p>
+    </div>
+
+    <!-- Sekce tým -->
+    <div class="bg-white shadow-md rounded-lg p-8 mb-6">
+        <h2 class="text-3xl font-semibold text-gray-700 mb-4 text-center">Náš tým</h2>
+        <div class="grid md:grid-cols-3 gap-6">
+            <!-- Člen týmu -->
+            {% for member in team_members %}
+            <div class="text-center transform transition-transform hover:scale-105">
+                <img class="mx-auto w-32 h-32 rounded-full shadow-lg mb-4" src="{{ member.image }}" alt="{{ member.name }}">
+                <h3 class="text-xl font-semibold text-gray-800">{{ member.name }}</h3>
+                <p class="text-sm text-gray-600">{{ member.role }}</p>
+                <p class="mt-2 text-sm text-gray-500">{{ member.bio }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Sekce hodnoty -->
+    <div class="bg-gradient-to-r from-green-400 to-green-600 text-white shadow-md rounded-lg p-8 transition-transform hover:scale-105">
+        <h2 class="text-3xl font-semibold mb-4">Naše hodnoty</h2>
+        <ul class="list-disc pl-5 space-y-2 text-lg leading-relaxed">
+            <li><strong>Inovace:</strong> Neustále hledáme nové způsoby, jak zlepšit naše služby.</li>
+            <li><strong>Spolupráce:</strong> Věříme, že týmová práce je klíčem k úspěchu.</li>
+            <li><strong>Transparentnost:</strong> Dbáme na otevřenou komunikaci s našimi klienty.</li>
+            <li><strong>Odpovědnost:</strong> Záleží nám na udržitelnosti a etice při organizaci každého eventu.</li>
+        </ul>
+    </div>
+</div>
+
+<!-- Dynamická sekce pro ukázku činnosti -->
+<div class="container mx-auto my-10 px-4">
+    <div x-data="{ open: false }" class="text-center">
+        <button @click="open = !open" class="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-500 transition duration-300">
+            Zjistěte více o naší činnosti
+        </button>
+        <div x-show="open" x-transition class="mt-6 bg-white p-6 shadow-lg rounded-lg">
+            <h3 class="text-xl font-semibold text-gray-800 mb-2">Naše činnost</h3>
+            <p class="text-gray-600">
+                Pomáháme klientům s plánováním, organizací a realizací eventů na míru. S námi se můžete spolehnout na hladký průběh a nezapomenutelné zážitky.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -102,6 +102,7 @@ class Event(models.Model):
     name = models.CharField(max_length=200, verbose_name='Název události', help_text='Zadejte název události')
     description = models.TextField(verbose_name='Popis události', help_text='Zadejte popis události')
     day = models.DateField(verbose_name='Den konání eventu', help_text='Zadejte den konání eventu', default=timezone.now)
+    time = models.TimeField(verbose_name='Čas konání eventu', help_text='Zadejte čas konání eventu', default=timezone.now)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
                                    verbose_name='Vytvořeno uživatelem', help_text='Vyberte uživatele, který událost vytvořil')
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE, null=True,

@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block title %}Podpora{% endblock %}
+{% block content %}
+<div class="container mx-auto my-10 px-4">
+    <h1 class="text-4xl font-semibold text-gray-800 mb-6">Podpora</h1>
+
+    <div class="bg-white shadow-md rounded-lg p-8">
+        <p class="text-lg text-gray-700 mb-6">Máte-li problém, neváhejte nás kontaktovat vyplněním tohoto formuláře.</p>
+
+        <!-- Formulář -->
+        <form method="POST" action="{% url 'support' %}" class="space-y-6">
+            {% csrf_token %}
+
+            <!-- Jméno -->
+            <div class="form-group">
+                <label for="id_name" class="block text-sm font-medium text-gray-700">Vaše jméno</label>
+                <input type="text" name="name" id="id_name" 
+                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 {% if form.name.errors %}border-red-500{% endif %}" placeholder="Jméno">
+                {% if form.name.errors %}
+                    <p class="mt-2 text-xs text-red-500">{{ form.name.errors }}</p>
+                {% endif %}
+            </div>
+
+            <!-- E-mail -->
+            <div class="form-group">
+                <label for="id_email" class="block text-sm font-medium text-gray-700">Váš e-mail</label>
+                <input type="email" name="email" id="id_email" 
+                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 {% if form.email.errors %}border-red-500{% endif %}" placeholder="E-mail">
+                {% if form.email.errors %}
+                    <p class="mt-2 text-xs text-red-500">{{ form.email.errors }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Zpráva -->
+            <div class="form-group">
+                <label for="id_message" class="block text-sm font-medium text-gray-700">Vaše zpráva</label>
+                <textarea name="message" id="id_message" 
+                          class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 {% if form.message.errors %}border-red-500{% endif %}" placeholder="Popište svůj problém"></textarea>
+                {% if form.message.errors %}
+                    <p class="mt-2 text-xs text-red-500">{{ form.message.errors }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Odeslání -->
+            <button type="submit" class="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                Odeslat tiket
+            </button>
+
+            <!-- Zobrazí úspěšné nebo chybové zprávy -->
+            {% if messages %}
+                <div class="mt-4">
+                    {% for message in messages %}
+                        {% if message.tags == 'success' %}
+                            <div class="p-4 rounded-md bg-green-100 text-green-700">
+                                {{ message }}
+                            </div>
+                        {% else %}
+                            <div class="p-4 rounded-md bg-red-100 text-red-700">
+                                {{ message }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </form>
+    </div>
+</div>
+{% endblock content %}

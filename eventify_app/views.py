@@ -1,9 +1,10 @@
+from datetime import timedelta
 from lib2to3.fixes.fix_input import context
 
 from allauth.account.views import SignupView
 from django.conf import settings
 from django.contrib.auth import logout
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMixin
@@ -15,9 +16,10 @@ from django.views import View
 from .models import Event, TicketType, TicketPurchase, Address, CustomUser, Cart, DeliveryAddress, PaymentMethod, \
     EventAddress
 from allauth.socialaccount.models import SocialAccount
-from .forms import UserProfileEditForm, DeliveryAddressForm, CustomUserForm, PaymentMethodForm
+from .forms import UserProfileEditForm, DeliveryAddressForm, CustomUserForm, PaymentMethodForm, ContactForm, \
+    SupportForm, EventAddressForm
 from django.utils import timezone
-from django.views.generic import ListView, DetailView, UpdateView, DeleteView
+from django.views.generic import ListView, DetailView, UpdateView, DeleteView, FormView
 from django.urls import resolve
 
 import logging
@@ -113,7 +115,18 @@ class EventManagerView(PermissionRequiredMixin, ListView):
         context['in_organization'] = in_organization
         context['has_picture'] = has_picture
         context['profile_picture'] = profile_picture
-        context['events'] = Event.objects.filter(organization=organization)
+        events = Event.objects.filter(organization=organization)
+
+        events_with_addresses = []
+        for event in events:
+            event_address = EventAddress.objects.filter(
+                event=event).first()
+            events_with_addresses.append({
+                'event': event,
+                'address': event_address
+            })
+
+        context['events_with_addresses'] = events_with_addresses
         current_url_name = resolve(self.request.path_info).url_name
         context['current_url'] = current_url_name
 
@@ -130,7 +143,10 @@ from .forms import EventForm, TicketTypeFormSet
 class EventInline():
     form_class = EventForm
     model = Event
-    template_name = "create_event.html"
+    template_name = "events/event_manager_create.html"
+
+    def __init__(self):
+        self.object = None
 
     def form_valid(self, form):
         named_formsets = self.get_named_formsets()
@@ -155,29 +171,57 @@ class EventInline():
             ticket_type.left = ticket_type.quantity
             ticket_type.save()
 
+
 class EventCreateView(EventInline, CreateView, LoginRequiredMixin, PermissionRequiredMixin):
+    model = Event  # Pokud používáte model Event
 
-     def get_context_data(self, **kwargs):
-         ctx = super(EventCreateView, self).get_context_data(**kwargs)
-         ctx['named_formsets'] = self.get_named_formsets()
-         has_picture = False
-         profile_picture = UserProfileView.get_user_profile_picture(self.request, SocialAccount.objects.filter(user=self.request.user))
-         if profile_picture:
-             has_picture = True
-         ctx['profile_picture'] = profile_picture
-         ctx['has_picture'] = has_picture
-         return ctx
+    def get_context_data(self, **kwargs):
+        ctx = super(EventCreateView, self).get_context_data(**kwargs)
 
-     def get_named_formsets(self):
-         if self.request.method == 'GET':
-             return {
-                 'ticket_types': TicketTypeFormSet(prefix='ticket_types')
-             }
-         else:
-             return {
-                 'ticket_types': TicketTypeFormSet(self.request.POST or None, self.request.FILES or None
-                                                   ,prefix='ticket_types')
-             }
+        # Přidání formuláře pro adresu eventu
+        ctx['event_address_form'] = EventAddressForm()
+
+        # Přidání formsetů pro ticket types
+        ctx['named_formsets'] = self.get_named_formsets()
+
+        # Získání profilového obrázku
+        has_picture = False
+        profile_picture = UserProfileView.get_user_profile_picture(self.request,
+                                                                   SocialAccount.objects.filter(user=self.request.user))
+        if profile_picture:
+            has_picture = True
+        ctx['profile_picture'] = profile_picture
+        ctx['has_picture'] = has_picture
+
+        return ctx
+
+    def get_named_formsets(self):
+        if self.request.method == 'GET':
+            return {
+                'ticket_types': TicketTypeFormSet(prefix='ticket_types')
+            }
+        else:
+            return {
+                'ticket_types': TicketTypeFormSet(self.request.POST or None, self.request.FILES or None
+                                                  , prefix='ticket_types')
+            }
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        event_address_form = EventAddressForm(request.POST)
+
+        if form.is_valid() and event_address_form.is_valid():
+            # Uložení Eventu
+            event = form.save()
+
+            # Přiřazení adresy k eventu
+            event_address = event_address_form.save(commit=False)
+            event_address.event = event
+            event_address.save()
+
+            return redirect('event_detail', event_id=event.id)  # Přesměrování na detail události
+        else:
+            return self.form_invalid(form)
 
 class EventUpdateView(EventInline, LoginRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
@@ -218,7 +262,7 @@ class EventDeleteView(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTes
     model = Event
     template_name = 'events/event_manager_delete.html'
     context_object_name = 'event'
-    success_url = '/'
+    success_url = '/eventify_app/eventmanager/'
     permission_required = 'eventify_app.delete_event'
 
     def test_func(self):
@@ -614,20 +658,17 @@ class CartConfirmationView(LoginRequiredMixin, TemplateView):
         return context
 
     def post(self, request, *args, **kwargs):
-        address = "jakubekrybka@gmail.com"
+        user = request.user
+        address = user.email
         subject = "Objednávka vstupenek"
-        message = ("Dobrý den,\n\n"
-                   "Děkujeme za vaši objednávku vstupenek. V příloze naleznete detaily objednávky.\n\n"
-                   "S pozdravem,\n"
-                   "Tým Eventify")
         tickets = Cart.objects.filter(user=request.user)
 
-        if address and subject and message:
+        if address and subject:
             subject = 'Potvrzení nákupu vstupenek - Eventify'
             html_message = render_to_string('email/email.html',
-                                            {'tickets': tickets, 'user_name': 'Jakub Rybka'})
+                                            {'tickets': tickets, 'user_name': f'{{ user.first_name }} {{ user.last_name }}'})
             plain_message = strip_tags(html_message)
-            from_email = 'ev3ntify@gmail.com'
+            from_email = settings.EMAIL_HOST_USER
 
             send_mail(subject, plain_message, from_email, [address], html_message=html_message)
         return redirect('index')
@@ -643,11 +684,10 @@ class ClearCartView(LoginRequiredMixin, View):
         Cart.objects.filter(user=request.user).delete()
         return redirect('cart')  # Přesměrování zpět na stránku s košíkem
 
-def event_list(request):
+def events_list(request):
     events = Event.objects.all()
     name_filter = request.GET.get('name')
     date_filter = request.GET.get('date')
-    time_filter = request.GET.get('time')
     location_filter = request.GET.get('location')
     filtered_events = events
 
@@ -659,11 +699,7 @@ def event_list(request):
     if date_filter:
         filtered_events = filtered_events.filter(date=date_filter)
 
-    # Filtrování dle času
-    if time_filter:
-        filtered_events = filtered_events.filter(time=time_filter)
-
-    # Filtrování dle města (EventAddress) s využitím geopy
+    # Filtrování dle města (EventAddress)
     if location_filter:
         geolocator = Nominatim(user_agent="eventify")
         location = geolocator.geocode(location_filter)
@@ -682,6 +718,96 @@ def event_list(request):
         'events': filtered_events,
         'name_filter': name_filter,
         'date_filter': date_filter,
-        'time_filter': time_filter,
         'location_filter': location_filter,
     })
+
+class TermsOfUseView(TemplateView):
+    template_name = 'informations/terms_of_use.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['date'] = timezone.now()
+        return context
+
+class PrivacyPolicy(TemplateView):
+    template_name = 'informations/privacy_policy.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['date'] = timezone.now()
+        return context
+
+class Faq(TemplateView):
+    template_name = 'informations/frequently_asked.html'
+
+class AboutUs(TemplateView):
+    template_name = 'informations/about_us.html'
+
+    def get_context_data(self, **kwargs):
+        team_members = [
+            {"name": "Jan Novák", "role": "CEO & Zakladatel", "bio": "Zakladatel naší společnosti.",
+             "image": "/static/img/member1.jpg"},
+            {"name": "Petra Svobodová", "role": "Projektový manažer", "bio": "Má na starosti všechny projekty.",
+             "image": "/static/img/member2.jpg"},
+            {"name": "Tomáš Dvořák", "role": "Marketingový specialista", "bio": "Zodpovědný za propagaci.",
+             "image": "/static/img/member3.jpg"},
+        ]
+        context = super().get_context_data(**kwargs)
+        context['team_members'] = team_members
+        return context
+
+class ContactView(View):
+    def get(self, request):
+        form = ContactForm()
+        return render(request, 'informations/contact.html', {'form': form})
+
+    def post(self, request):
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            # Zpracování formuláře (např. odeslání e-mailu)
+            name = form.cleaned_data['name']
+            email = form.cleaned_data['email']
+            message = form.cleaned_data['message']
+            # Například odeslání emailu nebo uložení do databáze
+            # Zde si můžeš přizpůsobit odeslání e-mailu podle potřeby
+            return HttpResponse("Děkujeme za vaši zprávu!")
+        return render(request, 'informations/contact.html', {'form': form})
+
+class SupportView(View):
+    def get(self, request):
+        form = SupportForm()  # Vytvoření prázdného formuláře pro GET request
+        return render(request, 'informations/support.html', {'form': form})
+
+    def post(self, request):
+        form = SupportForm(request.POST)  # Načtení odeslaných dat z formuláře
+        # Ověření, zda uživatel neodeslal formulář v posledních 10 minutách
+        last_submitted = request.session.get('last_submission_time')
+        if last_submitted:
+            # Převeďte uložený čas na datetime objekt
+            last_submitted_time = timezone.datetime.fromisoformat(last_submitted)
+            time_diff = timezone.now() - last_submitted_time
+            if time_diff < timedelta(minutes=10):
+                minutes_left = 10 - time_diff.seconds // 60
+                messages.error(request, f"Formulář už byl odeslán. Počkejte ještě {minutes_left} minut(y).")
+                return render(request, 'informations/support.html', {'form': form})
+
+        if form.is_valid():
+            # Odeslání e-mailu adminovi
+            subject = f"Nový tiket od {form.cleaned_data['name']}"
+            name = form.cleaned_data['name']
+            email = form.cleaned_data['email']
+            html_message = render_to_string('email/support_email.html', {'message': form.cleaned_data['message'], 'name': name, 'email': email})
+            plain_message = strip_tags(html_message)
+            from_email = settings.EMAIL_HOST_USER
+            address = settings.SUPPORT_EMAIL
+
+            send_mail(subject, plain_message, from_email, [address], html_message=html_message)
+
+            # Uložení času odeslání do session jako ISO formátovaný řetězec pro kompatibilitu s JSON
+            request.session['last_submission_time'] = timezone.now().isoformat()
+
+            messages.success(request, "Váš tiket byl úspěšně odeslán.")  # Zobrazení úspěšné zprávy
+            return redirect('support')  # Přesměrování zpět na stránku support
+        else:
+            messages.error(request, "Formulář obsahuje chyby. Zkuste to prosím znovu.")  # Zobrazení chybové zprávy
+            return render(request, 'informations/support.html', {'form': form})

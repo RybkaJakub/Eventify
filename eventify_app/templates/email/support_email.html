@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nový tiket - Eventify</title>
+    <style>
+        /* Základní reset a úpravy */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7fb;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #4CAF50;
+            margin-bottom: 30px;
+            font-size: 26px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .ticket-details {
+            margin-bottom: 30px;
+        }
+        .ticket-details label {
+            font-weight: bold;
+            color: #555;
+            font-size: 16px;
+            margin-bottom: 5px;
+            display: block;
+        }
+        .ticket-details div {
+            background-color: #f4f4f4;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 16px;
+            color: #333;
+            line-height: 1.5;
+        }
+        p {
+            font-size: 16px;
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .footer {
+            text-align: center;
+            font-size: 14px;
+            color: #777;
+            margin-top: 30px;
+        }
+        .footer a {
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .ticket-info {
+            background-color: #e8f5e9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .ticket-info p {
+            font-size: 15px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Nový tiket od {{ name }}</h2>
+
+        <div class="ticket-info">
+            <p><strong>Email:</strong> {{ email }}</p>
+        </div>
+
+        <div class="ticket-details">
+            <label for="message">Zpráva:</label>
+            <div id="message">{{ message }}</div>
+        </div>
+
+        <p>Prosím, tento tiket zpracujte co nejdříve.</p>
+
+        <div class="footer">
+            <p>&copy; 2024 Eventify. Všechna práva vyhrazena.</p>
+        </div>
+    </div>
+</body>
+</html>

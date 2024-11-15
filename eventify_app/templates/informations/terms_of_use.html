@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+
+{% block title %}Podmínky používání{% endblock %}
+{% block content %}
+<div class="container mx-auto my-10 px-4">
+    <h1 class="text-4xl font-semibold text-gray-800 mb-6">Podmínky používání</h1>
+
+    <div class="bg-white shadow-md rounded-lg p-6">
+        <p class="text-lg text-gray-700 mb-4">Tato stránka obsahuje podmínky používání našich služeb. Před použitím našich služeb si prosím důkladně přečtěte následující podmínky. Používáním našich služeb souhlasíte s těmito podmínkami.</p>
+
+        <div x-data="{ open: null }">
+            <!-- 1. Úvod -->
+            <div class="mb-4">
+                <button @click="open = open === 1 ? null : 1" class="w-full text-left text-xl font-semibold text-gray-800 py-3 px-4 border-b-2 border-gray-200 hover:bg-gray-100 focus:outline-none transition duration-300">
+                    1. Úvod
+                </button>
+                <div x-show="open === 1" x-transition.duration.500ms class="px-4 py-2 text-gray-600">
+                    <p>V těchto podmínkách popisujeme pravidla používání našich služeb a jaký je vztah mezi vámi a naší společností. Používáním našich služeb souhlasíte s těmito podmínkami.</p>
+                </div>
+            </div>
+
+            <!-- 2. Používání služeb -->
+            <div class="mb-4">
+                <button @click="open = open === 2 ? null : 2" class="w-full text-left text-xl font-semibold text-gray-800 py-3 px-4 border-b-2 border-gray-200 hover:bg-gray-100 focus:outline-none transition duration-300">
+                    2. Používání služeb
+                </button>
+                <div x-show="open === 2" x-transition.duration.500ms class="px-4 py-2 text-gray-600">
+                    <p>Naše služby můžete používat pouze v souladu s těmito podmínkami a platnými zákony. Jakékoliv neoprávněné používání našich služeb je zakázáno.</p>
+                </div>
+            </div>
+
+            <!-- 3. Vaše povinnosti -->
+            <div class="mb-4">
+                <button @click="open = open === 3 ? null : 3" class="w-full text-left text-xl font-semibold text-gray-800 py-3 px-4 border-b-2 border-gray-200 hover:bg-gray-100 focus:outline-none transition duration-300">
+                    3. Vaše povinnosti
+                </button>
+                <div x-show="open === 3" x-transition.duration.500ms class="px-4 py-2 text-gray-600">
+                    <p>Jste povinni poskytovat pravdivé a aktuální informace a zodpovídáte za jakékoliv činnosti, které vykonáte prostřednictvím našich služeb.</p>
+                </div>
+            </div>
+
+            <!-- 4. Ochrana práv duševního vlastnictví -->
+            <div class="mb-4">
+                <button @click="open = open === 4 ? null : 4" class="w-full text-left text-xl font-semibold text-gray-800 py-3 px-4 border-b-2 border-gray-200 hover:bg-gray-100 focus:outline-none transition duration-300">
+                    4. Ochrana práv duševního vlastnictví
+                </button>
+                <div x-show="open === 4" x-transition.duration.500ms class="px-4 py-2 text-gray-600">
+                    <p>Veškerý obsah a materiály poskytované na našich stránkách a v aplikacích jsou chráněny právem duševního vlastnictví. Bez našeho výslovného souhlasu je zakázáno obsah kopírovat nebo distribuovat.</p>
+                </div>
+            </div>
+
+            <!-- 5. Změny podmínek používání -->
+            <div class="mb-4">
+                <button @click="open = open === 5 ? null : 5" class="w-full text-left text-xl font-semibold text-gray-800 py-3 px-4 border-b-2 border-gray-200 hover:bg-gray-100 focus:outline-none transition duration-300">
+                    5. Změny podmínek používání
+                </button>
+                <div x-show="open === 5" x-transition.duration.500ms class="px-4 py-2 text-gray-600">
+                    <p>Tyto podmínky mohou být kdykoliv změněny. O všech změnách vás budeme informovat prostřednictvím této stránky. Doporučujeme pravidelně kontrolovat tuto stránku pro aktuální verzi našich podmínek.</p>
+                </div>
+            </div>
+
+            <!-- 6. Odpovědnost -->
+            <div class="mb-4">
+                <button @click="open = open === 6 ? null : 6" class="w-full text-left text-xl font-semibold text-gray-800 py-3 px-4 border-b-2 border-gray-200 hover:bg-gray-100 focus:outline-none transition duration-300">
+                    6. Odpovědnost
+                </button>
+                <div x-show="open === 6" x-transition.duration.500ms class="px-4 py-2 text-gray-600">
+                    <p>Za použití našich služeb neseme odpovědnost pouze v rozsahu, který stanovují platné zákony. Neodpovídáme za škody vzniklé v důsledku používání našich služeb mimo podmínky uvedené v tomto dokumentu.</p>
+                </div>
+            </div>
+
+            <!-- 7. Ukončení používání -->
+            <div class="mb-4">
+                <button @click="open = open === 7 ? null : 7" class="w-full text-left text-xl font-semibold text-gray-800 py-3 px-4 border-b-2 border-gray-200 hover:bg-gray-100 focus:outline-none transition duration-300">
+                    7. Ukončení používání
+                </button>
+                <div x-show="open === 7" x-transition.duration.500ms class="px-4 py-2 text-gray-600">
+                    <p>Máme právo kdykoliv pozastavit nebo ukončit poskytování našich služeb, pokud zjistíme, že byly porušeny naše podmínky používání.</p>
+                </div>
+            </div>
+
+            <!-- 8. Kontakt -->
+            <div class="mb-4">
+                <button @click="open = open === 8 ? null : 8" class="w-full text-left text-xl font-semibold text-gray-800 py-3 px-4 border-b-2 border-gray-200 hover:bg-gray-100 focus:outline-none transition duration-300">
+                    8. Kontakt
+                </button>
+                <div x-show="open === 8" x-transition.duration.500ms class="px-4 py-2 text-gray-600">
+                    <p>Pokud máte jakékoliv dotazy ohledně těchto podmínek, neváhejte nás kontaktovat prostřednictvím našich kontaktních údajů na stránce "Kontaktujte nás".</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

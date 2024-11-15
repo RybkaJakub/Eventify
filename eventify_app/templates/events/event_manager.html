@@ -4,97 +4,59 @@
 {% block title %}Správce eventů {% endblock %}
 
 {% block content %}
-    <style>
-    .table-wrapper {
-    overflow-x: auto; /* Umožní horizontální posun, pokud je tabulka širší než viewport */
-}
+    <div class="container mx-auto mt-5">
+        {% if in_organization %}
+            <div class="text-center mb-5">
+                <h2 class="text-2xl font-semibold text-gray-800">Události organizace: {{ organization.name }}</h2>
+            </div>
+            <div class="text-center mb-4">
+                <a class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700" href="{% url 'create_event' %}">Přidat
+                    událost</a>
+            </div>
+        {% endif %}
 
-table {
-    width: 100%; /* Nastaví šířku tabulky na 100% */
-    border-collapse: collapse; /* Odstraní mezery mezi buňkami */
-}
-
-th, td {
-    padding: 0.75rem; /* Přidá vycpání pro buňky */
-    text-align: left; /* Zarovná text na levé straně */
-    border: 1px solid #e2e8f0; /* Přidá okraj pro buňky */
-}
-
-thead {
-    background-color: #edf2f7; /* Světle šedá barva pro hlavičku tabulky */
-}
-
-tr:hover {
-    background-color: #f7fafc; /* Světle modrá barva při najetí myší na řádek */
-}
-
-.btn-group a {
-    display: inline-block; /* Zajistí, že tlačítka se zobrazí vedle sebe */
-    padding: 0.5rem 1rem; /* Přidá vycpání pro tlačítka */
-    border-radius: 0.375rem; /* Zaoblení rohů */
-    text-decoration: none; /* Odstraní podtržení */
-}
-
-.btn-group a:hover {
-    opacity: 0.9; /* Ztmaví tlačítka při najetí myší */
-}
-
-    </style>
-    
-<div class="container mx-auto mt-5">
-    {% if in_organization %}
-        <div class="text-center mb-5">
-            <h2 class="text-2xl font-bold">Události organizace: {{ organization.name }}</h2>
-        </div>
-        <div class="text-center mb-4">
-            <a class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700" href="{% url 'create_event' %}">Přidat událost</a>
-        </div>
-        <div class="overflow-x-auto">
-            <table class="min-w-full border-collapse">
-                <thead>
-                <tr class="bg-gray-200">
-                    <th class="py-2 px-4 border">ID eventu</th>
-                    <th class="py-2 px-4 border">Jméno eventu</th>
-                    <th class="py-2 px-4 border">Popis eventu</th>
-                    <th class="py-2 px-4 border">Datum eventu</th>
-                    <th class="py-2 px-4 border">Akce</th>
+        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <thead class="bg-gray-100 text-xs text-gray-700 uppercase">
+                <tr>
+                    <th scope="col" class="px-6 py-3">Název události</th>
+                    <th scope="col" class="px-6 py-3">Datum</th>
+                    <th scope="col" class="px-6 py-3">Čas</th>
+                    <th scope="col" class="px-6 py-3">Místo</th>
+                    <th scope="col" class="px-6 py-3" colspan="2">Popisek</th>
+                    <th scope="col" class="px-6 py-3">Akce</th>
                 </tr>
                 </thead>
                 <tbody>
-                {% if events %}
-                    {% for event in events %}
-                        <tr class="border-b hover:bg-gray-100">
-                            <td class="py-2 px-4 border">{{ event.id }}</td>
-                            <td class="py-2 px-4 border">{{ event.name }}</td>
-                            <td class="py-2 px-4 border">{{ event.description }}</td>
-                            <td class="py-2 px-4 border">{{ event.day }}</td>
-                            <td class="py-2 px-4 border text-center">
-                                <div class="flex justify-center space-x-2">
-                                    <a class="bg-blue-500 text-white rounded py-1 px-2 hover:bg-blue-600" href="{% url 'event_detail' event.id %}">Detail</a>
-                                    <a class="bg-yellow-500 text-white rounded py-1 px-2 hover:bg-yellow-600" href="{% url 'edit_event' event.id %}">Upravit</a>
-                                    <a class="bg-red-500 text-white rounded py-1 px-2 hover:bg-red-600" href="{% url 'delete_event' event.id %}">Smazat</a>
-                                </div>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                {% else %}
-                    <tr>
-                        <td colspan="7" class="text-center py-2">Žádné události nejsou k dispozici</td>
+                {% for item in events_with_addresses %}
+                    <tr class="bg-white border-b hover:bg-gray-50">
+                        <th scope="row"
+                            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">{{ item.event.name }}</th>
+                        <td class="px-6 py-4">{{ item.event.day }}</td>
+                        <td class="px-6 py-4">{{ item.event.time }}</td>
+                        <td class="px-6 py-4">{{ item.address.street }}, {{ item.address.number }},
+                            {{ item.address.city }} {{ item.address.postal_code }}, {{ item.address.country }}</td>
+                        <td class="px-6 py-4" colspan="2">{{ item.event.description }}</td>
+                        <td class="px-6 py-4">
+                            <a href="{% url 'event_detail' item.event.id %}" class="text-blue-600 hover:underline mx-2">
+                                <i class="fa-solid fa-eye fa-2x"></i>
+                            </a>
+                            <a href="{% url 'edit_event' item.event.id %}" class="text-yellow-600 hover:underline mx-2">
+                                <i class="fa-solid fa-pen-to-square fa-2x"></i>
+                            </a>
+                            <a href="{% url 'delete_event' item.event.id %}" class="text-red-600 hover:underline mx-2">
+                                <i class="fa-solid fa-xmark fa-2x"></i>
+                            </a>
+                        </td>
+
                     </tr>
-                {% endif %}
+                {% empty %}
+                    <tr>
+                        <td colspan="5" class="px-6 py-4 text-center text-gray-500">Žádné události</td>
+                    </tr>
+                {% endfor %}
                 </tbody>
             </table>
         </div>
-    {% else %}
-        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-            <strong class="font-bold">Chyba!</strong>
-            <span class="block sm:inline">Nejdříve musíte být přiděleni do organizace, abyste mohli přidávat události.</span>
-        </div>
-    {% endif %}
-</div>
-
-
-
-
-
+    </div>
 {% endblock %}

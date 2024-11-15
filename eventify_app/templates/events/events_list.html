@@ -1,4 +1,7 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Seznam eventů{% endblock %}
 
 {% block content %}
 <div class="container mx-auto p-6">
@@ -6,43 +9,59 @@
 
     <!-- Filtrovací formulář -->
     <form method="get" class="bg-white p-6 rounded-lg shadow-md mb-6">
-        <div class="grid grid-cols-2 gap-4">
-            <div>
-                <label for="name" class="block text-gray-700">Název</label>
-                <input type="text" name="name" id="name" value="{{ name_filter|default_if_none:'' }}" placeholder="Hledat podle názvu" class="w-full p-2 border border-gray-300 rounded-lg">
-            </div>
-            <div>
-                <label for="date" class="block text-gray-700">Datum</label>
-                <input type="date" name="date" id="date" value="{{ date_filter|default_if_none:'' }}" class="w-full p-2 border border-gray-300 rounded-lg">
-            </div>
-            <div>
-                <label for="time" class="block text-gray-700">Čas</label>
-                <input type="time" name="time" id="time" value="{{ time_filter|default_if_none:'' }}" class="w-full p-2 border border-gray-300 rounded-lg">
-            </div>
-            <div>
-                <label for="location" class="block text-gray-700">Lokace</label>
-                <input type="text" name="location" id="location" value="{{ location_filter|default_if_none:'' }}" placeholder="Např. Ostrava" class="w-full p-2 border border-gray-300 rounded-lg">
-            </div>
+    <div class="flex items-end space-x-4">
+        <div class="flex-1 flex flex-col">
+            <label for="name" class="block text-gray-700">Název</label>
+            <input type="text" name="name" id="name" value="{{ name_filter|default_if_none:'' }}" placeholder="Hledat podle názvu" class="w-full p-2 border border-gray-300 rounded-lg">
         </div>
-        <button type="submit" class="mt-4 w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600">Filtrovat</button>
-    </form>
+        <div class="flex-1 flex flex-col">
+            <label for="date" class="block text-gray-700">Datum</label>
+            <input type="date" name="date" id="date" value="{{ date_filter|default_if_none:'' }}" class="w-full p-2 border border-gray-300 rounded-lg">
+        </div>
+        <div class="flex-1 flex flex-col">
+            <label for="location" class="block text-gray-700">Lokace</label>
+            <input type="text" name="location" id="location" value="{{ location_filter|default_if_none:'' }}" placeholder="Např. Ostrava" class="w-full p-2 border border-gray-300 rounded-lg">
+        </div>
+        <div class="flex-1 flex flex-col">
+            <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600">Filtrovat</button>
+        </div>
+        <div class="flex justify-end">
+            <a href="{% url 'events_list' %}" class="w-10 h-10 flex items-center justify-center bg-gray-300 text-gray-700 rounded-full hover:bg-gray-400">
+                <i class="fas fa-undo-alt"></i>
+            </a>
+        </div>
+    </div>
+</form>
+
 
     <!-- Výpis eventů -->
-    <div class="bg-white rounded-lg shadow-md p-4">
+    <div class="grid grid-cols-1 gap-6">
         {% if events %}
-            <ul>
-                {% for event in events %}
-                    <li class="p-4 border-b border-gray-200 last:border-b-0">
-                        <h2 class="text-xl font-semibold text-gray-800">{{ event.name }}</h2>
-                        <p class="text-gray-600">{{ event.date }} | {{ event.time }}</p>
-                        {% if event.eventaddress_set.exists %}
-                            <p class="text-gray-600">
-                                {{ event.eventaddress_set.first.city }}, {{ event.eventaddress_set.first.street }} {{ event.eventaddress_set.first.number }}
-                            </p>
+            {% for event in events %}
+                <div class="flex items-stretch bg-white rounded-lg shadow-md overflow-hidden w-full">
+                    <div class="w-1/4 h-full">
+                        {% if event.image %}
+                            <img src="{{ event.image.url }}" class="w-full h-full object-cover object-center rounded-l-lg" alt="{{ event.name }}">
+                        {% else %}
+                            <img src="{% static 'img/static.jpg' %}" class="w-full h-full object-cover object-center rounded-l-lg" alt="{{ event.name }}">
                         {% endif %}
-                    </li>
-                {% endfor %}
-            </ul>
+                    </div>
+                    <div class="w-3/4 p-6 flex flex-col justify-between">
+                        <div>
+                            <h5 class="font-bold text-lg mb-2">{{ event.name }}</h5>
+                            <p class="text-gray-700 text-sm mb-4 line-clamp-3">{{ event.description }}</p>
+                            {% if event.eventaddress_set.exists %}
+                                <p class="text-gray-600 text-sm">Adresa: {{ event.eventaddress_set.first }}</p>
+                            {% else %}
+                                <p class="text-gray-600 text-sm">Adresa není k dispozici.</p>
+                            {% endif %}
+                        </div>
+                        <div class="mt-4">
+                            <a href="{% url 'event_detail' event.id %}" class="inline-block bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600">Zobrazit</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
         {% else %}
             <p class="text-center text-gray-500">Žádné eventy nenalezeny.</p>
         {% endif %}

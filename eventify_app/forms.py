@@ -2,7 +2,7 @@ from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit, Button
 from django import forms
-from .models import Event, Organization, DeliveryAddress, PaymentMethod
+from .models import Event, Organization, DeliveryAddress, PaymentMethod, EventAddress
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import get_user_model, login
 from django.utils.dateformat import format
@@ -20,17 +20,19 @@ from allauth.account.forms import SignupForm
 class EventForm(forms.ModelForm):
     class Meta:
         model = Event
-        fields = ['name', 'description', 'day','image']
+        fields = ['name', 'description', 'day', 'time','image']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Zadej název eventu'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Zadej popisek eventu'}),
             'day': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'time': forms.TimeInput(attrs={'type': 'time', 'class': 'form-control'}),
             'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
         }
         labels = {
             'name': 'Název Eventu',
             'description': 'Popisek Eventu',
             'day': 'Datum konání Eventu',
+            'time': 'Čas konání Eventu',
             'image': 'Foto Eventu',
         }
 
@@ -48,9 +50,25 @@ class EventForm(forms.ModelForm):
                 'name',
                 'description',
                 'day',
+                'time',
                 'image',
             ),
         )
+
+class EventAddressForm(forms.ModelForm):
+    class Meta:
+        model = EventAddress
+        fields = ['street', 'number', 'city', 'postal_code', 'country']
+        widgets = {
+            'street': forms.Textarea(attrs={'class': 'form-textarea', 'rows': 3}),
+            'number': forms.NumberInput(attrs={'class': 'form-input'}),
+            'city': forms.TextInput(attrs={'class': 'form-input'}),
+            'postal_code': forms.TextInput(attrs={'class': 'form-input'}),
+            'country': forms.TextInput(attrs={'class': 'form-input'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
 class TicketTypeForm(forms.ModelForm):
     class Meta:
@@ -188,3 +206,19 @@ class UserProfileEditForm(forms.ModelForm):
         widgets = {
             'date_birth': forms.DateInput(attrs={'type': 'date'}),
         }
+
+class SupportForm(forms.Form):
+    name = forms.CharField(max_length=100, required=True)
+    email = forms.EmailField(required=True)
+    message = forms.CharField(widget=forms.Textarea, required=True)
+    honeypot = forms.CharField(required=False, widget=forms.HiddenInput)
+
+    def clean_honeypot(self):
+        if self.cleaned_data.get('honeypot'):
+            raise ValidationError("Formulář je považován za spam.")
+        return self.cleaned_data
+
+class ContactForm(forms.Form):
+    name = forms.CharField(max_length=100)
+    email = forms.EmailField()
+    message = forms.CharField(widget=forms.Textarea)
