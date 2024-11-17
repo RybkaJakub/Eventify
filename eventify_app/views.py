@@ -4,7 +4,7 @@ from lib2to3.fixes.fix_input import context
 from allauth.account.views import SignupView
 from django.conf import settings
 from django.contrib.auth import logout
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMixin
@@ -17,7 +17,7 @@ from .models import Event, TicketType, TicketPurchase, Address, CustomUser, Cart
     EventAddress
 from allauth.socialaccount.models import SocialAccount
 from .forms import UserProfileEditForm, DeliveryAddressForm, CustomUserForm, PaymentMethodForm, ContactForm, \
-    SupportForm, EventAddressForm
+    SupportForm, EventAddressForm, TicketTypeForm
 from django.utils import timezone
 from django.views.generic import ListView, DetailView, UpdateView, DeleteView, FormView
 from django.urls import resolve
@@ -134,7 +134,7 @@ class EventManagerView(PermissionRequiredMixin, ListView):
 
 from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.forms import inlineformset_factory
+from django.forms import inlineformset_factory, modelformset_factory
 from django.views.generic import CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Event, TicketType
@@ -156,12 +156,25 @@ class EventInline():
         form.instance.created_by = self.request.user
         self.object = form.save()
 
+        # Uložení adresy eventu
+        event_address_form = self.get_event_address_form()
+        if event_address_form.is_valid():
+            event_address = event_address_form.save(commit=False)
+            event_address.event = self.object
+            event_address.save()
+        else:
+            return self.render_to_response(
+                self.get_context_data(form=form, event_address_form=event_address_form)
+            )
+
+        # Uložení ticket typů
         for name, formset in named_formsets.items():
-            formset_save_func = getattr(self, 'formset_{0}_valid'.format(name), None)
+            formset_save_func = getattr(self, f'formset_{name}_valid', None)
             if formset_save_func is not None:
                 formset_save_func(formset)
             else:
                 formset.save()
+
         return redirect('event_manager')
 
     def formset_ticket_types_valid(self, formset):
@@ -171,89 +184,154 @@ class EventInline():
             ticket_type.left = ticket_type.quantity
             ticket_type.save()
 
+    def get_event_address_form(self):
+        if self.request.method == 'POST':
+            return EventAddressForm(self.request.POST)
+        return EventAddressForm()
 
 class EventCreateView(EventInline, CreateView, LoginRequiredMixin, PermissionRequiredMixin):
-    model = Event  # Pokud používáte model Event
+    permission_required = 'events.add_event'
 
     def get_context_data(self, **kwargs):
-        ctx = super(EventCreateView, self).get_context_data(**kwargs)
+        ctx = super().get_context_data(**kwargs)
 
         # Přidání formuláře pro adresu eventu
-        ctx['event_address_form'] = EventAddressForm()
+        if 'event_address_form' not in ctx:
+            ctx['event_address_form'] = self.get_event_address_form()
 
         # Přidání formsetů pro ticket types
         ctx['named_formsets'] = self.get_named_formsets()
 
         # Získání profilového obrázku
-        has_picture = False
-        profile_picture = UserProfileView.get_user_profile_picture(self.request,
-                                                                   SocialAccount.objects.filter(user=self.request.user))
-        if profile_picture:
-            has_picture = True
+        profile_picture = UserProfileView.get_user_profile_picture(
+            self.request, SocialAccount.objects.filter(user=self.request.user)
+        )
         ctx['profile_picture'] = profile_picture
-        ctx['has_picture'] = has_picture
+        ctx['has_picture'] = bool(profile_picture)
 
         return ctx
 
     def get_named_formsets(self):
         if self.request.method == 'GET':
-            return {
-                'ticket_types': TicketTypeFormSet(prefix='ticket_types')
-            }
-        else:
-            return {
-                'ticket_types': TicketTypeFormSet(self.request.POST or None, self.request.FILES or None
-                                                  , prefix='ticket_types')
-            }
+            return {'ticket_types': TicketTypeFormSet(prefix='ticket_types')}
+        return {'ticket_types': TicketTypeFormSet(self.request.POST, prefix='ticket_types')}
 
     def post(self, request, *args, **kwargs):
         form = self.get_form()
-        event_address_form = EventAddressForm(request.POST)
+        event_address_form = self.get_event_address_form()
+        named_formsets = self.get_named_formsets()
 
-        if form.is_valid() and event_address_form.is_valid():
-            # Uložení Eventu
-            event = form.save()
-
-            # Přiřazení adresy k eventu
-            event_address = event_address_form.save(commit=False)
-            event_address.event = event
-            event_address.save()
-
-            return redirect('event_detail', event_id=event.id)  # Přesměrování na detail události
+        if form.is_valid() and event_address_form.is_valid() and all(
+            fs.is_valid() for fs in named_formsets.values()
+        ):
+            return self.form_valid(form)
         else:
             return self.form_invalid(form)
 
-class EventUpdateView(EventInline, LoginRequiredMixin, UpdateView):
+
+class EventUpdateView(LoginRequiredMixin, UpdateView):
+    template_name = 'events/event_manager_edit.html'
+    model = Event
+    form_class = EventForm
+
     def get_context_data(self, **kwargs):
-        ctx = super(EventUpdateView, self).get_context_data(**kwargs)
-        ctx['named_formsets'] = self.get_named_formsets()
-        has_picture = False
-        profile_picture = UserProfileView.get_user_profile_picture(self.request,
-                                                                   SocialAccount.objects.filter(user=self.request.user))
-        if profile_picture:
-            has_picture = True
-        ctx['has_picture'] = has_picture
-        ctx['profile_picture'] = profile_picture
-        return ctx
+        context = super().get_context_data(**kwargs)
 
-    def get_named_formsets(self):
-        return {
-            'ticket_types': TicketTypeFormSet(self.request.POST or None, self.request.FILES or None,
-                                              prefix='ticket_types', instance=self.object)
-        }
+        # Načteme formulář pro EventAddress
+        event_address_form = self.get_event_address_form()
+        context['event_address_form'] = event_address_form
 
-def delete_ticket_type(request, pk):
-    try:
-        ticket_type = TicketType.objects.get(id=pk)
-    except TicketType.DoesNotExist:
-        messages.success(
-            request, 'Objekt neexistuje.'
-        )
-    ticket_type.delete()
-    messages.success(
-        request, 'Vstupenka byla úspěšně smazána.'
-    )
-    return redirect('edit_event', pk=ticket_type.event.id)
+        return context
+
+    def get_event_address_form(self):
+        # Získáme EventAddress spojený s tímto Event objektem
+        event_address = EventAddress.objects.filter(event=self.object).first()
+
+        # Pokud neexistuje žádná adres, vytvoříme prázdnou instanci
+        if not event_address:
+            event_address = EventAddress(event=self.object)
+
+        # Pokud je POST požadavek, předáme data formuláře, jinak použijeme stávající instanci
+        if self.request.method == 'POST':
+            return EventAddressForm(self.request.POST, instance=event_address)
+        return EventAddressForm(instance=event_address)
+
+    def post(self, request, *args, **kwargs):
+        # Načteme objekt Event
+        self.object = self.get_object()  # Získání objektu Event podle primárního klíče
+
+        # Načteme formuláře
+        form = self.get_form()
+        event_address_form = self.get_event_address_form()
+
+        # Pokud všechny formuláře a formsety jsou validní, pokračujeme
+        if form.is_valid() and event_address_form.is_valid():
+            # Uložení Eventu
+            self.object = form.save(commit=False)  # Uložení bez commit, aby se neuložil dřív
+            self.object.save()
+
+            # Uložení EventAddress
+            event_address = event_address_form.save(commit=False)
+            event_address.event = self.object  # Přiřazení Eventu k adrese
+            event_address.save()
+
+            # Přesměrování na seznam eventů po úspěšném uložení
+            return redirect('events_list')
+
+        # Pokud nějaký formulář není validní, vykreslíme stránku s chybami
+        context = self.get_context_data(form=form, event_address_form=event_address_form)
+        return self.render_to_response(context)
+
+class EditTicketView(View):
+    def get(self, request, pk):
+        event = get_object_or_404(Event, pk=pk)
+
+        # Vytvoření formsetu pro TicketType model
+        TicketTypeFormSet = modelformset_factory(TicketType, form=TicketTypeForm, extra=0)
+
+        # Získání všech ticketů pro daný event
+        formset = TicketTypeFormSet(queryset=TicketType.objects.filter(event=event))
+
+        return render(request, 'events/event_manager_edit_ticket.html', {'formset': formset, 'event': event})
+
+    def post(self, request, pk):
+        event = get_object_or_404(Event, pk=pk)
+
+        # Vytvoření formsetu pro TicketType model
+        TicketTypeFormSet = modelformset_factory(TicketType, form=TicketTypeForm, extra=0)
+        formset = TicketTypeFormSet(request.POST)
+
+        if formset.is_valid():
+            # Uložit nebo upravit vstupenky
+            formset.save()  # Tento krok se postará o uložení formulářů.
+            messages.success(request, "Vstupenky byly úspěšně uloženy.")
+            return redirect('edit_ticket', pk=event.pk)
+        else:
+            messages.error(request, "Došlo k chybě při ukládání vstupenek.")
+            return render(request, 'events/event_manager_edit_ticket.html', {'formset': formset, 'event': event})
+
+
+class AddTicketView(View):
+    def post(self, request, event_pk):
+        event = get_object_or_404(Event, pk=event_pk)
+
+        # Vytvoření nové vstupenky z formuláře
+        form = TicketTypeForm(request.POST)
+        if form.is_valid():
+            new_ticket = form.save(commit=False)
+            new_ticket.event = event  # Připojení eventu k vstupence
+            new_ticket.save()
+            messages.success(request, "Nová vstupenka byla přidána.")
+            return redirect('edit_ticket', pk=event.pk)
+        else:
+            messages.error(request, "Došlo k chybě při přidávání vstupenky.")
+            return redirect('edit_ticket', pk=event.pk)
+
+class DeleteTicketView(View):
+    def post(self, request, ticket_id):
+        ticket = get_object_or_404(TicketType, pk=ticket_id)
+        ticket.delete()
+        return JsonResponse({'success': True})
 
 from django.shortcuts import get_object_or_404
 

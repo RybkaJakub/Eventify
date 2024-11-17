@@ -1,21 +1,101 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+{% load widget_tweaks %}
 
-{% block title %}Upravit event{% endblock %}
+{% block title %}Upravení eventu {{ event.name }}{% endblock %}
 
 {% block content %}
-    <div class="container mx-auto my-6">
-        <h2 class="text-2xl font-bold mb-4">Upravit event</h2>
-        {% load crispy_forms_tags %}
-        {% crispy form %}
-        
-        {% if messages %}
-            <ul class="mt-4">
-                {% for message in messages %}
-                    <li class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded relative mb-2">
-                        {{ message }}
-                    </li>
+    <div class="container mx-auto my-8">
+        <form enctype="multipart/form-data" class="bg-white shadow-md rounded-lg p-8" method="POST" id="event_form">
+            {% csrf_token %}
+            <h1 class="text-3xl font-bold text-center mb-8">Upravit event {{ event.name }}</h1>
+
+            <!-- Hlavní formulář pro Event -->
+            <div class="mb-8">
+                {% for field in form %}
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">{{ field.label }}</label>
+                        {% if field.field.required %}
+                            <span class="text-red-500 font-semibold">*</span>
+                        {% endif %}
+                        {% if field.name == 'day' %}
+                            <input type="date" name="{{ field.name }}" value="{{ form.instance.day|date:'Y-m-d' }}"
+                                   class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300">
+                        {% elif field.name == 'image' %}
+                            {% if form.instance.image %}
+                                <!-- Pokud již obrázek existuje, zobrazíme náhled -->
+                                <div class="mb-4">
+                                    <img src="{{ form.instance.image.url }}" alt="Obrázek"
+                                         class="w-full h-auto max-w-md mx-auto mb-4">
+                                </div>
+                            {% endif %}
+                            <!-- Formulář pro nahrání nového obrázku -->
+                            <input type="file" name="{{ field.name }}"
+                                   class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300">
+                        {% else %}
+                            {{ field|add_class:"w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300" }}
+                        {% endif %}
+                        {% if field.help_text %}
+                            <small class="text-gray-500">{{ field.help_text }}</small>
+                        {% endif %}
+                        {% for error in field.errors %}
+                            <p class="text-red-500 text-sm mt-1">{{ error }}</p>
+                        {% endfor %}
+                    </div>
                 {% endfor %}
-            </ul>
-        {% endif %}
+            </div>
+
+            <!-- Formulář pro adresu eventu -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Adresa eventu</h2>
+                <div class="mb-4">
+                    {% for field in event_address_form %}
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">{{ field.label }}</label>
+                            {% if field.field.required %}
+                                <span class="text-red-500 font-semibold">*</span>
+                            {% endif %}
+                            {{ field|add_class:"w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300" }}
+                            {% if field.help_text %}
+                                <small class="text-gray-500">{{ field.help_text }}</small>
+                            {% endif %}
+                            {% for error in field.errors %}
+                                <p class="text-red-500 text-sm mt-1">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="mt-6">
+                <button type="submit"
+                        class="w-full py-3 px-6 bg-blue-600 text-white rounded-lg hover:bg-blue-500 focus:outline-none focus:ring focus:ring-blue-300">
+                    Uložit
+                </button>
+            </div>
+        </form>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#add-ticket_types-button').click(function (ev) {
+                ev.preventDefault();
+                var count = $('#item-ticket_types').children().length;
+                var tmplMarkup = $('#ticket_types-template').html();
+                var compiledTmpl = tmplMarkup.replace(/__prefix__/g, count);
+                $('#item-ticket_types').append(compiledTmpl);
+                $('#id_ticket_types-TOTAL_FORMS').attr('value', count + 1);
+            });
+
+            // Odstranění řádku
+            $(document).on('click', '.remove-ticket_type', function () {
+                $(this).closest('tr').remove();
+                var totalForms = $('#id_ticket_types-TOTAL_FORMS').val();
+                $('#id_ticket_types-TOTAL_FORMS').val(totalForms - 1);
+            });
+        });
+    </script>
 {% endblock %}

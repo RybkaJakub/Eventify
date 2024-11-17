@@ -19,25 +19,25 @@
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="bg-gray-100 text-xs text-gray-700 uppercase">
                 <tr>
-                    <th scope="col" class="px-6 py-3">Název události</th>
+                    <th scope="col" class="px-6 py-3" colspan="2">Název události</th>
                     <th scope="col" class="px-6 py-3">Datum</th>
                     <th scope="col" class="px-6 py-3">Čas</th>
                     <th scope="col" class="px-6 py-3">Místo</th>
                     <th scope="col" class="px-6 py-3" colspan="2">Popisek</th>
-                    <th scope="col" class="px-6 py-3">Akce</th>
+                    <th scope="col" class="px-6 py-3" colspan="2">Akce</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for item in events_with_addresses %}
                     <tr class="bg-white border-b hover:bg-gray-50">
                         <th scope="row"
-                            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">{{ item.event.name }}</th>
+                            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap" colspan="2">{{ item.event.name }}</th>
                         <td class="px-6 py-4">{{ item.event.day }}</td>
                         <td class="px-6 py-4">{{ item.event.time }}</td>
                         <td class="px-6 py-4">{{ item.address.street }}, {{ item.address.number }},
                             {{ item.address.city }} {{ item.address.postal_code }}, {{ item.address.country }}</td>
                         <td class="px-6 py-4" colspan="2">{{ item.event.description }}</td>
-                        <td class="px-6 py-4">
+                        <td class="px-6 py-4" colspan="2">
                             <a href="{% url 'event_detail' item.event.id %}" class="text-blue-600 hover:underline mx-2">
                                 <i class="fa-solid fa-eye fa-2x"></i>
                             </a>
@@ -46,6 +46,9 @@
                             </a>
                             <a href="{% url 'delete_event' item.event.id %}" class="text-red-600 hover:underline mx-2">
                                 <i class="fa-solid fa-xmark fa-2x"></i>
+                            </a>
+                            <a href="{% url 'edit_ticket' item.event.id %}" class="text-red-600 hover:underline mx-2">
+                                <i class="fa-solid fa-ticket fa-2x"></i>
                             </a>
                         </td>
 

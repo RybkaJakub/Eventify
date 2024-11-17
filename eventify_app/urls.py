@@ -5,10 +5,10 @@ from django.urls import path, include
 from django.contrib import admin
 from django.contrib.auth.views import LogoutView
 from .views import index, purchase_ticket, EventManagerView, EventCreateView, EventDeleteView, EventDetailView, \
-    EventUpdateView, MyEventsListView, delete_ticket_type, \
-    UserProfileView, MyProfileView, UserProfileEditView, CartView, RemoveItemView, ClearCartView, CartInformationsView, \
+    EventUpdateView, UserProfileView, MyProfileView, UserProfileEditView, CartView, RemoveItemView, ClearCartView, \
+    CartInformationsView, \
     CartPaymentView, CartConfirmationView, events_list, TermsOfUseView, SupportView, PrivacyPolicy, Faq, ContactView, \
-    AboutUs
+    AboutUs, EditTicketView, DeleteTicketView, AddTicketView
 
 urlpatterns = [
     path('', index, name='index'),
@@ -20,7 +20,9 @@ urlpatterns = [
     path('eventmanager/', EventManagerView.as_view(), name='event_manager'),
     path('eventmanager/create/', EventCreateView.as_view(), name='create_event'),
     path('eventmanager/edit/<int:pk>/', EventUpdateView.as_view(), name='edit_event'),
-    path('eventmanager/delete-ticke_type/<int:pk>/', delete_ticket_type, name='delete_ticket_type'),
+    path('eventmanager/editticket/<int:pk>/', EditTicketView.as_view(), name='edit_ticket'),
+    path('eventmanager/delete_ticket/<int:ticket_id>/', DeleteTicketView.as_view(), name='delete_ticket'),
+    path('eventmanager/add_ticket/<int:event_pk>/', AddTicketView.as_view(), name='add_ticket'),
     path('eventmanager/delete/<int:pk>/', EventDeleteView.as_view(), name='delete_event'),
     path('events_list/', events_list, name='events_list'),
     path('cart/', CartView.as_view(), name='cart'),
