@@ -1,4 +1,5 @@
-from datetime import timedelta
+from calendar import monthrange
+from datetime import timedelta, datetime
 from lib2to3.fixes.fix_input import context
 
 from allauth.account.views import SignupView
@@ -195,6 +196,8 @@ class EventCreateView(EventInline, CreateView, LoginRequiredMixin, PermissionReq
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
 
+        ctx['categories'] = Event.CATEGORY_CHOICES
+
         # Přidání formuláře pro adresu eventu
         if 'event_address_form' not in ctx:
             ctx['event_address_form'] = self.get_event_address_form()
@@ -282,56 +285,65 @@ class EventUpdateView(LoginRequiredMixin, UpdateView):
         context = self.get_context_data(form=form, event_address_form=event_address_form)
         return self.render_to_response(context)
 
+
 class EditTicketView(View):
+
     def get(self, request, pk):
         event = get_object_or_404(Event, pk=pk)
 
-        # Vytvoření formsetu pro TicketType model
+        # Formset pro existující TicketType objekty
         TicketTypeFormSet = modelformset_factory(TicketType, form=TicketTypeForm, extra=0)
-
-        # Získání všech ticketů pro daný event
-        formset = TicketTypeFormSet(queryset=TicketType.objects.filter(event=event))
+        formset = TicketTypeFormSet(queryset=TicketType.objects.filter(event=event), prefix='ticket_types')
 
         return render(request, 'events/event_manager_edit_ticket.html', {'formset': formset, 'event': event})
 
     def post(self, request, pk):
         event = get_object_or_404(Event, pk=pk)
 
-        # Vytvoření formsetu pro TicketType model
+        # Formset pro POST data
         TicketTypeFormSet = modelformset_factory(TicketType, form=TicketTypeForm, extra=0)
-        formset = TicketTypeFormSet(request.POST)
+        formset = TicketTypeFormSet(request.POST, queryset=TicketType.objects.filter(event=event), prefix='ticket_types')
 
         if formset.is_valid():
-            # Uložit nebo upravit vstupenky
-            formset.save()  # Tento krok se postará o uložení formulářů.
+            formset.save()  # Uložení všech formulářů
             messages.success(request, "Vstupenky byly úspěšně uloženy.")
             return redirect('edit_ticket', pk=event.pk)
         else:
+            # Debugging: vypíšeme chyby formulářů
+            for form in formset:
+                print(form.errors)
             messages.error(request, "Došlo k chybě při ukládání vstupenek.")
             return render(request, 'events/event_manager_edit_ticket.html', {'formset': formset, 'event': event})
 
 
 class AddTicketView(View):
     def post(self, request, event_pk):
-        event = get_object_or_404(Event, pk=event_pk)
+        # Načtení eventu nebo vyvolání 404 chyby, pokud neexistuje
+        event = Event.objects.filter(pk=event_pk).first()
 
-        # Vytvoření nové vstupenky z formuláře
-        form = TicketTypeForm(request.POST)
-        if form.is_valid():
-            new_ticket = form.save(commit=False)
-            new_ticket.event = event  # Připojení eventu k vstupence
-            new_ticket.save()
-            messages.success(request, "Nová vstupenka byla přidána.")
-            return redirect('edit_ticket', pk=event.pk)
-        else:
-            messages.error(request, "Došlo k chybě při přidávání vstupenky.")
-            return redirect('edit_ticket', pk=event.pk)
+        # Vytvoření nového typu vstupenky
+        TicketType.objects.create(
+            event=event,
+            name='Nový typ vstupenky',
+            price=0,
+            quantity=0,
+            left=0
+        )
+
+        # Přesměrování zpět na úpravu vstupenek pro daný event
+        return redirect('edit_ticket', pk=event.pk)
+
 
 class DeleteTicketView(View):
     def post(self, request, ticket_id):
-        ticket = get_object_or_404(TicketType, pk=ticket_id)
-        ticket.delete()
-        return JsonResponse({'success': True})
+        try:
+            ticket = get_object_or_404(TicketType, pk=ticket_id)
+            ticket.delete()
+            messages.success(request, "Vstupenka byla úspěšně smazána.")
+            return redirect('edit_ticket', pk=ticket.event.pk)
+        except Exception as e:
+            messages.error(request, "Nepodařilo se smazat vstupenku.")
+            return redirect('edit_ticket', pk=ticket.event.pk)
 
 from django.shortcuts import get_object_or_404
 
@@ -362,7 +374,7 @@ class EventDeleteView(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTes
 
 class EventDetailView(DetailView):
     model = Event
-    template_name = 'event_detail.html'
+    template_name = 'events/event_detail.html'
     context_object_name = 'event'
 
     def get_context_data(self, **kwargs):
@@ -762,42 +774,49 @@ class ClearCartView(LoginRequiredMixin, View):
         Cart.objects.filter(user=request.user).delete()
         return redirect('cart')  # Přesměrování zpět na stránku s košíkem
 
-def events_list(request):
-    events = Event.objects.all()
-    name_filter = request.GET.get('name')
-    date_filter = request.GET.get('date')
-    location_filter = request.GET.get('location')
-    filtered_events = events
+class EventsListView(ListView):
+    model = Event
+    template_name = 'events/events_list.html'
+    context_object_name = 'events'
 
-    # Filtrování dle názvu
-    if name_filter:
-        filtered_events = filtered_events.filter(name__icontains=name_filter)
+    def get_queryset(self):
+        events = super().get_queryset()
+        name_filter = self.request.GET.get('name')
+        date_filter = self.request.GET.get('date')
+        location_filter = self.request.GET.get('location')
+        filtered_events = events
 
-    # Filtrování dle data
-    if date_filter:
-        filtered_events = filtered_events.filter(date=date_filter)
+        # Filtrování dle názvu
+        if name_filter:
+            filtered_events = filtered_events.filter(name__icontains=name_filter)
 
-    # Filtrování dle města (EventAddress)
-    if location_filter:
-        geolocator = Nominatim(user_agent="eventify")
-        location = geolocator.geocode(location_filter)
-        if location:
-            user_location = (location.latitude, location.longitude)
-            event_addresses = EventAddress.objects.all()
-            nearby_events = []
-            for address in event_addresses:
-                if address.latitude and address.longitude:
-                    event_location = (address.latitude, address.longitude)
-                    if geodesic(user_location, event_location).km <= 20:
-                        nearby_events.append(address.event.id)
-            filtered_events = filtered_events.filter(id__in=nearby_events)
+        # Filtrování dle data
+        if date_filter:
+            filtered_events = filtered_events.filter(date=date_filter)
 
-    return render(request, 'events/events_list.html', {
-        'events': filtered_events,
-        'name_filter': name_filter,
-        'date_filter': date_filter,
-        'location_filter': location_filter,
-    })
+        # Filtrování dle města (EventAddress)
+        if location_filter:
+            geolocator = Nominatim(user_agent="eventify")
+            location = geolocator.geocode(location_filter)
+            if location:
+                user_location = (location.latitude, location.longitude)
+                event_addresses = EventAddress.objects.all()
+                nearby_events = []
+                for address in event_addresses:
+                    if address.latitude and address.longitude:
+                        event_location = (address.latitude, address.longitude)
+                        if geodesic(user_location, event_location).km <= 20:
+                            nearby_events.append(address.event.id)
+                filtered_events = filtered_events.filter(id__in=nearby_events)
+
+        return filtered_events
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['name_filter'] = self.request.GET.get('name', '')
+        context['date_filter'] = self.request.GET.get('date', '')
+        context['location_filter'] = self.request.GET.get('location', '')
+        return context
 
 class TermsOfUseView(TemplateView):
     template_name = 'informations/terms_of_use.html'
@@ -889,3 +908,40 @@ class SupportView(View):
         else:
             messages.error(request, "Formulář obsahuje chyby. Zkuste to prosím znovu.")  # Zobrazení chybové zprávy
             return render(request, 'informations/support.html', {'form': form})
+
+class CalendarView(View):
+    template_name = 'calendar/calendar.html'
+
+    def get(self, request):
+        year = int(request.GET.get('year', datetime.now().year))
+        month = int(request.GET.get('month', datetime.now().month))
+
+        # Získání prvního a posledního dne měsíce
+        first_day = datetime(year, month, 1)
+        last_day = first_day + timedelta(days=monthrange(year, month)[1] - 1)
+
+        # Získání událostí pro daný měsíc
+        events = Event.objects.filter(day__range=(first_day, last_day))
+
+        # Vytvoření struktury kalendáře
+        calendar_days = []
+        for day in range(1, monthrange(year, month)[1] + 1):
+            current_date = datetime(year, month, day)
+            day_events = events.filter(day=current_date.date())
+            calendar_days.append({
+                'day': day,
+                'events': day_events,
+                'date': current_date,
+            })
+
+        # Přidání dat do kontextu
+        context = {
+            'calendar_days': calendar_days,
+            'current_year': year,
+            'current_month': month,
+            'previous_month': (month - 1) if month > 1 else 12,
+            'previous_year': year if month > 1 else year - 1,
+            'next_month': (month + 1) if month < 12 else 1,
+            'next_year': year if month < 12 else year + 1,
+        }
+        return render(request, self.template_name, context)

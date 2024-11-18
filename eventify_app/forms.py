@@ -20,13 +20,14 @@ from allauth.account.forms import SignupForm
 class EventForm(forms.ModelForm):
     class Meta:
         model = Event
-        fields = ['name', 'description', 'day', 'time','image']
+        fields = ['name', 'description', 'day', 'time','image', 'category']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Zadej název eventu'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Zadej popisek eventu'}),
             'day': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'time': forms.TimeInput(attrs={'type': 'time', 'class': 'form-control'}),
             'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'category': forms.Select(attrs={'class': 'form-control'}),
         }
         labels = {
             'name': 'Název Eventu',
@@ -34,6 +35,7 @@ class EventForm(forms.ModelForm):
             'day': 'Datum konání Eventu',
             'time': 'Čas konání Eventu',
             'image': 'Foto Eventu',
+            'category': 'Kategorie Eventu',
         }
 
     def __init__(self, *args, **kwargs):
@@ -52,6 +54,7 @@ class EventForm(forms.ModelForm):
                 'day',
                 'time',
                 'image',
+                'category',
             ),
         )
 
@@ -79,6 +82,8 @@ class TicketTypeForm(forms.ModelForm):
             'price': forms.NumberInput(attrs={'class':'form-control'}),
             'quantity': forms.NumberInput(attrs={'class':'form-control'})
         }
+
+    id = forms.IntegerField(widget=forms.HiddenInput(), required=False)
 
 TicketTypeFormSet = inlineformset_factory(
     Event, TicketType, form=TicketTypeForm,

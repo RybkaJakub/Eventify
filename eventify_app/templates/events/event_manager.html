@@ -44,11 +44,11 @@
                             <a href="{% url 'edit_event' item.event.id %}" class="text-yellow-600 hover:underline mx-2">
                                 <i class="fa-solid fa-pen-to-square fa-2x"></i>
                             </a>
+                            <a href="{% url 'edit_ticket' item.event.id %}" class="text-purple-600 hover:underline mx-2">
+                                <i class="fa-solid fa-ticket fa-2x"></i>
+                            </a>
                             <a href="{% url 'delete_event' item.event.id %}" class="text-red-600 hover:underline mx-2">
                                 <i class="fa-solid fa-xmark fa-2x"></i>
-                            </a>
-                            <a href="{% url 'edit_ticket' item.event.id %}" class="text-red-600 hover:underline mx-2">
-                                <i class="fa-solid fa-ticket fa-2x"></i>
                             </a>
                         </td>
 

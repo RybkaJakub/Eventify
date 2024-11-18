@@ -99,6 +99,17 @@ class Address(models.Model):
 
 
 class Event(models.Model):
+    CATEGORY_CHOICES = [
+        ('conference', 'Konference'),
+        ('festival', 'Festival'),
+        ('workshop', 'Workshop'),
+        ('sport', 'Sportovní událost'),
+        ('social', 'Společenská akce'),
+        ('exhibition', 'Výstava'),
+        ('concert', 'Koncert'),
+        ('online', 'Online událost'),
+        ('local', 'Městská akce'),
+    ]
     name = models.CharField(max_length=200, verbose_name='Název události', help_text='Zadejte název události')
     description = models.TextField(verbose_name='Popis události', help_text='Zadejte popis události')
     day = models.DateField(verbose_name='Den konání eventu', help_text='Zadejte den konání eventu', default=timezone.now)
@@ -110,6 +121,11 @@ class Event(models.Model):
                                      error_messages={'null': 'Nejsi v organizaci nemůžeš vytvořit event!'})
     image = models.ImageField(upload_to='event_images/', blank=True, null=True,
                               verbose_name='Obrázek události', help_text='Vyberte obrázek pro událost')
+    category = models.CharField(
+        max_length=20,
+        choices=CATEGORY_CHOICES,
+        default='conference',
+    )
 
     class Meta:
         verbose_name = 'Událost'

@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ event.name }}{% endblock %}
+{% block content %}
+    <div class="container mx-auto mt-5 max-w-2xl">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                {% if event.image %}
+                    <img src="{{ event.image.url }}" class="img-fluid rounded mb-4" alt="{{ event.name }}">
+                {% else %}
+                    <img src="{% static 'img/static.jpg' %}" class="img-fluid rounded mb-4" alt="{{ event.name }}">
+                {% endif %}
+            </div>
+            <div>
+                <h2 class="text-3xl font-bold mb-3">{{ event.name }}</h2>
+                <div class="description-container relative">
+                    <p class="text-muted description transition-all duration-500 overflow-hidden max-h-12">{{ event.description }}</p>
+                    <button id="toggleDescription" class="btn btn-link p-0 text-blue-600">Zobrazit více</button>
+                </div>
+                <p><strong>Datum:</strong> {{ event.day }} {{ event.start_time }}</p>
+                <p><strong>Místo:</strong> {{ event.location }}</p>
+                <p><strong>Akci pořádá organizace:</strong> {{ event.organization.name }}</p>
+            </div>
+        </div>
+
+        {% if not isAdmin and not userOrganization and isAuth %}
+            <form method="post" action="{% url 'purchase_ticket' pk=event.id %}" class="mt-4">
+                {% csrf_token %}
+                <input type="hidden" name="event_id" value="{{ event.id }}">
+                
+                <div class="mb-4">
+                    <label for="ticket_type" class="block mb-1">Typ vstupenky:</label>
+                    <select name="ticket_type" id="ticket_type" required class="block w-full border-gray-300 rounded-md">
+                        {% for ticket in ticket_types %}
+                            <option value="{{ ticket.id }}">{{ ticket.name }} - {{ ticket.price }} Kč</option>
+                        {% empty %}
+                            <option value="">Žádné typy vstupenek nejsou k dispozici</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label for="quantity" class="block mb-1">Počet:</label>
+                    <input type="number" name="quantity" id="quantity" min="1" max="20" value="1" required class="block w-full border-gray-300 rounded-md">
+                </div>
+                <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">Koupit vstupenku</button>
+            </form>
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert mt-2 {% if message.tags == 'error' %}alert-danger{% else %}alert-{{ message.tags }}{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endif %}
+
+        {% if isAdmin and userOrganization %}
+            <div class="text-center mt-6">
+                <h2 class="text-2xl font-semibold">Registrovaní uživatelé</h2>
+            </div>
+            <div class="overflow-auto mt-4">
+                <h2 class="text-xl">{{ ticket.name }}</h2>
+                <table class="w-full table-auto mt-2 border">
+                    <thead class="bg-gray-200 text-gray-700">
+                        <tr>
+                            <th class="border px-4 py-2">ID</th>
+                            <th class="border px-4 py-2">Typ Vstupenky</th>
+                            <th class="border px-4 py-2">Jméno</th>
+                            <th class="border px-4 py-2">Email</th>
+                            <th class="border px-4 py-2">Tel. číslo</th>
+                            <th class="border px-4 py-2">Počet</th>
+                            <th class="border px-4 py-2">Celková cena</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if purchasedTickets %}
+                            {% for purchasedTicket in purchasedTickets %}
+                                <tr onclick="window.location.href='{% url 'profile' purchasedTicket.user.id %}';" class="cursor-pointer hover:bg-gray-100">
+                                    <td class="border px-4 py-2">{{ purchasedTicket.id }}</td>
+                                    <td class="border px-4 py-2">{{ purchasedTicket.ticket_type.name }}</td>
+                                    <td class="border px-4 py-2">{{ purchasedTicket.user.username }} {{ purchasedTicket.user.last_name }}</td>
+                                    <td class="border px-4 py-2">{{ purchasedTicket.user.email }}</td>
+                                    <td class="border px-4 py-2">{{ purchasedTicket.user.telephone }}</td>
+                                    <td class="border px-4 py-2">{{ purchasedTicket.quantity }}</td>
+                                    <td class="border px-4 py-2">{{ purchasedTicket.total_amount }} Kč</td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="7" class="text-center">Žádné zakoupené vstupenky nejsou k dispozici</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+
+        {% if isAuth and not isAdmin %}
+            <div class="text-center mt-6">
+                <h2 class="text-2xl font-semibold">Tvé vstupenky</h2>
+            </div>
+            <div class="overflow-auto mt-4">
+                <table class="w-full table-auto">
+                    <thead>
+                        <tr>
+                            <th class="border px-4 py-2">ID</th>
+                            <th class="border px-4 py-2">Typ vstupenky</th>
+                            <th class="border px-4 py-2">Počet</th>
+                            <th class="border px-4 py-2">Celková cena</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if userTickets %}
+                            {% for userTicket in userTickets %}
+                                <tr>
+                                    <td class="border px-4 py-2">{{ userTicket.id }}</td>
+                                    <td class="border px-4 py-2">{{ userTicket.ticket_type.name }}</td>
+                                    <td class="border px-4 py-2">{{ userTicket.quantity }}</td>
+                                    <td class="border px-4 py-2">{{ userTicket.total_amount }} Kč</td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="4" class="text-center">Žádné zakoupené vstupenky nejsou k dispozici</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const description = document.querySelector('.description');
+            const toggleButton = document.getElementById('toggleDescription');
+            const maxLines = 3;
+
+            description.style.maxHeight = `${1.5 * maxLines}em`;
+            description.style.overflow = 'hidden';
+
+            toggleButton.addEventListener('click', function () {
+                if (description.style.maxHeight !== 'none') {
+                    description.style.maxHeight = 'none';
+                    toggleButton.textContent = 'Zobrazit méně';
+                } else {
+                    description.style.maxHeight = `${1.5 * maxLines}em`;
+                    toggleButton.textContent = 'Zobrazit více';
+                }
+            });
+        });
+    </script>
+{% endblock %}

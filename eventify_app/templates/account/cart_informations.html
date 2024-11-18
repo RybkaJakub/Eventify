@@ -329,35 +329,40 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <script>
-    $(document).ready(function() {
-        $("#id_country").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "https://restcountries.com/v3.1/all",
-                    dataType: "json",
-                    success: function(data) {
-                        var filteredCountries = data.filter(function(country) {
-                            // Filtrace na základě názvu státu
-                            return country.name.common.toLowerCase().startsWith(request.term.toLowerCase());
-                        });
+<script>
+$(document).ready(function() {
+    $("input[name='country']").autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: "https://restcountries.com/v3.1/all",
+                dataType: "json",
+                success: function(data) {
+                    var filteredCountries = data.filter(function(country) {
+                        // Filtrace podle českého názvu, pokud je dostupný, nebo podle anglického názvu
+                        var nameInCzech = country.translations && country.translations.ces ? country.translations.ces.common : null;
+                        var nameInEnglish = country.name.common;
 
-                        var countries = filteredCountries.map(function(item) {
-                            // Použití českého názvu pokud je k dispozici
-                            var nameInCzech = item.translations && item.translations.ces ? item.translations.ces.common : item.name.common;
-                            return nameInCzech; // Vracíme pouze název státu, ne celý objekt
-                        });
+                        // Pokud český název existuje, filtrujeme podle něj, jinak podle anglického názvu
+                        return (nameInCzech && nameInCzech.toLowerCase().startsWith(request.term.toLowerCase())) ||
+                               (nameInEnglish && nameInEnglish.toLowerCase().startsWith(request.term.toLowerCase()));
+                    });
 
-                        // Vrátíme seznam českých názvů států
-                        response(countries);
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("Chyba při načítání dat:", status, error);
-                    }
-                });
-            }
-        });
+                    var countries = filteredCountries.map(function(item) {
+                        // Použití českého názvu pokud je k dispozici, jinak anglický
+                        var nameInCzech = item.translations && item.translations.ces ? item.translations.ces.common : item.name.common;
+                        return nameInCzech; // Vracíme název státu v češtině, pokud je k dispozici
+                    });
+
+                    // Vrátíme seznam názvů států
+                    response(countries);
+                },
+                error: function(xhr, status, error) {
+                    console.error("Chyba při načítání dat:", status, error);
+                }
+            });
+        }
     });
+});
 </script>
 
 {% endblock %}
