@@ -241,6 +241,7 @@ class EventUpdateView(LoginRequiredMixin, UpdateView):
         context = super().get_context_data(**kwargs)
 
         # Načteme formulář pro EventAddress
+        context['categories'] = Event.CATEGORY_CHOICES
         event_address_form = self.get_event_address_form()
         context['event_address_form'] = event_address_form
 
@@ -784,6 +785,7 @@ class EventsListView(ListView):
         name_filter = self.request.GET.get('name')
         date_filter = self.request.GET.get('date')
         location_filter = self.request.GET.get('location')
+        category_filter = self.request.GET.get('category')
         filtered_events = events
 
         # Filtrování dle názvu
@@ -792,7 +794,11 @@ class EventsListView(ListView):
 
         # Filtrování dle data
         if date_filter:
-            filtered_events = filtered_events.filter(date=date_filter)
+            filtered_events = filtered_events.filter(day=date_filter)
+
+        # Filtrování dle kategorie
+        if category_filter:
+            filtered_events = filtered_events.filter(category=category_filter)
 
         # Filtrování dle města (EventAddress)
         if location_filter:
@@ -813,9 +819,20 @@ class EventsListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['name_filter'] = self.request.GET.get('name', '')
-        context['date_filter'] = self.request.GET.get('date', '')
-        context['location_filter'] = self.request.GET.get('location', '')
+        category_filter = self.request.GET.get('category', '')
+
+        # Přidáme lidsky čitelný název kategorie
+        categories = dict(Event.CATEGORY_CHOICES)
+        selected_category_label = categories.get(category_filter, '')
+
+        context.update({
+            'name_filter': self.request.GET.get('name', ''),
+            'date_filter': self.request.GET.get('date', ''),
+            'location_filter': self.request.GET.get('location', ''),
+            'category_filter': category_filter,
+            'selected_category_label': selected_category_label,
+            'categories': Event.CATEGORY_CHOICES,
+        })
         return context
 
 class TermsOfUseView(TemplateView):

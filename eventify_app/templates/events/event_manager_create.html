@@ -40,6 +40,9 @@
                                     </div>
                                 </div>
 
+                                <!-- Hidden input to store the selected category value -->
+                                <input type="hidden" id="category" name="category" value="{{ form.category.value }}">
+
                                 {% if field.help_text %}
                                     <small class="text-gray-500">{{ field.help_text }}</small>
                                 {% endif %}
@@ -196,7 +199,8 @@
             $(document).on('click', '.remove-ticket_type', function (ev) {
                 $(this).closest('tr').remove();
             });
-
+        });
+        $(document).ready(function () {
             // Dropdown toggle
             $('#categoryDropdown').click(function () {
                 $('#categoryOptions').toggleClass('hidden');
@@ -211,9 +215,10 @@
             $('#categoryOptions a').click(function (e) {
                 e.preventDefault();
                 var selectedValue = $(this).data('value');
-                $('#categoryDropdown').text($(this).text());
+                $('#categoryDropdown').text($(this).text());  // Update button text
                 $('#category').val(selectedValue);  // Update hidden input value
             });
         });
+
     </script>
 {% endblock %}
