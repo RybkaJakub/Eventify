@@ -23,59 +23,60 @@
             <div class="overflow-x-auto">
                 <table class="min-w-full table-auto border-collapse border border-gray-200">
                     <thead class="bg-gray-100">
-                    <tr>
-                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 border-b border-gray-200">
-                            Jméno
-                        </th>
-                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 border-b border-gray-200">
-                            Cena
-                        </th>
-                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 border-b border-gray-200">
-                            Počet
-                        </th>
-                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 border-b border-gray-200">
-                            Akce
-                        </th>
-                    </tr>
+                        <tr>
+                            <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 border-b border-gray-200">
+                                Jméno
+                            </th>
+                            <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 border-b border-gray-200">
+                                Cena
+                            </th>
+                            <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 border-b border-gray-200">
+                                Počet
+                            </th>
+                            <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 border-b border-gray-200">
+                                Akce
+                            </th>
+                        </tr>
                     </thead>
                     <tbody id="item-ticket_types">
-                    {% for form in formset %}
-                        <tr id="ticket_types-{{ forloop.counter0 }}" class="border-b border-gray-200">
-                            {{ form.id }}
+                        {% for form in formset %}
+                            <tr id="ticket_types-{{ forloop.counter0 }}" class="border-b border-gray-200">
+                                <!-- Skryté pole ID -->
+                                {{ form.id }}
+                                
+                                <!-- Název -->
+                                <td class="p-4">
+                                    {{ form.name|add_class:"w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300" }}
+                                    {% for error in form.name.errors %}
+                                        <p class="text-red-500 text-sm">{{ error }}</p>
+                                    {% endfor %}
+                                </td>
 
-                            <!-- Název -->
-                            <td class="p-4">
-                                {{ form.name|add_class:"w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300" }}
-                                {% for error in form.name.errors %}
-                                    <p class="text-red-500 text-sm">{{ error }}</p>
-                                {% endfor %}
-                            </td>
+                                <!-- Cena -->
+                                <td class="p-4">
+                                    {{ form.price|add_class:"w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300" }}
+                                    {% for error in form.price.errors %}
+                                        <p class="text-red-500 text-sm">{{ error }}</p>
+                                    {% endfor %}
+                                </td>
 
-                            <!-- Cena -->
-                            <td class="p-4">
-                                {{ form.price|add_class:"w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300" }}
-                                {% for error in form.price.errors %}
-                                    <p class="text-red-500 text-sm">{{ error }}</p>
-                                {% endfor %}
-                            </td>
+                                <!-- Počet -->
+                                <td class="p-4">
+                                    {{ form.quantity|add_class:"w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300" }}
+                                    {% for error in form.quantity.errors %}
+                                        <p class="text-red-500 text-sm">{{ error }}</p>
+                                    {% endfor %}
+                                </td>
 
-                            <!-- Počet -->
-                            <td class="p-4">
-                                {{ form.quantity|add_class:"w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300" }}
-                                {% for error in form.quantity.errors %}
-                                    <p class="text-red-500 text-sm">{{ error }}</p>
-                                {% endfor %}
-                            </td>
-
-                            <!-- Akce -->
-                            <td class="p-4">
-                                <form action="{% url 'delete_ticket' form.instance.id %}" method="POST" style="display: inline;">
-                                {% csrf_token %}
-                                <button type="submit" class="text-red-500 hover:text-red-700"><i class="fas fa-trash-alt"></i></button>
-                                </form>
-                            </td>
-                        </tr>
-                    {% endfor %}
+                                <!-- Akce -->
+                                <td class="p-4">
+                                    <form action="{% url 'delete_ticket' form.instance.id %}" method="POST" style="display: inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="text-red-500 hover:text-red-700"><i class="fas fa-trash-alt"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
@@ -89,9 +90,11 @@
 
         <div class="mt-4">
             <form action="{% url 'add_ticket' event.id %}" method="POST" style="display: inline;">
-                                {% csrf_token %}
-                                <button type="submit" class="inline-flex items-center px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 shadow-md"><i class="fas fa-plus mr-2"></i>Přidat více</button>
-                            </form>
+                {% csrf_token %}
+                <button type="submit" class="inline-flex items-center px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 shadow-md">
+                    <i class="fas fa-plus mr-2"></i>Přidat více
+                </button>
+            </form>
         </div>
     </div>
 {% endblock %}

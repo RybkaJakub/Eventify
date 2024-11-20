@@ -926,6 +926,17 @@ class SupportView(View):
             messages.error(request, "Formulář obsahuje chyby. Zkuste to prosím znovu.")  # Zobrazení chybové zprávy
             return render(request, 'informations/support.html', {'form': form})
 
+from calendar import monthrange
+from datetime import datetime, timedelta
+from django.views import View
+from django.shortcuts import render
+from .models import Event  # Import vašeho modelu Event
+
+from calendar import Calendar
+from datetime import datetime, timedelta
+from django.shortcuts import render
+from .models import Event
+
 class CalendarView(View):
     template_name = 'calendar/calendar.html'
 
@@ -937,28 +948,34 @@ class CalendarView(View):
         first_day = datetime(year, month, 1)
         last_day = first_day + timedelta(days=monthrange(year, month)[1] - 1)
 
-        # Získání událostí pro daný měsíc
+        # Získání všech událostí pro aktuální měsíc
         events = Event.objects.filter(day__range=(first_day, last_day))
 
-        # Vytvoření struktury kalendáře
-        calendar_days = []
-        for day in range(1, monthrange(year, month)[1] + 1):
-            current_date = datetime(year, month, day)
-            day_events = events.filter(day=current_date.date())
-            calendar_days.append({
-                'day': day,
-                'events': day_events,
-                'date': current_date,
-            })
+        # Rozdělení kalendáře na týdny
+        cal = Calendar(firstweekday=0)  # 0 = Pondělí
+        weeks = cal.monthdatescalendar(year, month)
 
-        # Přidání dat do kontextu
+        # Struktura kalendáře s událostmi
+        calendar_weeks = []
+        for week in weeks:
+            week_days = []
+            for day in week:
+                if first_day.date() <= day <= last_day.date():
+                    day_events = events.filter(day=day)
+                    week_days.append({'day': day, 'events': day_events})
+                else:
+                    week_days.append(None)  # Dny mimo aktuální měsíc
+            calendar_weeks.append(week_days)
+
+        # Kontext pro šablonu
         context = {
-            'calendar_days': calendar_days,
+            'calendar_weeks': calendar_weeks,
             'current_year': year,
             'current_month': month,
             'previous_month': (month - 1) if month > 1 else 12,
             'previous_year': year if month > 1 else year - 1,
             'next_month': (month + 1) if month < 12 else 1,
             'next_year': year if month < 12 else year + 1,
+            'weekdays': ["Pondělí", "Úterý", "Středa", "Čtvrtek", "Pátek", "Sobota", "Neděle"],
         }
         return render(request, self.template_name, context)

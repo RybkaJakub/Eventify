@@ -4,130 +4,81 @@
 {% block title %}Kalendář{% endblock %}
 
 {% block content %}
-<div class="container mx-auto p-6">
-    <h1 class="text-3xl font-bold text-center mb-6">Kalendář</h1>
+    <div class="container mx-auto mt-10">
+        <!-- Navigace mezi měsíci -->
+        <div class="flex justify-between items-center mb-6">
+            <a href="?year={{ previous_year }}&month={{ previous_month }}"
+               class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Předchozí měsíc</a>
+            <h1 class="text-2xl font-bold">{{ current_year }} - {{ current_month }}</h1>
+            <a href="?year={{ next_year }}&month={{ next_month }}"
+               class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Další měsíc</a>
+        </div>
 
-    <!-- Navigace pro měsíce -->
-    <div class="flex justify-between items-center mb-6">
-        <a href="?year={{ previous_year }}&month={{ previous_month }}" class="text-blue-500 hover:underline">
-            &laquo; Předchozí měsíc
-        </a>
-        <h2 class="text-xl font-semibold">{{ current_month }}/{{ current_year }}</h2>
-        <a href="?year={{ next_year }}&month={{ next_month }}" class="text-blue-500 hover:underline">
-            Další měsíc &raquo;
-        </a>
-    </div>
-
-    <!-- Kalendář -->
-    <table class="w-full">
-    <thead>
-        <tr>
-            <th class="p-2 border-r h-10 xl:w-40 lg:w-30 md:w-30 sm:w-20 w-10 xl:text-sm text-xs">
-                <span class="xl:block lg:block md:block sm:block hidden">Sunday</span>
-                <span class="xl:hidden lg:hidden md:hidden sm:hidden block">Sun</span>
-            </th>
-            <th class="p-2 border-r h-10 xl:w-40 lg:w-30 md:w-30 sm:w-20 w-10 xl:text-sm text-xs">
-                <span class="xl:block lg:block md:block sm:block hidden">Monday</span>
-                <span class="xl:hidden lg:hidden md:hidden sm:hidden block">Mon</span>
-            </th>
-            <th class="p-2 border-r h-10 xl:w-40 lg:w-30 md:w-30 sm:w-20 w-10 xl:text-sm text-xs">
-                <span class="xl:block lg:block md:block sm:block hidden">Tuesday</span>
-                <span class="xl:hidden lg:hidden md:hidden sm:hidden block">Tue</span>
-            </th>
-            <th class="p-2 border-r h-10 xl:w-40 lg:w-30 md:w-30 sm:w-20 w-10 xl:text-sm text-xs">
-                <span class="xl:block lg:block md:block sm:block hidden">Wednesday</span>
-                <span class="xl:hidden lg:hidden md:hidden sm:hidden block">Wed</span>
-            </th>
-            <th class="p-2 border-r h-10 xl:w-40 lg:w-30 md:w-30 sm:w-20 w-10 xl:text-sm text-xs">
-                <span class="xl:block lg:block md:block sm:block hidden">Thursday</span>
-                <span class="xl:hidden lg:hidden md:hidden sm:hidden block">Thu</span>
-            </th>
-            <th class="p-2 border-r h-10 xl:w-40 lg:w-30 md:w-30 sm:w-20 w-10 xl:text-sm text-xs">
-                <span class="xl:block lg:block md:block sm:block hidden">Friday</span>
-                <span class="xl:hidden lg:hidden md:hidden sm:hidden block">Fri</span>
-            </th>
-            <th class="p-2 border-r h-10 xl:w-40 lg:w-30 md:w-30 sm:w-20 w-10 xl:text-sm text-xs">
-                <span class="xl:block lg:block md:block sm:block hidden">Saturday</span>
-                <span class="xl:hidden lg:hidden md:hidden sm:hidden block">Sat</span>
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr class="text-center h-20">
-            <td class="border p-1 h-40 xl:w-40 lg:w-30 md:w-30 sm:w-20 w-10 overflow-auto transition cursor-pointer duration-500 ease hover:bg-gray-300">
-                <div class="flex flex-col h-40 mx-auto xl:w-40 lg:w-30 md:w-30 sm:w-full w-10 mx-auto overflow-hidden">
-                    <div class="top h-5 w-full">
-                        <span class="text-gray-500">1</span>
-                    </div>
-                    <div class="bottom flex-grow h-30 py-1 w-full cursor-pointer">
-                        <div class="event bg-purple-400 text-white rounded p-1 text-sm mb-1">
-                            <span class="event-name">Meeting</span>
-                            <span class="time">12:00~14:00</span>
-                        </div>
-                        <div class="event bg-purple-400 text-white rounded p-1 text-sm mb-1">
-                            <span class="event-name">Meeting</span>
-                            <span class="time">18:00~20:00</span>
-                        </div>
-                    </div>
-                </div>
-            </td>
-            <td class="border p-1 h-40 xl:w-40 lg:w-30 md:w-30 sm:w-20 w-10 overflow-auto transition cursor-pointer duration-500 ease hover:bg-gray-300">
-                <div class="flex flex-col h-40 mx-auto xl:w-40 lg:w-30 md:w-30 sm:w-full w-10 mx-auto overflow-hidden">
-                    <div class="top h-5 w-full">
-                        <span class="text-gray-500">2</span>
-                    </div>
-                    <div class="bottom flex-grow h-30 py-1 w-full cursor-pointer"></div>
-                </div>
-            </td>
-            <td class="border p-1 h-40 xl:w-40 lg:w-30 md:w-30 sm:w-20 w-10 overflow-auto transition cursor-pointer duration-500 ease hover:bg-gray-300">
-                <div class="flex flex-col h-40 mx-auto xl:w-40 lg:w-30 md:w-30 sm:w-full w-10 mx-auto overflow-hidden">
-                    <div class="top h-5 w-full">
-                        <span class="text-gray-500">3</span>
-                    </div>
-                    <div class="bottom flex-grow h-30 py-1 w-full cursor-pointer"></div>
-                </div>
-            </td>
-            <td class="border p-1 h-40 xl:w-40 lg:w-30 md:w-30 sm:w-20 w-10 overflow-auto transition cursor-pointer duration-500 ease hover:bg-gray-300">
-                <div class="flex flex-col h-40 mx-auto xl:w-40 lg:w-30 md:w-30 sm:w-full w-10 mx-auto overflow-hidden">
-                    <div class="top h-5 w-full">
-                        <span class="text-gray-500">4</span>
-                    </div>
-                    <div class="bottom flex-grow h-30 py-1 w-full cursor-pointer"></div>
-                </div>
-            </td>
-            <td class="border p-1 h-40 xl:w-40 lg:w-30 md:w-30 sm:w-20 w-10 overflow-auto transition cursor-pointer duration-500 ease hover:bg-gray-300">
-                <div class="flex flex-col h-40 mx-auto xl:w-40 lg:w-30 md:w-30 sm:w-full w-10 mx-auto overflow-hidden">
-                    <div class="top h-5 w-full">
-                        <span class="text-gray-500">5</span>
-                    </div>
-                    <div class="bottom flex-grow h-30 py-1 w-full cursor-pointer"></div>
-                </div>
-            </td>
-            <td class="border p-1 h-40 xl:w-40 lg:w-30 md:w-30 sm:w-20 w-10 overflow-auto transition cursor-pointer duration-500 ease hover:bg-gray-300">
-                <div class="flex flex-col h-40 mx-auto xl:w-40 lg:w-30 md:w-30 sm:w-full w-10 mx-auto overflow-hidden">
-                    <div class="top h-5 w-full">
-                        <span class="text-gray-500">6</span>
-                    </div>
-                    <div class="bottom flex-grow h-30 py-1 w-full cursor-pointer">
-                        <div class="event bg-blue-400 text-white rounded p-1 text-sm mb-1">
-                            <span class="event-name">Shopping</span>
-                            <span class="time">12:00~14:00</span>
-                        </div>
-                    </div>
-                </div>
-            </td>
-            <td class="border p-1 h-40 xl:w-40 lg:w-30 md:w-30 sm:w-20 w-10 overflow-auto transition cursor-pointer duration-500 ease hover:bg-gray-300">
-                <div class="flex flex-col h-40 mx-auto xl:w-40 lg:w-30 md:w-30 sm:w-full w-10 mx-auto overflow-hidden">
-                    <div class="top h-5 w-full">
-                        <span class="text-gray-500">7</span>
-                    </div>
-                    <div class="bottom flex-grow h-30 py-1 w-full cursor-pointer"></div>
-                </div>
-            </td>
-        </tr>
+        <!-- Tabulka kalendáře -->
+        <table class="table-auto w-full bg-white rounded-lg shadow-md">
+            <thead>
+            <tr>
+                {% for day_name in weekdays %}
+                    <th class="p-3 border-b text-sm font-medium text-gray-600">{{ day_name }}</th>
+                {% endfor %}
+            </tr>
+            </thead>
+            <tbody>
+            {% for week in calendar_weeks %}
+                <tr>
+                    {% for day in week %}
+                        <td class="border p-1 h-40 xl:w-40 lg:w-30 md:w-30 sm:w-20 w-10 overflow-auto transition cursor-pointer duration-500 ease hover:bg-gray-300">
+                            {% if day %}
+                                <div class="flex flex-col h-40 mx-auto xl:w-40 lg:w-30 md:w-30 sm:w-full w-10 overflow-hidden">
+                                    <!-- Datum -->
+                                    <div class="top h-5 w-full">
+                                        <span class="text-gray-500">{{ day.day.day }}</span>
+                                    </div>
+                                    <!-- Události -->
+                                    <div class="bottom flex-grow h-30 py-1 w-full cursor-pointer">
+                                        {% if day.events %}
+                                            {% for event in day.events %}
+                                                <div class="event rounded p-1 text-sm mb-1" onclick="window.location.href='{% url 'event_detail' event.id %}'"
+                                                     style="
+                                                             {% if event.category == 'conference' %}
+                                                                 background-color: #4CFFCC; color: white;
+                                                             {% elif event.category == 'festival' %}
+                                                                 background-color: #FF5733; color: white; /* oranžová */
+                                                             {% elif event.category == 'workshop' %}
+                                                                 background-color: #FF8C00; color: white; /* tmavě oranžová */
+                                                             {% elif event.category == 'sport' %}
+                                                                 background-color: #1E90FF; color: white; /* modrá */
+                                                             {% elif event.category == 'social' %}
+                                                                 background-color: #FFD700; color: white; /* zlatá */
+                                                             {% elif event.category == 'exhibition' %}
+                                                                 background-color: #8A2BE2; color: white; /* modrofialová */
+                                                             {% elif event.category == 'concert' %}
+                                                                 background-color: #FF1493; color: white; /* růžová */
+                                                             {% elif event.category == 'online' %}
+                                                                 background-color: #32CD32; color: white; /* zelená */
+                                                             {% elif event.category == 'local' %}
+                                                                 background-color: #FF6347; color: white; /* rajčatová červená */
+                                                             {% else %}
+                                                                 background-color: gray; color: white;
+                                                             {% endif %}">
+                                                <span class="event-name">{{ event.name }}</span>
+                                                {% if event.start_time and event.end_time %}
+                                                    <span class="time">{{ event.start_time|time:"H:i" }}~{{ event.end_time|time:"H:i" }}</span>
+                                                {% endif %}
+                                                </div>
+                                            {% endfor %}
+                                        {% else %}
+                                            <!-- Pokud nejsou události -->
+                                            <div class="text-gray-400 italic text-sm">Žádné události</div>
+                                        {% endif %}
+                                </div>
+                                </div>
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
     </tbody>
-</table>
-
-
-</div>
+    </table>
+    </div>
 {% endblock %}
