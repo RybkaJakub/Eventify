@@ -5,6 +5,7 @@ from lib2to3.fixes.fix_input import context
 from allauth.account.views import SignupView
 from django.conf import settings
 from django.contrib.auth import logout
+import json
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
@@ -36,6 +37,7 @@ from geopy.geocoders import Nominatim
 
 logger = logging.getLogger(__name__)
 
+
 def send_email(html_template, context):
     from_email = settings.EMAIL_HOST_USER
     subject = context.get('subject')
@@ -60,15 +62,15 @@ def send_email(html_template, context):
         logger.info(f"Sending email to {', '.join(to_email)} with subject: {subject} - Status 0")
         logger.exception(e)
 
-def index(request):
 
+def index(request):
     registered_events = []
     divider_rendered = False
     profile_picture = ''
     has_picture = False
 
     now = timezone.now()
-    upcoming_events = Event.objects.all() # Use prefetch_related for reverse relationships
+    upcoming_events = Event.objects.all()
 
     if request.user.is_authenticated:
         registered_events = TicketPurchase.objects.filter(user=request.user).distinct('event')
@@ -82,7 +84,39 @@ def index(request):
                 divider_rendered = True
                 break
 
+    events = Event.objects.all()
 
+    # Načti všechny souřadnice pro události
+    event_addresses = EventAddress.objects.all()
+
+    # Vytvoř slovník pro souřadnice podle event_id
+    event_address_dict = {address.event.id: address for address in event_addresses}
+
+    # Předání událostí a jejich souřadnic
+    events_data = []
+    for event in events:
+        address = event_address_dict.get(event.id)
+        latitude = address.latitude if address else None
+        longitude = address.longitude if address else None
+
+        # Převod datumu a času na řetězec
+        event_day = event.day.strftime('%Y-%m-%d') if event.day else None
+        event_time = event.time.strftime('%H:%M') if event.time else None
+
+        events_data.append({
+            'name': event.name,
+            'day': event_day,
+            'time': event_time,
+            'category': event.category,
+            'description': event.description,
+            'image': event.image.url if event.image else '',
+            'latitude': latitude,
+            'longitude': longitude,
+            'id': event.id,
+        })
+
+    # Převod na JSON řetězec
+    events_json = json.dumps(events_data)
 
     context = {
         'divider_rendered': divider_rendered,
@@ -90,8 +124,10 @@ def index(request):
         'registered_events': registered_events,
         'profile_picture': profile_picture,
         'has_picture': has_picture,
-        'user': request.user
+        'user': request.user,
+        'events_json': events_json
     }
+
     return render(request, 'index.html', context=context)
 
 
@@ -108,7 +144,8 @@ class EventManagerView(PermissionRequiredMixin, ListView):
 
         in_organization = True if organization else False
 
-        profile_picture = UserProfileView.get_user_profile_picture(self.request, SocialAccount.objects.filter(user=self.request.user))
+        profile_picture = UserProfileView.get_user_profile_picture(self.request,
+                                                                   SocialAccount.objects.filter(user=self.request.user))
         if profile_picture:
             has_picture = True
 
@@ -133,6 +170,7 @@ class EventManagerView(PermissionRequiredMixin, ListView):
 
         return context
 
+
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.forms import inlineformset_factory, modelformset_factory
@@ -140,6 +178,7 @@ from django.views.generic import CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Event, TicketType
 from .forms import EventForm, TicketTypeFormSet
+
 
 class EventInline():
     form_class = EventForm
@@ -190,6 +229,7 @@ class EventInline():
             return EventAddressForm(self.request.POST)
         return EventAddressForm()
 
+
 class EventCreateView(EventInline, CreateView, LoginRequiredMixin, PermissionRequiredMixin):
     permission_required = 'events.add_event'
 
@@ -225,7 +265,7 @@ class EventCreateView(EventInline, CreateView, LoginRequiredMixin, PermissionReq
         named_formsets = self.get_named_formsets()
 
         if form.is_valid() and event_address_form.is_valid() and all(
-            fs.is_valid() for fs in named_formsets.values()
+                fs.is_valid() for fs in named_formsets.values()
         ):
             return self.form_valid(form)
         else:
@@ -303,7 +343,8 @@ class EditTicketView(View):
 
         # Formset pro POST data
         TicketTypeFormSet = modelformset_factory(TicketType, form=TicketTypeForm, extra=0)
-        formset = TicketTypeFormSet(request.POST, queryset=TicketType.objects.filter(event=event), prefix='ticket_types')
+        formset = TicketTypeFormSet(request.POST, queryset=TicketType.objects.filter(event=event),
+                                    prefix='ticket_types')
 
         if formset.is_valid():
             formset.save()  # Uložení všech formulářů
@@ -345,6 +386,7 @@ class DeleteTicketView(View):
         except Exception as e:
             messages.error(request, "Nepodařilo se smazat vstupenku.")
             return redirect('edit_ticket', pk=ticket.event.pk)
+
 
 from django.shortcuts import get_object_or_404
 
@@ -421,11 +463,13 @@ class EventDetailView(DetailView):
 
         return context
 
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 from allauth.socialaccount.models import SocialAccount
 from allauth.account.models import EmailAddress
 from .models import Address  # Import your Address model
+
 
 class MyProfileView(LoginRequiredMixin, TemplateView):
     template_name = 'account/myprofile.html'
@@ -464,6 +508,7 @@ class MyProfileView(LoginRequiredMixin, TemplateView):
         context['profile_picture'] = profile_picture
         return context
 
+
 class UserProfileView(LoginRequiredMixin, TemplateView):
     template_name = 'account/profile.html'
 
@@ -494,15 +539,18 @@ class UserProfileView(LoginRequiredMixin, TemplateView):
         context['address'] = Address.objects.filter(user=vieweduser)
         context['email_confirmed'] = EmailAddress.objects.filter(user=vieweduser, verified=True).exists()
         context['social_accounts'] = SocialAccount.objects.filter(user=vieweduser)
-        viewed_picture = UserProfileView.get_user_profile_picture(self.request, SocialAccount.objects.filter(user=vieweduser))
+        viewed_picture = UserProfileView.get_user_profile_picture(self.request,
+                                                                  SocialAccount.objects.filter(user=vieweduser))
         has_picture = False
-        profile_picture = UserProfileView.get_user_profile_picture(self.request, SocialAccount.objects.filter(user=self.request.user))
+        profile_picture = UserProfileView.get_user_profile_picture(self.request,
+                                                                   SocialAccount.objects.filter(user=self.request.user))
         if profile_picture:
             has_picture = True
         context['has_picture'] = has_picture
         context['profile_picture'] = profile_picture
         context['viewed_picture'] = viewed_picture
         return context
+
 
 class UserProfileEditView(UpdateView):
     model = CustomUser
@@ -516,6 +564,7 @@ class UserProfileEditView(UpdateView):
     def form_invalid(self, form):
         messages.error(self.request, "Opravit chyby ve formuláři.")
         return super().form_invalid(form)
+
 
 class MyEventsListView(ListView):
     model = Event
@@ -620,7 +669,8 @@ class CartView(LoginRequiredMixin, TemplateView):
             if quantity:
                 quantity = int(quantity)
                 if quantity > item.ticket_type.left:
-                    messages.error(request, f'Nemůžete si objednat více než {item.ticket_type.left} vstupenek pro {item.ticket_type.name}.')
+                    messages.error(request,
+                                   f'Nemůžete si objednat více než {item.ticket_type.left} vstupenek pro {item.ticket_type.name}.')
                     return redirect('cart')
                 item.quantity = quantity
                 item.total_amount = item.ticket_type.price * quantity
@@ -636,6 +686,7 @@ from django.views.generic import TemplateView
 from allauth.socialaccount.models import SocialAccount
 from .forms import CustomUserForm, DeliveryAddressForm
 
+
 class CartInformationsView(LoginRequiredMixin, TemplateView):
     """Opravit chyby s tím že když uživatel zadá neplatnou hodnotu tak se neuloží např číslo popisné 632/7"""
     template_name = "account/cart_informations.html"
@@ -648,7 +699,6 @@ class CartInformationsView(LoginRequiredMixin, TemplateView):
         context['delivery_address'] = delivery_address
         context['user_form'] = CustomUserForm(instance=user)
         context['address_form'] = DeliveryAddressForm(instance=DeliveryAddress.objects.filter(user=user).first())
-
 
         # Kontrola pro profilový obrázek
         has_picture = False
@@ -664,7 +714,8 @@ class CartInformationsView(LoginRequiredMixin, TemplateView):
 
     def post(self, request, *args, **kwargs):
         user_form = CustomUserForm(request.POST, instance=request.user)
-        address_form = DeliveryAddressForm(request.POST, instance=DeliveryAddress.objects.filter(user=request.user).first())
+        address_form = DeliveryAddressForm(request.POST,
+                                           instance=DeliveryAddress.objects.filter(user=request.user).first())
 
         if user_form.is_valid() and address_form.is_valid():
             user_form.save()
@@ -720,6 +771,7 @@ class CartPaymentView(LoginRequiredMixin, TemplateView):
         context['payment_form'] = payment_form
         return render(request, self.template_name, context)
 
+
 class CartConfirmationView(LoginRequiredMixin, TemplateView):
     template_name = "account/cart_confirmation.html"
 
@@ -757,12 +809,14 @@ class CartConfirmationView(LoginRequiredMixin, TemplateView):
         if address and subject:
             subject = 'Potvrzení nákupu vstupenek - Eventify'
             html_message = render_to_string('email/email.html',
-                                            {'tickets': tickets, 'user_name': f'{{ user.first_name }} {{ user.last_name }}'})
+                                            {'tickets': tickets,
+                                             'user_name': f'{{ user.first_name }} {{ user.last_name }}'})
             plain_message = strip_tags(html_message)
             from_email = settings.EMAIL_HOST_USER
 
             send_mail(subject, plain_message, from_email, [address], html_message=html_message)
         return redirect('index')
+
 
 class RemoveItemView(LoginRequiredMixin, View):
     def post(self, request, item_id):
@@ -770,10 +824,12 @@ class RemoveItemView(LoginRequiredMixin, View):
         item.delete()
         return redirect('cart')
 
+
 class ClearCartView(LoginRequiredMixin, View):
     def post(self, request):
         Cart.objects.filter(user=request.user).delete()
         return redirect('cart')  # Přesměrování zpět na stránku s košíkem
+
 
 class EventsListView(ListView):
     model = Event
@@ -835,6 +891,7 @@ class EventsListView(ListView):
         })
         return context
 
+
 class TermsOfUseView(TemplateView):
     template_name = 'informations/terms_of_use.html'
 
@@ -842,6 +899,7 @@ class TermsOfUseView(TemplateView):
         context = super().get_context_data(**kwargs)
         context['date'] = timezone.now()
         return context
+
 
 class PrivacyPolicy(TemplateView):
     template_name = 'informations/privacy_policy.html'
@@ -851,8 +909,10 @@ class PrivacyPolicy(TemplateView):
         context['date'] = timezone.now()
         return context
 
+
 class Faq(TemplateView):
     template_name = 'informations/frequently_asked.html'
+
 
 class AboutUs(TemplateView):
     template_name = 'informations/about_us.html'
@@ -860,15 +920,16 @@ class AboutUs(TemplateView):
     def get_context_data(self, **kwargs):
         team_members = [
             {"name": "Jan Novák", "role": "CEO & Zakladatel", "bio": "Zakladatel naší společnosti.",
-             "image": "/static/img/member1.jpg"},
+             "image": "/static/img/novak.jpeg"},
             {"name": "Petra Svobodová", "role": "Projektový manažer", "bio": "Má na starosti všechny projekty.",
-             "image": "/static/img/member2.jpg"},
+             "image": "/static/img/svobodova.png"},
             {"name": "Tomáš Dvořák", "role": "Marketingový specialista", "bio": "Zodpovědný za propagaci.",
-             "image": "/static/img/member3.jpg"},
+             "image": "/static/img/dvorak.jpeg"},
         ]
         context = super().get_context_data(**kwargs)
         context['team_members'] = team_members
         return context
+
 
 class ContactView(View):
     def get(self, request):
@@ -886,6 +947,7 @@ class ContactView(View):
             # Zde si můžeš přizpůsobit odeslání e-mailu podle potřeby
             return HttpResponse("Děkujeme za vaši zprávu!")
         return render(request, 'informations/contact.html', {'form': form})
+
 
 class SupportView(View):
     def get(self, request):
@@ -910,7 +972,8 @@ class SupportView(View):
             subject = f"Nový tiket od {form.cleaned_data['name']}"
             name = form.cleaned_data['name']
             email = form.cleaned_data['email']
-            html_message = render_to_string('email/support_email.html', {'message': form.cleaned_data['message'], 'name': name, 'email': email})
+            html_message = render_to_string('email/support_email.html',
+                                            {'message': form.cleaned_data['message'], 'name': name, 'email': email})
             plain_message = strip_tags(html_message)
             from_email = settings.EMAIL_HOST_USER
             address = settings.SUPPORT_EMAIL
@@ -926,6 +989,7 @@ class SupportView(View):
             messages.error(request, "Formulář obsahuje chyby. Zkuste to prosím znovu.")  # Zobrazení chybové zprávy
             return render(request, 'informations/support.html', {'form': form})
 
+
 from calendar import monthrange
 from datetime import datetime, timedelta
 from django.views import View
@@ -936,6 +1000,7 @@ from calendar import Calendar
 from datetime import datetime, timedelta
 from django.shortcuts import render
 from .models import Event
+
 
 class CalendarView(View):
     template_name = 'calendar/calendar.html'

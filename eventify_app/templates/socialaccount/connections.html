@@ -1,56 +1,116 @@
 {% extends "base.html" %}
-
 {% load i18n %}
+{% load allauth %}
+{% load socialaccount %}
 
-{% block head_title %}{% trans "Account Connections" %}{% endblock %}
+{% block head_title %}
+    Správa připojených účtů
+{% endblock head_title %}
 
 {% block content %}
-<div class="text-center">
-    <h1>{% trans "Account Connections" %}</h1>
+    <div class="min-h-screen flex bg-gray-50">
 
-    {% if form.accounts %}
-    <p>{% blocktrans %}You can sign in to your account using any of the following third party accounts:{% endblocktrans %}</p>
+        <main class="flex-1 p-8">
+            <div class="max-w-4xl mx-auto bg-white shadow-xl rounded-lg p-8 mb-5"
+                 aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
+                    <li class="inline-flex items-center">
+                        <a href="{% url 'myprofile' %}"
+                           class="inline-flex items-center text-sm font-medium text-gray-400 hover:text-gray-600">
+                            <svg class="w-3 h-3 me-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                 fill="currentColor" viewBox="0 0 20 20">
+                                <path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z"/>
+                            </svg>
+                            Můj profil
+                        </a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <svg class="rtl:rotate-180 block w-3 h-3 mx-1 text-gray-400 " aria-hidden="true"
+                                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                      stroke-width="2" d="m1 9 4-4-4-4"/>
+                            </svg>
+                            <p
+                               class="ms-1 text-sm font-medium text-gray-400 md:ms-2">Propojení účtů</p>
+                        </div>
+                    </li>
+                </ol>
+            </div>
 
+            <div class="max-w-4xl mx-auto bg-white shadow-xl rounded-lg p-8">
+                <h1 class="text-3xl font-bold text-gray-800 mb-8 text-center">
+                    Připojené účty
+                </h1>
 
-    <form method="post" action="{% url 'socialaccount_connections' %}">
-    {% csrf_token %}
+                {% if form.accounts %}
+                    <p class="text-gray-600 mb-8 text-center">
+                        Toto jsou vaše aktuálně připojené účty třetí strany:
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+                        {% for acc in form.fields.account.choices %}
+                            {% with account=acc.0.instance.get_provider_account %}
+                                <div class="flex flex-col items-center p-6 bg-white border border-gray-200 rounded-lg shadow-md hover:shadow-lg transition">
+                                    <div class="w-16 h-16 bg-gray-100 flex items-center justify-center rounded-full mb-4">
+                                        {% if account.account.provider == "discord" %}
+                                            <i class="fab fa-discord text-purple-600 text-4xl"></i>
+                                        {% elif account.account.provider == "google" %}
+                                            <i class="fab fa-google text-red-500 text-4xl"></i>
+                                        {% elif account.account.provider == "github" %}
+                                            <i class="fab fa-github text-gray-800 text-4xl"></i>
+                                        {% endif %}
+                                    </div>
+                                    <div class="text-center">
+                                        <h3 class="font-semibold text-gray-800">{{ account }}</h3>
+                                        <p class="text-sm text-gray-500">{{ account.get_brand.name }}</p>
+                                    </div>
+                                    <form method="post" class="mt-4">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="account" value="{{ account.account.pk }}">
+                                        <button type="submit"
+                                                class="text-sm font-medium text-red-600 hover:text-red-800 hover:underline transition">
+                                            Odstranit
+                                        </button>
+                                    </form>
+                                </div>
+                            {% endwith %}
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="flex flex-col items-center">
+                        <div class="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center mb-6">
+                            <i class="fas fa-user-slash text-gray-400 text-5xl"></i>
+                        </div>
+                        <p class="text-gray-600 text-center mb-6">
+                            Nemáte připojený žádný účet třetí strany.
+                        </p>
+                    </div>
+                {% endif %}
 
-    <fieldset>
-    {% if form.non_field_errors %}
-    <div id="errorMsg">{{ form.non_field_errors }}</div>
-    {% endif %}
-
-    {% for base_account in form.accounts %}
-    {% with base_account.get_provider_account as account %}
-    <div>
-    <label for="id_account_{{ base_account.id }}">
-    <input id="id_account_{{ base_account.id }}" type="radio" name="account" value="{{ base_account.id }}"/>
-    <span class="socialaccount_provider {{ base_account.provider }} {{ account.get_brand.id }}">{{account.get_brand.name}}</span>
-    -> {{ account }}
-    </label>
+                <h2 id="add-account" class="text-2xl font-semibold text-gray-800 mt-12 mb-6 text-center">
+                    Přidat účet třetí strany
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    <div class="w-full flex flex-col items-center p-6 bg-purple-600 text-white rounded-lg shadow-md hover:shadow-lg hover:bg-purple-700 transition">
+                        <div class="w-16 h-16 bg-purple-700 flex items-center justify-center rounded-full mb-4">
+                            <i class="fab fa-discord text-4xl"></i>
+                        </div>
+                        <span class="font-medium">Discord</span>
+                    </div>
+                    <div class="w-full flex flex-col items-center p-6 bg-red-500 text-white rounded-lg shadow-md hover:shadow-lg hover:bg-red-600 transition">
+                        <div class="w-16 h-16 bg-red-600 flex items-center justify-center rounded-full mb-4">
+                            <i class="fab fa-google text-4xl"></i>
+                        </div>
+                        <span class="font-medium">Google</span>
+                    </div>
+                    <div class="w-full flex flex-col items-center p-6 bg-gray-800 text-white rounded-lg shadow-md hover:shadow-lg hover:bg-gray-900 transition">
+                        <div class="w-16 h-16 bg-gray-700 flex items-center justify-center rounded-full mb-4">
+                            <i class="fab fa-github text-4xl"></i>
+                        </div>
+                        <span class="font-medium">GitHub</span>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
-    {% endwith %}
-    {% endfor %}
-
-    <div class="my-2">
-    <button class="btn btn-dark" type="submit">{% trans 'Remove' %}</button>
-    </div>
-
-    </fieldset>
-
-    </form>
-
-    {% else %}
-    <p>{% trans 'You currently have no social network accounts connected to this account.' %}</p>
-    {% endif %}
-
-    <hr>
-    <h3>{% trans 'Add a 3rd Party Account' %}</h3>
-
-    <div class="socialaccount_providers">
-        {% include "socialaccount/snippets/provider_list.html" with process="connect" %}
-    </div>
-
-    {% include "socialaccount/snippets/login_extra.html" %}
-</div>
-{% endblock %}
+{% endblock content %}

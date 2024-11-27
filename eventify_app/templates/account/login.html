@@ -1,23 +1,16 @@
 {% extends "base.html" %}
-{% load i18n %}
-{% load account socialaccount %}
 {% load crispy_forms_tags %}
 
-{% block title %}{% trans "Přihlášení" %}{% endblock %}
+{% block title %}Přihlášení{% endblock %}
 
 {% block content %}
 <div class="flex flex-col items-center mt-16">
-    <h1 class="text-4xl font-extrabold text-gray-900 mb-6">{% trans "Přihlášení" %}</h1>
+    <h1 class="text-4xl font-extrabold text-gray-900 mb-6">Přihlášení</h1>
 
-    {% get_providers as socialaccount_providers %}
-
-    {% if socialaccount_providers %}
     <p class="text-gray-500 text-center mb-8 max-w-lg leading-relaxed">
-        {% blocktrans with site.name as site_name %}
-        Přihlaste se pomocí jednoho z vašich existujících účtů třetích stran nebo si <a href="{{ signup_url }}" class="text-indigo-500 hover:underline">vytvořte nový účet</a> na {{ site_name }}.
-        {% endblocktrans %}
+        Přihlaste se pomocí jednoho z vašich existujících účtů třetích stran nebo si <a href="{{ signup_url }}" class="text-indigo-500 hover:underline">vytvořte nový účet</a> na {{ site.name }}.
     </p>
-
+    
     <div class="w-full max-w-md mb-6">
         <div class="bg-white shadow-lg rounded-lg px-4 py-6">
             {% include "socialaccount/snippets/provider_list.html" with process="login" %}
@@ -27,7 +20,6 @@
         </div>
         {% include "socialaccount/snippets/login_extra.html" %}
     </div>
-    {% endif %}
 </div>
     
 {% endblock %}

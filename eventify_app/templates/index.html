@@ -3,76 +3,213 @@
 
 {% block content %}
 
-{% if user.is_authenticated %}
+    {% if user.is_authenticated %}
+        <div class="container mx-auto mt-5">
+            <div class="text-center my-6">
+                <h2 class="text-2xl font-semibold">Moje události</h2>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {% if registered_events %}
+                    {% for registration in registered_events %}
+                        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                            {% if registration.event.image %}
+                                <img src="{{ registration.event.image.url }}" class="w-full h-48 object-cover"
+                                     alt="{{ registration.event.name }}">
+                            {% else %}
+                                <img src="{% static 'img/static.jpg' %}" class="w-full h-48 object-cover"
+                                     alt="{{ registration.event.name }}">
+                            {% endif %}
+                            <div class="p-4">
+                                <h5 class="font-bold text-lg">{{ registration.event.name }}</h5>
+                                <p class="text-gray-700 text-sm mt-2 line-clamp-4">{{ registration.event.description }}</p>
+                            </div>
+                            <div class="p-4 bg-gray-100">
+                                <a href="{% url 'event_detail' registration.event.id %}"
+                                   class="text-indigo-500 font-medium">Detail události</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="col-span-1 lg:col-span-4 text-center">
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h5 class="text-gray-700">Není registrován na žádném eventu</h5>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+
     <div class="container mx-auto mt-5">
         <div class="text-center my-6">
-            <h2 class="text-2xl font-semibold">Moje události</h2>
+            <h2 class="text-2xl font-semibold">Nadcházející události</h2>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {% if registered_events %}
-                {% for registration in registered_events %}
+            {% if upcoming_events %}
+                {% for event in upcoming_events %}
                     <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                        {% if registration.event.image %}
-                            <img src="{{ registration.event.image.url }}" class="w-full h-48 object-cover" alt="{{ registration.event.name }}">
+                        {% if event.image %}
+                            <img src="{{ event.image.url }}" class="w-full h-48 object-cover" alt="{{ event.name }}">
                         {% else %}
-                            <img src="{% static 'img/static.jpg' %}" class="w-full h-48 object-cover" alt="{{ registration.event.name }}">
+                            <img src="{% static 'img/static.jpg' %}" class="w-full h-48 object-cover"
+                                 alt="{{ event.name }}">
                         {% endif %}
                         <div class="p-4">
-                            <h5 class="font-bold text-lg">{{ registration.event.name }}</h5>
-                            <p class="text-gray-700 text-sm mt-2 line-clamp-4">{{ registration.event.description }}</p>
+                            <h5 class="font-bold text-lg">{{ event.name }}</h5>
+                            <p class="text-gray-700 text-sm mt-2 line-clamp-4">{{ event.description }}</p>
+                            {% if event.eventaddress_set.exists %}
+                                <p class="text-gray-600 text-sm mt-1">
+                                    Adresa: {{ event.eventaddress_set.first }}
+                                </p>
+                            {% else %}
+                                <p class="text-gray-600 text-sm mt-1">Adresa není k dispozici.</p>
+                            {% endif %}
                         </div>
                         <div class="p-4 bg-gray-100">
-                            <a href="{% url 'event_detail' registration.event.id %}" class="text-indigo-500 font-medium">Detail události</a>
+                            <a href="{% url 'event_detail' event.id %}" class="text-indigo-500 font-medium">Detail
+                                události</a>
                         </div>
                     </div>
                 {% endfor %}
             {% else %}
                 <div class="col-span-1 lg:col-span-4 text-center">
                     <div class="bg-white p-6 rounded-lg shadow-md">
-                        <h5 class="text-gray-700">Není registrován na žádném eventu</h5>
+                        <h5 class="text-gray-700">Není žádná nadcházející událost</h5>
                     </div>
                 </div>
             {% endif %}
         </div>
     </div>
-{% endif %}
 
-<div class="container mx-auto mt-5">
-    <div class="text-center my-6">
-        <h2 class="text-2xl font-semibold">Nadcházející události</h2>
+    <div class="max-w-8xl mx-auto mt-8 mb-8 bg-white shadow-xl rounded-lg p-6 pb-20">
+        <h1 class="text-3xl font-semibold text-center mb-6">Mapa Eventů</h1>
+
+        <div class="relative w-full max-w-7xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+            <div id="map" class="w-full h-[800px] rounded-xl shadow-md" style="z-index: 1"></div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var map = L.map('map').setView([49.774, 15.606], 8);
+
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(map);
+
+                const events = JSON.parse('{{ events_json|escapejs }}');
+
+                if (events.length > 0) {
+                    events.forEach(function (event) {
+                        var popupContent = `
+                <div class="popup-container p-4 bg-white rounded-lg shadow-lg max-w-[300px]">
+    <h3 class="font-bold text-xl text-gray-800 mb-2">${event.name}</h3>
+    <p class="text-sm text-gray-600 mb-1"><b>Datum:</b> ${event.day}</p>
+    <p class="text-sm text-gray-600 mb-1"><b>Čas:</b> ${event.time || 'Neuveden'}</p>
+    <div class="text-sm text-gray-600 mb-1">
+        <b>Kategorie:</b> 
+        <span class="inline-block py-1 px-3 text-white rounded-full" >
+            ${event.category.charAt(0).toUpperCase() + event.category.slice(1)}
+        </span>
     </div>
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {% if upcoming_events %}
-            {% for event in upcoming_events %}
-                <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                    {% if event.image %}
-                        <img src="{{ event.image.url }}" class="w-full h-48 object-cover" alt="{{ event.name }}">
-                    {% else %}
-                        <img src="{% static 'img/static.jpg' %}" class="w-full h-48 object-cover" alt="{{ event.name }}">
-                    {% endif %}
-                    <div class="p-4">
-                        <h5 class="font-bold text-lg">{{ event.name }}</h5>
-                        <p class="text-gray-700 text-sm mt-2 line-clamp-4">{{ event.description }}</p>
-                        {% if event.eventaddress_set.exists %}
-                            <p class="text-gray-600 text-sm mt-1">
-                                Adresa: {{ event.eventaddress_set.first }}
-                            </p>
-                        {% else %}
-                            <p class="text-gray-600 text-sm mt-1">Adresa není k dispozici.</p>
-                        {% endif %}
-                    </div>
-                    <div class="p-4 bg-gray-100">
-                        <a href="{% url 'event_detail' event.id %}" class="text-indigo-500 font-medium">Detail události</a>
-                    </div>
-                </div>
-            {% endfor %}
-        {% else %}
-            <div class="col-span-1 lg:col-span-4 text-center">
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h5 class="text-gray-700">Není žádná nadcházející událost</h5>
-                </div>
-            </div>
-        {% endif %}
-    </div>
+    <p class="text-sm text-gray-700 mt-2">${event.description}</p>
+    ${event.image ? `<img src="${event.image}" alt="${event.name}" class="mt-4 max-w-[200px] rounded-md">` : ''}
 </div>
+            `;
+
+                        let markerColor = '';
+                        switch (event.category) {
+                            case 'conference':
+                                markerColor = '#4CFFCC';
+                                break;
+                            case 'festival':
+                                markerColor = '#FF5733';
+                                break;
+                            case 'workshop':
+                                markerColor = '#FF8C00';
+                                break;
+                            case 'sport':
+                                markerColor = '#1E90FF';
+                                break;
+                            case 'social':
+                                markerColor = '#FFD700';
+                                break;
+                            case 'exhibition':
+                                markerColor = '#8A2BE2';
+                                break;
+                            case 'concert':
+                                markerColor = '#FF1493';
+                                break;
+                            case 'online':
+                                markerColor = '#32CD32';
+                                break;
+                            case 'local':
+                                markerColor = '#FF6347';
+                                break;
+                            default:
+                                markerColor = 'gray'; // výchozí barva
+                        }
+
+                        var customIconHtml = `
+                <div>
+                    <i class="fa-solid fa-location-dot" style="color: ${markerColor}; font-size: 30px; text-shadow: 1px 1px 5px black;"></i>
+
+                </div>
+            `;
+
+                        var customIcon = L.divIcon({
+                            className: 'custom-icon',
+                            html: customIconHtml,
+                            iconSize: [40, 40],
+                            iconAnchor: [20, 40],
+                            popupAnchor: [0, -40]
+                        });
+
+                        // Přidání markeru na mapu
+                        if (event.latitude && event.longitude) {
+                            L.marker([event.latitude, event.longitude], {icon: customIcon})
+                                .addTo(map)
+                                .bindPopup(popupContent);
+                        } else {
+                            console.warn("Chybí souřadnice pro event:", event);
+                        }
+                    });
+                } else {
+                    console.log("Žádné eventy k zobrazení.");
+                }
+
+                var attributionControl = document.querySelector(".leaflet-control-attribution");
+                if (attributionControl) {
+                    attributionControl.style.display = "none";
+                }
+            });
+        </script>
+
+
+    </div>
+    <style>
+        .popup-container {
+            font-family: 'Inter', sans-serif;
+            color: #333;
+            padding: 10px;
+            max-width: 250px;
+            line-height: 1.5;
+        }
+
+        .popup-container h3 {
+            font-size: 1.25rem;
+            color: #1a202c;
+        }
+
+        .popup-container p {
+            margin: 5px 0;
+        }
+
+        .popup-container img {
+            display: block;
+            margin: 0 auto;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+
 {% endblock %}
