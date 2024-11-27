@@ -78,5 +78,6 @@ Chcete-li spustit projekt lokálně, postupujte následovně:
 - **[Tailwind CSS Guide](https://tailwindcss.com/docs/)**: Průvodce využitím Tailwind CSS pro styling frontendové části aplikace.
 - **[Django AllAuth Documentation](https://docs.allauth.org/en/latest/)**: Dokumentace pro OAuth a další možnosti autentizace.
 - **[Docker Docs](https://docs.docker.com/)**: Oficiální dokumentace k Dockeru, obsahující postupy pro vytváření kontejnerů a nasazování aplikací.
+- **[Django Inline formset tutorial](https://youtu.be/MRWFg30FmZQ?si=ctxF_uXAdET4cQ1W)**: Tutoriál pro použití django inline formsetu.
 
 ---
