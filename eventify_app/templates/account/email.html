@@ -1,77 +1,238 @@
-
 {% extends "base.html" %}
 
-{% load i18n %}
-
-{% block title %}{% trans "E-mail Addresses" %}{% endblock %}
+{% block head_title %}
+    Správa e-mailových adres
+{% endblock head_title %}
 
 {% block content %}
-<div class="text-center">
-    <h1>{% trans "E-mail Addresses" %}</h1>
-{% if user.emailaddress_set.all %}
-<p>{% trans 'The following e-mail addresses are associated with your account:' %}</p>
+    <div class="min-h-screen flex bg-gray-50">
 
-<form action="{% url 'account_email' %}" class="email_list" method="post">
-{% csrf_token %}
-<fieldset class="blockLabels">
+        <main class="flex-1 p-8">
+            <div class="max-w-4xl mx-auto bg-white shadow-xl rounded-lg p-8 mb-5"
+                 aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
+                    <li class="inline-flex items-center">
+                        <a href="{% url 'myprofile' %}"
+                           class="inline-flex items-center text-sm font-medium text-gray-400 hover:text-gray-600">
+                            <svg class="w-3 h-3 me-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                 fill="currentColor" viewBox="0 0 20 20">
+                                <path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z"/>
+                            </svg>
+                            Můj profil
+                        </a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <svg class="rtl:rotate-180 block w-3 h-3 mx-1 text-gray-400 " aria-hidden="true"
+                                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                      stroke-width="2" d="m1 9 4-4-4-4"/>
+                            </svg>
+                            <div x-data="{ open: false }"
+                                 class="relative inline-block text-left text-sm font-medium text-gray-400 hover:text-gray-600">
+                                <!-- Tlačítko -->
+                                <button @click="open = !open"
+                                        class="text-sm font-medium text-gray-400 flex items-center">
+                                    Správa e-mailových adres
+                                    <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                         viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M19 9l-7 7-7-7"/>
+                                    </svg>
+                                </button>
 
-  {% for emailaddress in user.emailaddress_set.all %}
-<div class="ctrlHolder">
-      <label for="email_radio_{{forloop.counter}}" class="{% if emailaddress.primary %}primary_email{%endif%}">
+                                <!-- Dropdown menu -->
+                                <div x-show="open"
+                                     @click.away="open = false"
+                                     x-transition:enter="transition ease-out duration-100"
+                                     x-transition:enter-start="transform opacity-0 scale-95"
+                                     x-transition:enter-end="transform opacity-100 scale-100"
+                                     x-transition:leave="transition ease-in duration-75"
+                                     x-transition:leave-start="transform opacity-100 scale-100"
+                                     x-transition:leave-end="transform opacity-0 scale-95"
+                                     class="absolute mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+                                    <div class="py-1">
+                                        <a href="{% url 'account_change_password' %}"
+                                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                            Správa hesel</a>
+                                        <a href="{% url 'editprofile' %}"
+                                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                            Změna údajů</a>
+                                        <a href="{% url 'socialaccount_connections' %}"
+                                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                            Propojení účtů</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ol>
+            </div>
+            <div class="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg">
+                <h1 class="text-3xl font-semibold mb-6 text-gray-900 text-center">
+                    Správa e-mailových adres
+                </h1>
 
-      <input id="email_radio_{{forloop.counter}}" type="radio" name="email" {% if emailaddress.primary or user.emailaddress_set.count == 1 %}checked="checked"{%endif %} value="{{emailaddress.email}}"/>
+                {% if emailaddresses %}
+                    <p class="text-gray-600 mb-4">
+                        Následující e-mailové adresy jsou přiřazeny k vašemu účtu:
+                    </p>
+                    {% url 'account_email' as email_url %}
+                    <form action="{{ email_url }}" method="post" class="space-y-6">
+                        {% csrf_token %}
+                        <div class="space-y-4">
+                            {% for radio in emailaddress_radios %}
+                                {% with emailaddress=radio.emailaddress %}
+                                    <div class="flex items-center justify-between bg-gray-50 p-4 rounded-lg shadow hover:bg-gray-100 transition-colors">
+                                        <!-- Levá část -->
+                                        <div class="flex items-center space-x-4">
+                                            <input
+                                                    type="radio"
+                                                    id="{{ radio.id }}"
+                                                    name="email"
+                                                    value="{{ emailaddress.email }}"
+                                                    {% if radio.checked %}checked{% endif %}
+                                                    class="hidden peer">
+                                            <label for="{{ radio.id }}"
+                                                   class="peer-checked:text-blue-600 font-medium text-lg text-gray-800">
+                                                {{ emailaddress.email }}
+                                            </label>
+                                            <span class="ml-2 text-sm px-2 py-1 rounded-full 
+                                                {% if emailaddress.verified %}bg-green-100 text-green-600{% else %}bg-red-100 text-red-600{% endif %}">
+                                                {% if emailaddress.verified %}
+                                                    Ověřeno
+                                                {% else %}
+                                                    Neověřeno
+                                                {% endif %}
+                                            </span>
+                                            {% if emailaddress.primary %}
+                                                <span class="ml-2 text-sm px-2 py-1 rounded-full bg-blue-100 text-blue-600">
+                                                    Primární
+                                                 </span>
+                                            {% endif %}
+                                            <button
+                                                    type="button"
+                                                    onclick="confirmDelete('{{ emailaddress.email }}')"
+                                                    class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-200">
+                                                Odebrat
+                                            </button>
+                                        </div>
 
-{{ emailaddress.email }}
-    {% if emailaddress.verified %}
-    <span class="verified">-> {% trans "Verified" %}</span>
-    {% else %}
-    <span class="unverified">-> {% trans "Unverified" %}</span>
-    {% endif %}
-      {% if emailaddress.primary %}<span class="primary">-> {% trans "Primary" %}</span>{% endif %}
-</label>
-</div>
-  {% endfor %}
+                                        <!-- Pravá část -->
+                                        <div class="flex space-x-4">
+                                            <button
+                                                    type="submit"
+                                                    name="action_primary"
+                                                    class="text-blue-600 hover:text-blue-800 transition duration-200">
+                                                <i class="fa-solid fa-envelope fa-lg"></i>
+                                            </button>
+                                            <button
+                                                    type="submit"
+                                                    name="action_resend"
+                                                    class="text-gray-600 hover:text-gray-800 transition duration-200">
+                                                <i class="fa-solid fa-repeat fa-lg"></i>
+                                            </button>
+                                        </div>
+                                    </div>
 
-<div class="buttonHolder">
-      <button class="btn btn-dark secondaryAction" type="submit" name="action_primary" >{% trans 'Make Primary' %}</button>
-      <button class="btn btn-dark secondaryAction" type="submit" name="action_send" >{% trans 'Re-send Verification' %}</button>
-      <button class="btn btn-dark primaryAction" type="submit" name="action_remove" >{% trans 'Remove' %}</button>
-</div>
+                                {% endwith %}
+                            {% endfor %}
+                        </div>
 
-</fieldset>
-</form>
+                        <div class="flex justify-between gap-4 mt-8">
+                            <button
+                                    type="submit"
+                                    name="action_primary"
+                                    class="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
+                                Nastavit jako primární
+                            </button>
+                            <button
+                                    type="submit"
+                                    name="action_send"
+                                    class="w-full py-3 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition duration-200">
+                                Znovu odeslat ověření
+                            </button>
+                        </div>
+                    </form>
+                {% else %}
+                    <p class="text-red-500 text-lg font-semibold">
+                        K vašemu účtu není přiřazena žádná e-mailová adresa.
+                    </p>
+                {% endif %}
 
-{% else %}
-<p><strong>{% trans 'Warning:'%}</strong> {% trans "You currently do not have any e-mail address set up. You should really add an e-mail address so you can receive notifications, reset your password, etc." %}</p>
+                {% if can_add_email %}
+                    <hr class="my-6 border-t-2 border-gray-200">
+                    <h2 class="text-xl font-medium mb-4 text-gray-800">
+                        Přidat novou e-mailovou adresu
+                    </h2>
+                    <form action="{{ email_url }}" method="post" class="space-y-4 add-email">
+                        {% csrf_token %}
+                        <input
+                                type="email"
+                                name="{{ form.email.name }}"
+                                id="{{ form.email.id_for_label }}"
+                                placeholder="Zadejte svůj e-mail"
+                                class="w-full px-6 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg">
+                        <button
+                                type="submit"
+                                name="action_add"
+                                class="w-full py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-200">
+                            Přidat e-mail
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
+        </main>
+    </div>
 
-{% endif %}
-<hr>
-  {% if can_add_email %}
-    <h2>{% trans "Add E-mail Address" %}</h2>
+    <script>
+        function confirmDelete(email) {
+            if (confirm("Opravdu chcete odebrat vybranou e-mailovou adresu?")) {
+                const form = document.createElement("form");
+                form.method = "POST";
+                form.action = "{% url 'account_email' %}";
 
-    <form method="post" action="{% url 'account_email' %}" class="add_email">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button class="btn btn-dark" name="action_add" type="submit">{% trans "Add E-mail" %}</button>
-    </form>
-  {% endif %}
+                // CSRF token
+                const csrfInput = document.createElement("input");
+                csrfInput.name = "csrfmiddlewaretoken";
+                csrfInput.type = "hidden";
+                csrfInput.value = "{{ csrf_token }}";
+                form.appendChild(csrfInput);
 
-</div>
-{% endblock %}
+                // Email k odebrání
+                const emailInput = document.createElement("input");
+                emailInput.name = "email";
+                emailInput.type = "hidden";
+                emailInput.value = email;
+                form.appendChild(emailInput);
 
+                // Akce odebrání
+                const actionInput = document.createElement("input");
+                actionInput.name = "action_remove";
+                actionInput.type = "hidden";
+                actionInput.value = "1";
+                form.appendChild(actionInput);
 
-{% block extra_body %}
-<script type="text/javascript">
-(function() {
-  var message = "{% trans 'Do you really want to remove the selected e-mail address?' %}";
-  var actions = document.getElementsByName('action_remove');
-  if (actions.length) {
-    actions[0].addEventListener("click", function(e) {
-      if (! confirm(message)) {
-        e.preventDefault();
-      }
-    });
-  }
-})();
-</script>
-{% endblock %}
+                // Přidání do DOM a odeslání
+                document.body.appendChild(form);
+                form.submit();
+                console.log(form)
+            }
+        }
+    </script>
+    <style>
+        .add-email input {
+            background-color: #f7f8fa;
+            border-radius: 8px;
+            padding: 12px;
+            color: #4a5568;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.2s ease-in-out;
+        }
+
+        .add-email input:focus {
+            border-color: #5a67d8;
+            outline: none;
+        }
+    </style>
+{% endblock content %}

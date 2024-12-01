@@ -10,38 +10,48 @@
             <div class="max-w-4xl mx-auto bg-white shadow-xl rounded-lg p-8 mb-5"
                  aria-label="Breadcrumb">
                 <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
-    <li class="inline-flex items-center">
-        <div x-data="{ open: false }" class="relative inline-flex items-center text-sm font-medium text-gray-400 hover:text-gray-600">
-            
-            <!-- Tlačítko pro otevření dropdown menu -->
-            <button @click="open = !open"
-                    class="text-sm font-medium text-gray-400 flex items-center">
-                <svg class="w-3 h-3 me-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                     fill="currentColor" viewBox="0 0 20 20">
-                    <path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z"/>
-                </svg>
-                Můj profil
-                <svg class="ml-2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
-                     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M19 9l-7 7-7-7"/>
-                </svg>
-            </button>
+                    <li class="inline-flex items-center">
+                        <div x-data="{ open: false }" class="relative inline-block text-left text-sm font-medium text-gray-400 hover:text-gray-600">
+                            <!-- Tlačítko -->
+                            <button @click="open = !open"
+                                    class="text-sm font-medium text-gray-400 flex items-center">
+                                <svg class="w-3 h-3 me-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                     fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z"/>
+                                </svg>
+                                Můj profil
+                                <svg class="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                     viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </button>
 
-            <!-- Dropdown -->
-            <div x-show="open" @click.away="open = false" x-transition
-                 class="absolute left-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-10">
-                <ul class="py-2">
-                    <li><a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Možnost 1</a></li>
-                    <li><a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Možnost 2</a></li>
-                    <li><a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Možnost 3</a></li>
-                    <li><a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Možnost 4</a></li>
-                    <li><a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Možnost 5</a></li>
-                </ul>
-            </div>
-        </div>
-    </li>
-</ol>
+                            <!-- Dropdown menu -->
+                            <div x-show="open"
+                                 @click.away="open = false"
+                                 x-transition:enter="transition ease-out duration-100"
+                                 x-transition:enter-start="transform opacity-0 scale-95"
+                                 x-transition:enter-end="transform opacity-100 scale-100"
+                                 x-transition:leave="transition ease-in duration-75"
+                                 x-transition:leave-start="transform opacity-100 scale-100"
+                                 x-transition:leave-end="transform opacity-0 scale-95"
+                                 class="absolute mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+                                <div class="py-1">
+                                    <a href="{% url 'account_change_password' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        Správa hesel</a>
+                                    <a href="{% url 'account_email' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        Správa e-mailových adres</a>
+                                    <a href="{% url 'editprofile' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        Změna údajů</a>
+                                    <a href="{% url 'socialaccount_connections' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        Propojení účtů</a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </li>
+                </ol>
 
             </div>
             <div class="max-w-4xl mx-auto bg-white shadow-xl rounded-lg p-8">

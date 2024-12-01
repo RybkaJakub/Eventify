@@ -1,0 +1,10 @@
+{% load i18n %}
+{% load account %}
+{% load allauth %}
+
+<div class="max-w-2xl bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 rounded-lg">
+    <p>
+        <strong>Poznámka:</strong> Již jste přihlášeni jako
+        <span class="font-semibold">{{ user.username|default:user.username }}</span>.
+    </p>
+</div>
