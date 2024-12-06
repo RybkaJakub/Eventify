@@ -11,7 +11,7 @@
     {% if user.is_authenticated %}
         <button type="button" class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button" aria-expanded="false">
         <span class="sr-only">Otevrit uzivatelske menu</span>
-        <p class="text-white m-1">{{ user.first_name }} {{ user.last_name }}</p>
+        <p class="text-white m-2 text-center justify-center pl-2">{{ user.first_name }} {{ user.last_name }}</p>
         {% if has_picture %}
             <img class="w-8 h-8 rounded-full" src="{{ profile_picture }}" alt="user photo">
         {% elif user.image %}

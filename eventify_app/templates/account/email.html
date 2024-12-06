@@ -68,6 +68,24 @@
                     </li>
                 </ol>
             </div>
+            {% if messages %}
+        {% if messages %}
+<div class="max-w-4xl mb-4 space-y-4">
+    {% for message in messages %}
+    <div class="flex items-center p-4 rounded-lg shadow-md 
+                {% if message.tags == 'success' %}bg-green-100 text-green-700{% else %}bg-red-100 text-red-700{% endif %}">
+        <svg class="w-5 h-5 mr-3 
+                    {% if message.tags == 'success' %}text-green-500{% else %}text-red-500{% endif %}" 
+             xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+            <path d="{% if message.tags == 'success' %}M16.707 6.293a1 1 0 0 0-1.414 0L9 12.586 5.707 9.293a1 1 0 1 0-1.414 1.414l4 4a1 1 0 0 0 1.414 0l7-7a1 1 0 0 0 0-1.414Z{% else %}M9 4a1 1 0 0 1 2 0v4a1 1 0 0 1-2 0V4Zm.293 9.707a1 1 0 0 1 0-1.414l4-4a1 1 0 1 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 1 1 1.414-1.414l4 4a1 1 0 0 1 0 1.414Z{% endif %}" />
+        </svg>
+        <span class="text-sm font-medium">{{ message }}</span>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+    {% endif %}
             <div class="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg">
                 <h1 class="text-3xl font-semibold mb-6 text-gray-900 text-center">
                     Správa e-mailových adres
@@ -86,72 +104,61 @@
                                     <div class="flex items-center justify-between bg-gray-50 p-4 rounded-lg shadow hover:bg-gray-100 transition-colors">
                                         <!-- Levá část -->
                                         <div class="flex items-center space-x-4">
-                                            <input
-                                                    type="radio"
-                                                    id="{{ radio.id }}"
-                                                    name="email"
-                                                    value="{{ emailaddress.email }}"
-                                                    {% if radio.checked %}checked{% endif %}
-                                                    class="hidden peer">
-                                            <label for="{{ radio.id }}"
-                                                   class="peer-checked:text-blue-600 font-medium text-lg text-gray-800">
-                                                {{ emailaddress.email }}
-                                            </label>
-                                            <span class="ml-2 text-sm px-2 py-1 rounded-full 
-                                                {% if emailaddress.verified %}bg-green-100 text-green-600{% else %}bg-red-100 text-red-600{% endif %}">
-                                                {% if emailaddress.verified %}
-                                                    Ověřeno
-                                                {% else %}
-                                                    Neověřeno
-                                                {% endif %}
-                                            </span>
+        <span class="font-medium text-lg text-gray-800">
+            {{ emailaddress.email }}
+        </span>
+                                            <span class="ml-2 text-sm px-2 py-1 rounded-full
+            {% if emailaddress.verified %}bg-green-100 text-green-600{% else %}bg-red-100 text-red-600{% endif %}">
+            {% if emailaddress.verified %}
+                Ověřeno
+            {% else %}
+                Neověřeno
+            {% endif %}
+        </span>
                                             {% if emailaddress.primary %}
                                                 <span class="ml-2 text-sm px-2 py-1 rounded-full bg-blue-100 text-blue-600">
-                                                    Primární
-                                                 </span>
+                Primární
+             </span>
                                             {% endif %}
-                                            <button
-                                                    type="button"
-                                                    onclick="confirmDelete('{{ emailaddress.email }}')"
-                                                    class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-200">
-                                                Odebrat
-                                            </button>
                                         </div>
 
                                         <!-- Pravá část -->
                                         <div class="flex space-x-4">
-                                            <button
-                                                    type="submit"
-                                                    name="action_primary"
-                                                    class="text-blue-600 hover:text-blue-800 transition duration-200">
-                                                <i class="fa-solid fa-envelope fa-lg"></i>
-                                            </button>
-                                            <button
-                                                    type="submit"
-                                                    name="action_resend"
-                                                    class="text-gray-600 hover:text-gray-800 transition duration-200">
-                                                <i class="fa-solid fa-repeat fa-lg"></i>
-                                            </button>
+                                            <form action="{{ email_url }}" method="post" class="inline">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="email" value="{{ emailaddress.email }}">
+                                                <input type="hidden" name="action_primary" value="1">
+                                                <button
+                                                        type="submit"
+                                                        class="text-blue-600 hover:text-blue-800 transition duration-200">
+                                                    <i class="fa-solid fa-envelope fa-lg"></i>
+                                                </button>
+                                            </form>
+                                            <form action="{{ email_url }}" method="post" class="inline">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="email" value="{{ emailaddress.email }}">
+                                                <input type="hidden" name="action_resend" value="1">
+                                                <button
+                                                        type="submit"
+                                                        class="text-gray-600 hover:text-gray-800 transition duration-200">
+                                                    <i class="fa-solid fa-repeat fa-lg"></i>
+                                                </button>
+                                            </form>
+                                            <form action="{{ email_url }}" method="post" class="inline">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="email" value="{{ emailaddress.email }}">
+                                                <input type="hidden" name="action_remove" value="1">
+                                                <button
+                                                        type="submit"
+                                                        class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-200">
+                                                    Odebrat
+                                                </button>
+                                            </form>
                                         </div>
                                     </div>
 
                                 {% endwith %}
                             {% endfor %}
-                        </div>
-
-                        <div class="flex justify-between gap-4 mt-8">
-                            <button
-                                    type="submit"
-                                    name="action_primary"
-                                    class="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
-                                Nastavit jako primární
-                            </button>
-                            <button
-                                    type="submit"
-                                    name="action_send"
-                                    class="w-full py-3 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition duration-200">
-                                Znovu odeslat ověření
-                            </button>
                         </div>
                     </form>
                 {% else %}
@@ -186,27 +193,94 @@
     </div>
 
     <script>
-        function confirmDelete(email) {
-            if (confirm("Opravdu chcete odebrat vybranou e-mailovou adresu?")) {
-                const form = document.createElement("form");
+        function actionResend(email) {
+            const form = document.createElement("form");
                 form.method = "POST";
                 form.action = "{% url 'account_email' %}";
 
-                // CSRF token
+                // Přidání CSRF tokenu
                 const csrfInput = document.createElement("input");
                 csrfInput.name = "csrfmiddlewaretoken";
                 csrfInput.type = "hidden";
                 csrfInput.value = "{{ csrf_token }}";
                 form.appendChild(csrfInput);
 
-                // Email k odebrání
+                // Přidání e-mailu k odstranění
                 const emailInput = document.createElement("input");
                 emailInput.name = "email";
                 emailInput.type = "hidden";
                 emailInput.value = email;
                 form.appendChild(emailInput);
 
-                // Akce odebrání
+                // Nastavení akce pro odstranění
+                const actionInput = document.createElement("input");
+                actionInput.name = "action_resend";
+                actionInput.type = "hidden";
+                actionInput.value = "1";
+                form.appendChild(actionInput);
+
+                // Přidání do DOM a odeslání
+                document.body.appendChild(form);
+                form.submit();
+                console.log(form)
+        }
+    </script>
+    <script>
+        function actionPrimary(email) {
+            const form = document.createElement("form");
+                form.method = "POST";
+                form.action = "{% url 'account_email' %}";
+
+                // Přidání CSRF tokenu
+                const csrfInput = document.createElement("input");
+                csrfInput.name = "csrfmiddlewaretoken";
+                csrfInput.type = "hidden";
+                csrfInput.value = "{{ csrf_token }}";
+                form.appendChild(csrfInput);
+
+                // Přidání e-mailu k odstranění
+                const emailInput = document.createElement("input");
+                emailInput.name = "email";
+                emailInput.type = "hidden";
+                emailInput.value = email;
+                form.appendChild(emailInput);
+
+                // Nastavení akce pro odstranění
+                const actionInput = document.createElement("input");
+                actionInput.name = "action_primary";
+                actionInput.type = "hidden";
+                actionInput.value = "1";
+                form.appendChild(actionInput);
+
+                // Přidání do DOM a odeslání
+                document.body.appendChild(form);
+                form.submit();
+                console.log(form)
+        }
+    </script>
+
+    <script>
+        function confirmDelete(email) {
+            if (confirm("Opravdu chcete odebrat vybranou e-mailovou adresu?")) {
+                const form = document.createElement("form");
+                form.method = "POST";
+                form.action = "{% url 'account_email' %}";
+
+                // Přidání CSRF tokenu
+                const csrfInput = document.createElement("input");
+                csrfInput.name = "csrfmiddlewaretoken";
+                csrfInput.type = "hidden";
+                csrfInput.value = "{{ csrf_token }}";
+                form.appendChild(csrfInput);
+
+                // Přidání e-mailu k odstranění
+                const emailInput = document.createElement("input");
+                emailInput.name = "email";
+                emailInput.type = "hidden";
+                emailInput.value = email;
+                form.appendChild(emailInput);
+
+                // Nastavení akce pro odstranění
                 const actionInput = document.createElement("input");
                 actionInput.name = "action_remove";
                 actionInput.type = "hidden";
@@ -216,7 +290,6 @@
                 // Přidání do DOM a odeslání
                 document.body.appendChild(form);
                 form.submit();
-                console.log(form)
             }
         }
     </script>
