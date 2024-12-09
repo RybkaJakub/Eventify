@@ -1,3 +1,4 @@
+import os
 from calendar import monthrange
 from datetime import timedelta, datetime
 from lib2to3.fixes.fix_input import context
@@ -331,6 +332,7 @@ class EditTicketView(View):
 
     def get(self, request, pk):
         event = get_object_or_404(Event, pk=pk)
+        messages = []
 
         # Formset pro existující TicketType objekty
         TicketTypeFormSet = modelformset_factory(TicketType, form=TicketTypeForm, extra=0)
@@ -343,11 +345,13 @@ class EditTicketView(View):
 
         # Formset pro POST data
         TicketTypeFormSet = modelformset_factory(TicketType, form=TicketTypeForm, extra=0)
-        formset = TicketTypeFormSet(request.POST, queryset=TicketType.objects.filter(event=event),
-                                    prefix='ticket_types')
+        formset = TicketTypeFormSet(request.POST, queryset=TicketType.objects.filter(event=event), prefix='ticket_types')
 
         if formset.is_valid():
-            formset.save()  # Uložení všech formulářů
+            tickets = formset.save(commit=False)  # Uloží pouze instance bez jejich uložení do DB
+            for ticket in tickets:
+                ticket.event = event  # Ručně nastavíme `event`
+                ticket.save()  # Uložíme do DB
             messages.success(request, "Vstupenky byly úspěšně uloženy.")
             return redirect('edit_ticket', pk=event.pk)
         else:
@@ -400,6 +404,16 @@ class EventDeleteView(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTes
 
     def test_func(self):
         return self.request.user
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if self.object.image and self.object.image.path:
+            try:
+                if os.path.isfile(self.object.image.path):  # Ověříme, že soubor existuje
+                    os.remove(self.object.image.path)  # Smažeme obrázek
+            except Exception as e:
+                print(f"Chyba při mazání obrázku: {e}")  # Logování chyby (pouze pro ladění)
+        return super().delete(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

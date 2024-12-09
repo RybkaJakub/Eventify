@@ -42,8 +42,12 @@
                         {% for form in formset %}
                             <tr id="ticket_types-{{ forloop.counter0 }}" class="border-b border-gray-200">
                                 <!-- Skryté pole ID -->
-                                {{ form.id }}
-                                
+                                <td class="p-4" hidden>
+                                    {{ form.id|add_class:"w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300" }}
+                                    {% for error in form.id.errors %}
+                                        <p class="text-red-500 text-sm">{{ error }}</p>
+                                    {% endfor %}
+                                </td>
                                 <!-- Název -->
                                 <td class="p-4">
                                     {{ form.name|add_class:"w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300" }}
