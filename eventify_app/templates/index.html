@@ -166,7 +166,7 @@
                 </div>
             {% endif %}
         {% endfor %}
-        {% if user.groups is not set %}
+        {% if not user.groups.all %}
             <div class="container mx-auto mt-5">
                 <div class="text-center my-6">
                     <h2 class="text-2xl font-semibold">Moje události</h2>
