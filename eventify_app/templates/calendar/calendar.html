@@ -71,7 +71,28 @@
                                                 {% for event in day.events %}
                                                     <div class="event rounded p-1 text-sm mb-1"
                                                          onclick="window.location.href='{% url 'event_detail' event.id %}'"
-                                                         style="{% if event.category == 'conference' %} background-color: #4CFFCC; color: white; {% elif event.category == 'festival' %} background-color: #FF5733; color: white; {% else %} background-color: gray; color: white; {% endif %}">
+                                                         style="
+                                                                 {% if event.category == 'conference' %} 
+                                                                     background-color: #4CFFCC; color: white; 
+                                                                 {% elif event.category == 'festival' %} 
+                                                                     background-color: #FF5733; color: white;
+                                                                 {% elif event.category == 'workshop' %} 
+                                                                     background-color: #FF8C00; color: white; 
+                                                                 {% elif event.category == 'sport' %} 
+                                                                     background-color: #1E90FF; color: white; 
+                                                                 {% elif event.category == 'social' %} 
+                                                                     background-color: #FFD700; color: white; 
+                                                                 {% elif event.category == 'exhibition' %} 
+                                                                     background-color: #8A2BE2; color: white; 
+                                                                 {% elif event.category == 'concert' %} 
+                                                                     background-color: #FF1493; color: white; 
+                                                                 {% elif event.category == 'online' %} 
+                                                                     background-color: #32CD32; color: white; 
+                                                                 {% elif event.category == 'local' %} 
+                                                                     background-color: #FF6347; color: white; 
+                                                                 {% else %} 
+                                                                     background-color: gray; color: white; 
+                                                                 {% endif %}">
                                                         <span class="event-name">{{ event.name }}</span>
                                                         {% if event.start_time and event.end_time %}
                                                             <span class="time">{{ event.start_time|time:"H:i" }}~{{ event.end_time|time:"H:i" }}</span>
