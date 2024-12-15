@@ -36,8 +36,7 @@ Aplikace je rozdělena do částí pro **organizátory** a **účastníky**. Org
 | **Databáze**      | PostgreSQL – relační databáze optimalizovaná pro vysoký výkon a komplexní dotazy.   |
 | **Frontend**      | Tailwind CSS – utility-first CSS framework pro tvorbu responzivního designu.        |
 | **Autentizace**   | Django AllAuth – podpora OAuth a dalších metod pro bezpečné přihlašování uživatelů. |
-| **Deployment**    | Docker – usnadňuje balení a nasazování aplikace.                                    |
-| **Hosting**       | xxx                                                                                 |
+| **Hosting**       | Hicoria - Aplikace je hostována na hostingu Hicoria                                 |
 
 ## Instalace a spuštění
 
