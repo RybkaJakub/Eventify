@@ -203,11 +203,11 @@ ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
 ACCOUNT_EMAIL_REQUIRED = True
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 465
+EMAIL_HOST = env('EMAIL_HOST')
+EMAIL_PORT = env('EMAIL_PORT')
 EMAIL_USE_SSL = True
-EMAIL_HOST_USER = 'ev3ntify@gmail.com'
-EMAIL_HOST_PASSWORD = 'gwga adji tnef svph'
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 
-SUPPORT_EMAIL = 'lakoba@lakoba.xyz'
-CONTACT_EMAIL = 'jakubekrybka@gmail.com'
+SUPPORT_EMAIL = env('SUPPORT_EMAIL')
+CONTACT_EMAIL = env('CONTACT_EMAIL')
