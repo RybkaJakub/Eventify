@@ -1,153 +1,320 @@
 {% extends 'base.html' %}
 {% load static %}
-
 {% block title %}{{ event.name }}{% endblock %}
+
 {% block content %}
-    <div class="container mx-auto mt-5 max-w-2xl">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-                {% if event.image %}
-                    <img src="{{ event.image.url }}" class="img-fluid rounded mb-4" alt="{{ event.name }}">
-                {% else %}
-                    <img src="{% static 'img/static.jpg' %}" class="img-fluid rounded mb-4" alt="{{ event.name }}">
-                {% endif %}
-            </div>
-            <div>
-                <h2 class="text-3xl font-bold mb-3">{{ event.name }}</h2>
-                <div class="description-container relative">
-                    <p class="text-muted description transition-all duration-500 overflow-hidden max-h-12">{{ event.description }}</p>
-                    <button id="toggleDescription" class="btn btn-link p-0 text-blue-600">Zobrazit více</button>
+    <div class="container mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 bg-white shadow-xl rounded-lg p-8 mt-5">
+            <!-- Left Column -->
+            <div class="md:col-span-1 pr-10 relative mt-5">
+                <!-- Event Photo -->
+                <div class="mb-8">
+                    {% if event.image %}
+                        <img src="{{ event.image.url }}" alt="{{ event.name }}"
+                             class="w-full h-64 object-cover rounded-lg shadow-md">
+                    {% else %}
+                        <img src="{% static 'img/static.jpg' %}" alt="{{ event.name }}"
+                             class="w-full h-64 object-cover rounded-lg shadow-md">
+                    {% endif %}
                 </div>
-                <p><strong>Datum:</strong> {{ event.day }} {{ event.start_time }}</p>
-                <p><strong>Místo:</strong> {{ event.location }}</p>
-                <p><strong>Akci pořádá organizace:</strong> {{ event.organization.name }}</p>
+
+                <!-- Share Links -->
+                <div class="flex gap-4 mb-8">
+                    <a href="https://instagram.com/direct/new?text={{ request.build_absolute_uri }}"
+                       target="_blank"
+                       class="text-2xl text-gray-600 hover:text-indigo-600">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://www.messenger.com/share?link={{ request.build_absolute_uri | urlencode }}"
+                       target="_blank"
+                       class="text-2xl text-gray-600 hover:text-blue-600">
+                        <i class="fab fa-facebook-messenger"></i>
+                    </a>
+                    <a href="https://wa.me/?text={{ request.build_absolute_uri }}" target="_blank"
+                       class="text-2xl text-gray-600 hover:text-green-600">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                    <a href="javascript:void(0);" onclick="copyLink()"
+                       class="text-2xl text-gray-600 hover:text-gray-800">
+                        <i class="fas fa-link"></i>
+                    </a>
+                </div>
+                {% if isAuth and isAdmin and userOrganization %}
+    <div class="my-6 border-t-2 pt-6">
+        <h2 class="text-2xl text-center font-bold mb-4">Úprava eventu</h2>
+        <div class="flex gap-4">
+            <a href="{% url 'edit_event' event.id %}"
+               class="bg-yellow-600 hover:bg-yellow-800 text-white py-3 px-6 rounded-lg transition">
+                Upravit event
+            </a>
+
+            <a href="{% url 'edit_ticket' event.id %}"
+               class="bg-purple-600 hover:bg-purple-800 text-white py-3 px-6 rounded-lg transition">
+                Upravit vstupenky
+            </a>
+        </div>
+    </div>
+{% endif %}
+
+
+                <script>
+                    function copyLink() {
+                        const el = document.createElement('textarea');
+                        el.value = window.location.href;
+                        document.body.appendChild(el);
+                        el.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(el);
+                        alert("Odkaz byl zkopírován!");
+                    }
+                </script>
+
+                <!-- Vertical Border Positioned Center -->
+                <div class="absolute rounded-full inset-y-0 right-0 border-r-4 border-gray-200 transform translate-x-1/2"></div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="md:col-span-2 pl-8 mt-5">
+                <!-- Event Title -->
+                <h1 class="text-4xl font-bold text-gray-900 mb-6">{{ event.name }}</h1>
+
+                <!-- Event Date and Time -->
+                <p class="text-lg text-gray-700 mb-4 pb-2 border-b-2"><strong>Datum a
+                    čas:</strong> {{ event.day }} {{ event.start_time }}</p>
+
+                <!-- Event Address -->
+                <p class="text-lg text-gray-700 mb-4 pb-2 border-b-2"><strong>Adresa:</strong> {{ event_address }}</p>
+
+                <!-- Event Category -->
+                <p class="text-lg text-gray-700 mb-4 pb-2 border-b-2">
+                    <strong>Kategorie:</strong> {{ event.get_category_display }}</p>
+
+                <!-- Event Information -->
+                <h2 class="text-2xl font-semibold text-gray-900 mb-4">Informace o eventu</h2>
+                <p class="text-lg text-gray-700 mb-8 pb-2 border-b-2">{{ event.description }}</p>
+
+                <!-- Map Section -->
+                <h2 class="text-2xl font-semibold text-gray-900 mb-4">Na mapě</h2>
+                <div class="relative w-full max-w-7xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+                    <div id="map" class="w-full h-[400px] rounded-xl shadow-md" style="z-index: 1"></div>
+                </div>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        // Převedení souřadnic na správný formát
+                        const longitude = "{{ event_address.longitude }}".replace(",", ".");
+                        const latitude = "{{ event_address.latitude }}".replace(",", ".");
+
+                        // Zaokrouhlíme na 3 desetinná místa
+                        const formattedLongitude = parseFloat(longitude).toFixed(10);
+                        const formattedLatitude = parseFloat(latitude).toFixed(10);
+
+                        // Vytvoření mapy s formátovanými souřadnicemi
+                        var map = L.map('map').setView([formattedLatitude, formattedLongitude], 13);
+
+                        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                            attribution: '© OpenStreetMap contributors'
+                        }).addTo(map);
+
+                        // Popup obsah
+
+                        // Určení barvy markeru podle kategorie eventu
+                        let markerColor = '';
+                        switch ("{{ event.category|capfirst }}") {
+                            case 'Conference':
+                                markerColor = '#4CFFCC';
+                                break;
+                            case 'Festival':
+                                markerColor = '#FF5733';
+                                break;
+                            case 'Workshop':
+                                markerColor = '#FF8C00';
+                                break;
+                            case 'Sport':
+                                markerColor = '#1E90FF';
+                                break;
+                            case 'Social':
+                                markerColor = '#FFD700';
+                                break;
+                            case 'Exhibition':
+                                markerColor = '#8A2BE2';
+                                break;
+                            case 'Concert':
+                                markerColor = '#FF1493';
+                                break;
+                            case 'Online':
+                                markerColor = '#32CD32';
+                                break;
+                            case 'Local':
+                                markerColor = '#FF6347';
+                                break;
+                            default:
+                                markerColor = 'gray'; // výchozí barva
+                        }
+
+                        var customIconHtml = `
+                        <div>
+                            <i class="fa-solid fa-location-dot" style="color: ${markerColor}; font-size: 30px; text-shadow: 1px 1px 5px black;"></i>
+                        </div>`;
+
+                        var customIcon = L.divIcon({
+                            className: 'custom-icon',
+                            html: customIconHtml,
+                            iconSize: [40, 40],
+                            iconAnchor: [20, 40]
+                        });
+
+                        // Přidání markeru na mapu, pokud existují souřadnice
+                        if ("{{ event_address.latitude }}" && "{{ event_address.longitude }}") {
+                            L.marker([formattedLatitude, formattedLongitude], {icon: customIcon})
+                                .addTo(map);
+                        } else {
+                            console.warn("Chybí souřadnice pro event:", "{{ event.name }}");
+                        }
+
+                        // Skrytí attribution control
+                        var attributionControl = document.querySelector(".leaflet-control-attribution");
+                        if (attributionControl) {
+                            attributionControl.style.display = "none";
+                        }
+                    });
+                </script>
+
             </div>
         </div>
+        {% if isAuth and not isAdmin and not userOrganization %}
+            <div class="grid grid-cols-1 bg-white shadow-xl rounded-lg p-8 mt-5">
 
-        {% if not isAdmin and not userOrganization and isAuth %}
-            <form method="post" action="{% url 'purchase_ticket' pk=event.id %}" class="mt-4">
-                {% csrf_token %}
-                <input type="hidden" name="event_id" value="{{ event.id }}">
-                
-                <div class="mb-4">
-                    <label for="ticket_type" class="block mb-1">Typ vstupenky:</label>
-                    <select name="ticket_type" id="ticket_type" required class="block w-full border-gray-300 rounded-md">
-                        {% for ticket in ticket_types %}
-                            <option value="{{ ticket.id }}">{{ ticket.name }} - {{ ticket.price }} Kč</option>
-                        {% empty %}
-                            <option value="">Žádné typy vstupenek nejsou k dispozici</option>
+                <!-- Nadpis uprostřed řádku -->
+                <h1 class="text-3xl font-semibold mb-6 text-gray-900 text-center">
+                    Nákup vstupenek na event: {{ event.name }}
+                </h1>
+
+                <!-- Error zprávy na celém řádku -->
+                {% if messages %}
+                    <div class="w-full mb-4 space-y-4">
+                        {% for message in messages %}
+                            <div class="flex items-center p-4 rounded-lg shadow-md 
+                {% if message.tags == 'success' %}bg-green-100 text-green-700{% else %}bg-red-100 text-red-700{% endif %}">
+                                <svg class="w-5 h-5 mr-3 
+                    {% if message.tags == 'success' %}text-green-500{% else %}text-red-500{% endif %}"
+                                     xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="{% if message.tags == 'success' %}M16.707 6.293a1 1 0 0 0-1.414 0L9 12.586 5.707 9.293a1 1 0 1 0-1.414 1.414l4 4a1 1 0 0 0 1.414 0l7-7a1 1 0 0 0 0-1.414Z{% else %}M9 4a1 1 0 0 1 2 0v4a1 1 0 0 1-2 0V4Zm.293 9.707a1 1 0 0 1 0-1.414l4-4a1 1 0 1 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 1 1 1.414-1.414l4 4a1 1 0 0 1 0 1.414Z{% endif %}"/>
+                                </svg>
+                                <span class="text-sm font-medium">{{ message }}</span>
+                            </div>
                         {% endfor %}
-                    </select>
-                </div>
-                <div class="mb-4">
-                    <label for="quantity" class="block mb-1">Počet:</label>
-                    <input type="number" name="quantity" id="quantity" min="1" max="20" value="1" required class="block w-full border-gray-300 rounded-md">
-                </div>
-                <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700">Koupit vstupenku</button>
-            </form>
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert mt-2 {% if message.tags == 'error' %}alert-danger{% else %}alert-{{ message.tags }}{% endif %}">
-                        {{ message }}
                     </div>
-                {% endfor %}
-            {% endif %}
-        {% endif %}
+                {% endif %}
 
-        {% if isAdmin and userOrganization %}
-            <div class="text-center mt-6">
-                <h2 class="text-2xl font-semibold">Registrovaní uživatelé</h2>
+                <!-- Formulář na výběr vstupenek -->
+                <form method="post" action="{% url 'purchase_ticket' pk=event.id %}" class="mt-4">
+                    {% csrf_token %}
+                    <input type="hidden" name="event_id" value="{{ event.id }}">
+
+                    <!-- Pole na výběr typu vstupenky a počet na jednom řádku -->
+                    <div class="buytickets mb-4">
+                        <div class="flex items-center gap-6">
+
+                            <!-- Výběr typu vstupenky -->
+                            <label for="ticket_type" class="flex items-center w-15/20">
+                                <span class="mr-5 font-medium">Typ vstupenky:</span>
+                                <select name="ticket_type" id="ticket_type" required
+                                        class="block w-full border-gray-300 rounded-md">
+                                    {% for ticket in ticket_types %}
+                                        <option value="{{ ticket.id }}">{{ ticket.name }} - {{ ticket.price }} Kč
+                                        </option>
+                                    {% empty %}
+                                        <option value="">Žádné typy vstupenek nejsou k dispozici</option>
+                                    {% endfor %}
+                                </select>
+                            </label>
+
+                            <!-- Výběr počtu vstupenek -->
+                            <label for="quantity" class="flex items-center w-5/20">
+                                <span class="mr-2 font-medium">Počet:</span>
+                                <input type="number" name="quantity" id="quantity" min="1" max="20" value="1" required
+                                       class="block w-full border-gray-300 rounded-md">
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Tlačítko koupit -->
+                    <div class="flex justify-center mt-4">
+                        <button type="submit"
+                                class="bg-gray-500 text-white py-3 px-6 rounded w-full sm:w-1/2 hover:bg-gray-600 transition">
+                            Koupit
+                        </button>
+                    </div>
+                </form>
             </div>
-            <div class="overflow-auto mt-4">
-                <h2 class="text-xl">{{ ticket.name }}</h2>
-                <table class="w-full table-auto mt-2 border">
-                    <thead class="bg-gray-200 text-gray-700">
+        {% endif %}
+        {% if isAuth and isAdmin or userOrganization %}
+            <div class="grid grid-cols-1 bg-white shadow-2xl rounded-xl p-10 mt-8">
+
+                <!-- Nadpis uprostřed řádku -->
+                <h1 class="text-4xl font-bold mb-8 text-gray-900 text-center">
+                    Nakoupené vstupenky na event: {{ event.name }}
+                </h1>
+
+                <div class="overflow-auto mt-6">
+                    <h2 class="text-2xl font-semibold mb-4">{{ ticket.name }}</h2>
+
+                    <table class="w-full border-collapse shadow-lg rounded-lg overflow-hidden">
+                        <thead class="bg-gradient-to-r from-gray-100 to-gray-300 text-gray-800">
                         <tr>
-                            <th class="border px-4 py-2">ID</th>
-                            <th class="border px-4 py-2">Typ Vstupenky</th>
-                            <th class="border px-4 py-2">Jméno</th>
-                            <th class="border px-4 py-2">Email</th>
-                            <th class="border px-4 py-2">Tel. číslo</th>
-                            <th class="border px-4 py-2">Počet</th>
-                            <th class="border px-4 py-2">Celková cena</th>
+                            <th class="px-6 py-4 text-left font-medium uppercase text-sm">ID</th>
+                            <th class="px-6 py-4 text-left font-medium uppercase text-sm">Typ Vstupenky</th>
+                            <th class="px-6 py-4 text-left font-medium uppercase text-sm">Jméno</th>
+                            <th class="px-6 py-4 text-left font-medium uppercase text-sm">Email</th>
+                            <th class="px-6 py-4 text-left font-medium uppercase text-sm">Tel. číslo</th>
+                            <th class="px-6 py-4 text-left font-medium uppercase text-sm">Počet</th>
+                            <th class="px-6 py-4 text-left font-medium uppercase text-sm">Celková cena</th>
                         </tr>
-                    </thead>
-                    <tbody>
+                        </thead>
+
+                        <tbody class="bg-white">
                         {% if purchasedTickets %}
                             {% for purchasedTicket in purchasedTickets %}
-                                <tr onclick="window.location.href='{% url 'profile' purchasedTicket.user.id %}';" class="cursor-pointer hover:bg-gray-100">
-                                    <td class="border px-4 py-2">{{ purchasedTicket.id }}</td>
-                                    <td class="border px-4 py-2">{{ purchasedTicket.ticket_type.name }}</td>
-                                    <td class="border px-4 py-2">{{ purchasedTicket.user.username }} {{ purchasedTicket.user.last_name }}</td>
-                                    <td class="border px-4 py-2">{{ purchasedTicket.user.email }}</td>
-                                    <td class="border px-4 py-2">{{ purchasedTicket.user.telephone }}</td>
-                                    <td class="border px-4 py-2">{{ purchasedTicket.quantity }}</td>
-                                    <td class="border px-4 py-2">{{ purchasedTicket.total_amount }} Kč</td>
+                                <tr onclick="window.location.href='{% url 'profile' purchasedTicket.user.id %}';"
+                                    class="hover:bg-gray-100 transition-colors border-b border-gray-200">
+                                    <td class="px-6 py-4 text-gray-700">{{ purchasedTicket.id }}</td>
+                                    <td class="px-6 py-4 text-gray-700">{{ purchasedTicket.ticket_type.name }}</td>
+                                    <td class="px-6 py-4 text-gray-700">{{ purchasedTicket.user.username }} {{ purchasedTicket.user.last_name }}</td>
+                                    <td class="px-6 py-4 text-gray-700">{{ purchasedTicket.user.email }}</td>
+                                    <td class="px-6 py-4 text-gray-700">{{ purchasedTicket.user.telephone }}</td>
+                                    <td class="px-6 py-4 text-gray-700">{{ purchasedTicket.quantity }}</td>
+                                    <td class="px-6 py-4 text-gray-700">{{ purchasedTicket.total_amount }} Kč</td>
                                 </tr>
                             {% endfor %}
                         {% else %}
                             <tr>
-                                <td colspan="7" class="text-center">Žádné zakoupené vstupenky nejsou k dispozici</td>
+                                <td colspan="7" class="text-center px-6 py-4 text-gray-600">
+                                    Žádné zakoupené vstupenky nejsou k dispozici
+                                </td>
                             </tr>
                         {% endif %}
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        {% endif %}
 
-        {% if isAuth and not isAdmin %}
-            <div class="text-center mt-6">
-                <h2 class="text-2xl font-semibold">Tvé vstupenky</h2>
-            </div>
-            <div class="overflow-auto mt-4">
-                <table class="w-full table-auto">
-                    <thead>
-                        <tr>
-                            <th class="border px-4 py-2">ID</th>
-                            <th class="border px-4 py-2">Typ vstupenky</th>
-                            <th class="border px-4 py-2">Počet</th>
-                            <th class="border px-4 py-2">Celková cena</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% if userTickets %}
-                            {% for userTicket in userTickets %}
-                                <tr>
-                                    <td class="border px-4 py-2">{{ userTicket.id }}</td>
-                                    <td class="border px-4 py-2">{{ userTicket.ticket_type.name }}</td>
-                                    <td class="border px-4 py-2">{{ userTicket.quantity }}</td>
-                                    <td class="border px-4 py-2">{{ userTicket.total_amount }} Kč</td>
-                                </tr>
-                            {% endfor %}
-                        {% else %}
-                            <tr>
-                                <td colspan="4" class="text-center">Žádné zakoupené vstupenky nejsou k dispozici</td>
-                            </tr>
-                        {% endif %}
-                    </tbody>
-                </table>
-            </div>
         {% endif %}
     </div>
+    <style>
+        .buytickets select, .buytickets input {
+            background-color: #f7f8fa;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 12px;
+            color: #4a5568;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.2s ease-in-out;
+        }
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const description = document.querySelector('.description');
-            const toggleButton = document.getElementById('toggleDescription');
-            const maxLines = 3;
+        .buytickets select:focus, .buytickets input:focus {
+            border-color: #5a67d8;
+            outline: none;
+        }
+    </style>
 
-            description.style.maxHeight = `${1.5 * maxLines}em`;
-            description.style.overflow = 'hidden';
-
-            toggleButton.addEventListener('click', function () {
-                if (description.style.maxHeight !== 'none') {
-                    description.style.maxHeight = 'none';
-                    toggleButton.textContent = 'Zobrazit méně';
-                } else {
-                    description.style.maxHeight = `${1.5 * maxLines}em`;
-                    toggleButton.textContent = 'Zobrazit více';
-                }
-            });
-        });
-    </script>
 {% endblock %}

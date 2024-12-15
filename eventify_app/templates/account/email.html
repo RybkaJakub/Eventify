@@ -69,23 +69,20 @@
                 </ol>
             </div>
             {% if messages %}
-        {% if messages %}
-<div class="max-w-4xl mb-4 space-y-4">
-    {% for message in messages %}
-    <div class="flex items-center p-4 rounded-lg shadow-md 
+                <div class="max-w-4xl mb-4 space-y-4">
+                    {% for message in messages %}
+                        <div class="flex items-center p-4 rounded-lg shadow-md 
                 {% if message.tags == 'success' %}bg-green-100 text-green-700{% else %}bg-red-100 text-red-700{% endif %}">
-        <svg class="w-5 h-5 mr-3 
-                    {% if message.tags == 'success' %}text-green-500{% else %}text-red-500{% endif %}" 
-             xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-            <path d="{% if message.tags == 'success' %}M16.707 6.293a1 1 0 0 0-1.414 0L9 12.586 5.707 9.293a1 1 0 1 0-1.414 1.414l4 4a1 1 0 0 0 1.414 0l7-7a1 1 0 0 0 0-1.414Z{% else %}M9 4a1 1 0 0 1 2 0v4a1 1 0 0 1-2 0V4Zm.293 9.707a1 1 0 0 1 0-1.414l4-4a1 1 0 1 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 1 1 1.414-1.414l4 4a1 1 0 0 1 0 1.414Z{% endif %}" />
-        </svg>
-        <span class="text-sm font-medium">{{ message }}</span>
-    </div>
-    {% endfor %}
-</div>
-{% endif %}
-
-    {% endif %}
+                            <svg class="w-5 h-5 mr-3 
+                    {% if message.tags == 'success' %}text-green-500{% else %}text-red-500{% endif %}"
+                                 xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="{% if message.tags == 'success' %}M16.707 6.293a1 1 0 0 0-1.414 0L9 12.586 5.707 9.293a1 1 0 1 0-1.414 1.414l4 4a1 1 0 0 0 1.414 0l7-7a1 1 0 0 0 0-1.414Z{% else %}M9 4a1 1 0 0 1 2 0v4a1 1 0 0 1-2 0V4Zm.293 9.707a1 1 0 0 1 0-1.414l4-4a1 1 0 1 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 1 1 1.414-1.414l4 4a1 1 0 0 1 0 1.414Z{% endif %}"/>
+                            </svg>
+                            <span class="text-sm font-medium">{{ message }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
             <div class="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg">
                 <h1 class="text-3xl font-semibold mb-6 text-gray-900 text-center">
                     Správa e-mailových adres
@@ -195,67 +192,67 @@
     <script>
         function actionResend(email) {
             const form = document.createElement("form");
-                form.method = "POST";
-                form.action = "{% url 'account_email' %}";
+            form.method = "POST";
+            form.action = "{% url 'account_email' %}";
 
-                // Přidání CSRF tokenu
-                const csrfInput = document.createElement("input");
-                csrfInput.name = "csrfmiddlewaretoken";
-                csrfInput.type = "hidden";
-                csrfInput.value = "{{ csrf_token }}";
-                form.appendChild(csrfInput);
+            // Přidání CSRF tokenu
+            const csrfInput = document.createElement("input");
+            csrfInput.name = "csrfmiddlewaretoken";
+            csrfInput.type = "hidden";
+            csrfInput.value = "{{ csrf_token }}";
+            form.appendChild(csrfInput);
 
-                // Přidání e-mailu k odstranění
-                const emailInput = document.createElement("input");
-                emailInput.name = "email";
-                emailInput.type = "hidden";
-                emailInput.value = email;
-                form.appendChild(emailInput);
+            // Přidání e-mailu k odstranění
+            const emailInput = document.createElement("input");
+            emailInput.name = "email";
+            emailInput.type = "hidden";
+            emailInput.value = email;
+            form.appendChild(emailInput);
 
-                // Nastavení akce pro odstranění
-                const actionInput = document.createElement("input");
-                actionInput.name = "action_resend";
-                actionInput.type = "hidden";
-                actionInput.value = "1";
-                form.appendChild(actionInput);
+            // Nastavení akce pro odstranění
+            const actionInput = document.createElement("input");
+            actionInput.name = "action_resend";
+            actionInput.type = "hidden";
+            actionInput.value = "1";
+            form.appendChild(actionInput);
 
-                // Přidání do DOM a odeslání
-                document.body.appendChild(form);
-                form.submit();
-                console.log(form)
+            // Přidání do DOM a odeslání
+            document.body.appendChild(form);
+            form.submit();
+            console.log(form)
         }
     </script>
     <script>
         function actionPrimary(email) {
             const form = document.createElement("form");
-                form.method = "POST";
-                form.action = "{% url 'account_email' %}";
+            form.method = "POST";
+            form.action = "{% url 'account_email' %}";
 
-                // Přidání CSRF tokenu
-                const csrfInput = document.createElement("input");
-                csrfInput.name = "csrfmiddlewaretoken";
-                csrfInput.type = "hidden";
-                csrfInput.value = "{{ csrf_token }}";
-                form.appendChild(csrfInput);
+            // Přidání CSRF tokenu
+            const csrfInput = document.createElement("input");
+            csrfInput.name = "csrfmiddlewaretoken";
+            csrfInput.type = "hidden";
+            csrfInput.value = "{{ csrf_token }}";
+            form.appendChild(csrfInput);
 
-                // Přidání e-mailu k odstranění
-                const emailInput = document.createElement("input");
-                emailInput.name = "email";
-                emailInput.type = "hidden";
-                emailInput.value = email;
-                form.appendChild(emailInput);
+            // Přidání e-mailu k odstranění
+            const emailInput = document.createElement("input");
+            emailInput.name = "email";
+            emailInput.type = "hidden";
+            emailInput.value = email;
+            form.appendChild(emailInput);
 
-                // Nastavení akce pro odstranění
-                const actionInput = document.createElement("input");
-                actionInput.name = "action_primary";
-                actionInput.type = "hidden";
-                actionInput.value = "1";
-                form.appendChild(actionInput);
+            // Nastavení akce pro odstranění
+            const actionInput = document.createElement("input");
+            actionInput.name = "action_primary";
+            actionInput.type = "hidden";
+            actionInput.value = "1";
+            form.appendChild(actionInput);
 
-                // Přidání do DOM a odeslání
-                document.body.appendChild(form);
-                form.submit();
-                console.log(form)
+            // Přidání do DOM a odeslání
+            document.body.appendChild(form);
+            form.submit();
+            console.log(form)
         }
     </script>
 

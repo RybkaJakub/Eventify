@@ -7,6 +7,8 @@ from allauth.account.views import SignupView
 from django.conf import settings
 from django.contrib.auth import logout
 import json
+
+from django.db.models import Q
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
@@ -66,16 +68,19 @@ def send_email(html_template, context):
 
 def index(request):
     registered_events = []
+    organization_events = []
     divider_rendered = False
     profile_picture = ''
     has_picture = False
 
     now = timezone.now()
-    upcoming_events = Event.objects.all()
+    upcoming_events = Event.objects.filter(
+    Q(day__gt=now.date()) | (Q(day=now.date()) & Q(time__gt=now))
+).order_by('day', 'time')
 
     if request.user.is_authenticated:
         registered_events = TicketPurchase.objects.filter(user=request.user).distinct('event')
-
+        organization_events = Event.objects.filter(organization=request.user.organization)
         social_accounts = SocialAccount.objects.filter(user=request.user)
         profile_picture = UserProfileView.get_user_profile_picture(request, social_accounts)
         if profile_picture:
@@ -122,6 +127,7 @@ def index(request):
     context = {
         'divider_rendered': divider_rendered,
         'upcoming_events': upcoming_events,
+        'organization_events': organization_events,
         'registered_events': registered_events,
         'profile_picture': profile_picture,
         'has_picture': has_picture,
@@ -285,6 +291,9 @@ class EventUpdateView(LoginRequiredMixin, UpdateView):
         context['categories'] = Event.CATEGORY_CHOICES
         event_address_form = self.get_event_address_form()
         context['event_address_form'] = event_address_form
+        context['event'] = self.object
+        context['user'] = self.request.user
+        context['event_address'] = EventAddress.objects.filter(event=self.object).first()
 
         return context
 
@@ -442,19 +451,21 @@ class EventDetailView(DetailView):
         current_url_name = resolve(self.request.path_info).url_name
         context['current_url'] = current_url_name
         context['ticket_types'] = TicketType.objects.filter(event=self.object)
+        context['event_address'] = EventAddress.objects.filter(event=self.object).first()
 
         has_picture = False
-        profile_picture = UserProfileView.get_user_profile_picture(self.request,
-                                                                   SocialAccount.objects.filter(user=self.request.user))
-        if profile_picture:
-            has_picture = True
-        context['has_picture'] = has_picture
-        context['profile_picture'] = profile_picture
 
         auth = self.request.user.is_authenticated
         context['isAuth'] = auth
 
         if auth:
+            profile_picture = UserProfileView.get_user_profile_picture(self.request,
+                                                                       SocialAccount.objects.filter(
+                                                                           user=self.request.user))
+            if profile_picture:
+                has_picture = True
+            context['has_picture'] = has_picture
+            context['profile_picture'] = profile_picture
             # Pouze pro přihlášené uživatele
             context['userTickets'] = TicketPurchase.objects.filter(
                 user=self.request.user,
@@ -1020,6 +1031,7 @@ class CalendarView(View):
     template_name = 'calendar/calendar.html'
 
     def get(self, request):
+        # Získání aktuálního roku a měsíce
         year = int(request.GET.get('year', datetime.now().year))
         month = int(request.GET.get('month', datetime.now().month))
 
@@ -1046,6 +1058,17 @@ class CalendarView(View):
                     week_days.append(None)  # Dny mimo aktuální měsíc
             calendar_weeks.append(week_days)
 
+        # Slovník měsíců (1 - Leden, 2 - Únor, ...)
+        months = {
+            1: 'Leden', 2: 'Únor', 3: 'Březen', 4: 'Duben',
+            5: 'Květen', 6: 'Červen', 7: 'Červenec', 8: 'Srpen',
+            9: 'Září', 10: 'Říjen', 11: 'Listopad', 12: 'Prosinec'
+        }
+
+        # Generování dostupných let (např. 2022 - 2029)
+        current_year = datetime.now().year
+        available_years = list(range(current_year - 5, current_year + 5))
+
         # Kontext pro šablonu
         context = {
             'calendar_weeks': calendar_weeks,
@@ -1056,5 +1079,7 @@ class CalendarView(View):
             'next_month': (month + 1) if month < 12 else 1,
             'next_year': year if month < 12 else year + 1,
             'weekdays': ["Pondělí", "Úterý", "Středa", "Čtvrtek", "Pátek", "Sobota", "Neděle"],
+            'months': months,  # Přidáno do kontextu
+            'available_years': available_years,  # Přidáno do kontextu
         }
         return render(request, self.template_name, context)

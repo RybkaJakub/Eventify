@@ -51,7 +51,7 @@
 <header class="bg-white text-center" style="margin-top: 50px;">
     <div class="welcome-section relative py-32 bg-cover bg-center" style="background-image: url('{% static 'img/eventify_wallpaper.jpg' %}');">
         <div class="absolute inset-0 bg-black bg-opacity-50"></div>
-        <div class="relative z-10 flex justify-between items-start p-6">
+        <div class="relative z-10 flex justify-between items-center p-6 h-full">
             <div class="text-left max-w-lg">
                 <h1 class="text-5xl font-bold mb-4 text-white">Vítej na <span class="text-indigo-400">Eventify</span></h1>
                 <p class="text-lg leading-relaxed text-gray-200">
@@ -67,10 +67,11 @@
                     se unést do světa zábavy, kultury a dobrodružství s Eventify!
                 </p>
             </div>
-            <div class="buttons flex flex-col">
-                <a href="{% url 'events_list' %}" class="button explore-button">Prozkoumat</a>
+            <div class="buttons flex flex-col justify-center items-center">
+                <a href="{% url 'events_list' %}" class="button explore-button mb-4">Prozkoumat</a>
                 <a href="{% url 'calendar' %}" class="button calendar-button">Zobrazit kalendář</a>
             </div>
         </div>
     </div>
 </header>
+

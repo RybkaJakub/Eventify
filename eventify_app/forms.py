@@ -63,7 +63,7 @@ class EventAddressForm(forms.ModelForm):
         model = EventAddress
         fields = ['street', 'number', 'city', 'postal_code', 'country']
         widgets = {
-            'street': forms.Textarea(attrs={'class': 'form-textarea', 'rows': 3}),
+            'street': forms.TextInput(attrs={'class': 'form-input'}),
             'number': forms.NumberInput(attrs={'class': 'form-input'}),
             'city': forms.TextInput(attrs={'class': 'form-input'}),
             'postal_code': forms.TextInput(attrs={'class': 'form-input'}),

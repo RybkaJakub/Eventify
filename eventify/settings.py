@@ -204,7 +204,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 465
 EMAIL_USE_SSL = True
 EMAIL_HOST_USER = 'ev3ntify@gmail.com'
-EMAIL_HOST_PASSWORD = 'umwp zzar njra tzco'
+EMAIL_HOST_PASSWORD = 'gwga adji tnef svph'
 
 SUPPORT_EMAIL = 'lakoba@lakoba.xyz'
 CONTACT_EMAIL = 'jakubekrybka@gmail.com'

@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.conf import settings
+from django.db.models.query_utils import logger
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 import re
@@ -155,7 +156,7 @@ class EventAddress(models.Model):
         verbose_name_plural = 'Adresa Eventu'
 
     def __str__(self):
-        return f"{self.street}, {self.city}, {self.country}"
+        return f"{self.street} {self.number}, {self.city}, {self.country}"
 
     def save(self, *args, **kwargs):
         if not self.latitude or not self.longitude:
@@ -163,6 +164,7 @@ class EventAddress(models.Model):
             geolocator = Nominatim(user_agent="eventify")
             try:
                 location = geolocator.geocode(address)
+                logger.info(location)
                 if location:
                     self.latitude = location.latitude
                     self.longitude = location.longitude

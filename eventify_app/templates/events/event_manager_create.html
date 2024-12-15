@@ -1,184 +1,307 @@
 {% extends "base.html" %}
 {% load widget_tweaks %}
+{% load static %}
 
 {% block title %}Vytvoření eventu{% endblock %}
 
 {% block content %}
     <div class="container mx-auto my-8">
         <form enctype="multipart/form-data" class="bg-white shadow-md rounded-lg p-8" method="post" id="event_form">
+            {% if form.errors %}
+                <div class="w-full mb-4 space-y-4">
+                    {% for field, errors in form.errors.items %}
+                        {% for error in errors %}
+                            <div class="flex items-center p-4 rounded-lg shadow-md
+                    {% if error == 'success' %}bg-green-100 text-green-700{% else %}bg-red-100 text-red-700{% endif %}">
+                                <svg class="w-5 h-5 mr-3
+                        {% if error == 'success' %}text-green-500{% else %}text-red-500{% endif %}"
+                                     xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="{% if error == 'success' %}M16.707 6.293a1 1 0 0 0-1.414 0L9 12.586 5.707 9.293a1 1 0 1 0-1.414 1.414l4 4a1 1 0 0 0 1.414 0l7-7a1 1 0 0 0 0-1.414Z{% else %}M9 4a1 1 0 0 1 2 0v4a1 1 0 0 1-2 0V4Zm.293 9.707a1 1 0 0 1 0-1.414l4-4a1 1 0 1 1 1.414 1.414l-4 4a1 1 0 0 1-1.414 0l-4-4a1 1 0 1 1 1.414-1.414l4 4a1 1 0 0 1 0 1.414Z{% endif %}"/>
+                                </svg>
+                                <span class="text-sm font-medium">
+                                    {% if field == 'category' %}
+                                        Kategorie eventu: {{ error }}
+                                    {% else %}
+                                        {{ field.label }}: {{ error }}
+                                    {% endif %}
+                    </span>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            {% endif %}
             {% csrf_token %}
             <h1 class="text-3xl font-bold text-center mb-8">Vytvořit nový event</h1>
 
             <!-- Hlavní formulář pro Event -->
             <div class="mb-8">
-                {% for field in form %}
-                    <div class="mb-4">
-                        {% if field.name == 'category' %}
-                            <div class="mb-4">
-                                <label for="category" class="block text-sm font-medium text-gray-700 mb-2">
-                                    {{ field.label }}
-                                </label>
-                                {% if field.field.required %}
-                                    <span class="text-red-500 font-semibold">*</span>
-                                {% endif %}
-
-                                <!-- Custom dropdown -->
-                                <div class="relative">
-                                    <button type="button" id="categoryDropdown"
-                                            class="w-full p-3 border border-gray-300 rounded-lg text-gray-600 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                        Vyberte kategorii
-                                        <span class="ml-2">&#9662;</span>
-                                    </button>
-                                    <div id="categoryOptions"
-                                         class="absolute hidden w-full bg-white border border-gray-300 rounded-lg shadow-lg mt-1 z-10">
-                                        {% for value, label in categories %}
-                                            <a href="#" class="block px-3 py-2 text-gray-700 hover:bg-gray-100"
-                                               data-value="{{ value }}">
-                                                {{ label }}
-                                            </a>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-
-                                <!-- Hidden input to store the selected category value -->
-                                <input type="hidden" id="category" name="category" value="{{ form.category.value }}">
-
-                                {% if field.help_text %}
-                                    <small class="text-gray-500">{{ field.help_text }}</small>
-                                {% endif %}
-
-                                {% for error in field.errors %}
-                                    <p class="text-red-500 text-sm mt-1">{{ error }}</p>
-                                {% endfor %}
-                            </div>
-                        {% else %}
-                            <label class="block text-sm font-medium text-gray-700 mb-1">{{ field.label }}</label>
-                            {% if field.field.required %}
-                                <span class="text-red-500 font-semibold">*</span>
-                            {% endif %}
-                            {{ field|add_class:"w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300" }}
-                            {% if field.help_text %}
-                                <small class="text-gray-500">{{ field.help_text }}</small>
-                            {% endif %}
-                            {% for error in field.errors %}
-                                <p class="text-red-500 text-sm mt-1">{{ error }}</p>
-                            {% endfor %}
-                        {% endif %}
-                    </div>
-                {% endfor %}
-            </div>
-
-            <!-- Formulář pro adresu eventu -->
-            <div class="mb-8">
-                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Adresa eventu</h2>
                 <div class="mb-4">
-                    {% for field in event_address_form %}
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">{{ field.label }}</label>
-                            {% if field.field.required %}
-                                <span class="text-red-500 font-semibold">*</span>
-                            {% endif %}
-                            {{ field|add_class:"w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300" }}
-                            {% if field.help_text %}
-                                <small class="text-gray-500">{{ field.help_text }}</small>
-                            {% endif %}
-                            {% for error in field.errors %}
-                                <p class="text-red-500 text-sm mt-1">{{ error }}</p>
-                            {% endfor %}
-                        </div>
-                    {% endfor %}
+                    <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Název události</label>
+                    <input type="text" name="name" placeholder="{{ form.name.help_text }}"
+                           class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300">
                 </div>
-            </div>
 
-            <!-- Formulář pro ticket types -->
-            {% with named_formsets.ticket_types as formset %}
-                {{ formset.management_form }}
-                <script type="text/html" id="ticket_types-template">
-                    <tr id="ticket_types-__prefix__" class="border-b border-gray-200">
-                        <td class="p-4">
-                            <input type="text" name="ticket_types-__prefix__-name"
-                                   class="form-control w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
-                                   maxlength="255">
-                        </td>
-                        <td class="p-4">
-                            <input type="number" name="ticket_types-__prefix__-price"
-                                   class="form-control w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
-                                   step="0.01">
-                        </td>
-                        <td class="p-4">
-                            <input type="number" name="ticket_types-__prefix__-quantity"
-                                   class="form-control w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300">
-                        </td>
-                        <td class="p-4">
-                            <button type="button" class="remove-ticket_type text-red-500 hover:text-red-700">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>
-                        </td>
-                    </tr>
+                <div class="mb-4">
+                    <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Popis
+                        události</label>
+                    <textarea name="description"
+                              class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+                              placeholder="{{ form.description.help_text }}"></textarea>
+                </div>
+
+                <div class="flex gap-4 mb-4">
+                    <div class="w-1/2">
+                        <label for="day" class="block text-sm font-medium text-gray-700 mb-2">Den konání
+                            eventu</label>
+                        <input type="date" name="day" value="{{ form.instance.day|date:'Y-m-d' }}"
+                               class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300">
+                    </div>
+                    <div class="w-1/2">
+                        <label for="time" class="block text-sm font-medium text-gray-700 mb-2">Čas konání eventu</label>
+                        <input type="time" id="time" name="time" value="{{ form.instance.time }}"
+                               class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300">
+                    </div>
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            const timeInput = document.getElementById('time');
+                            if (!timeInput.value) { // Nastaví čas pouze v případě, že už není zadaný
+                                const now = new Date();
+                                const hours = String(now.getHours()).padStart(2, '0');
+                                const minutes = String(now.getMinutes()).padStart(2, '0');
+                                timeInput.value = `${hours}:${minutes}`;
+                            }
+                        });
+                    </script>
+                </div>
+                <div class="mb-4">
+                    <label for="image" class="block text-sm font-medium text-gray-700 mb-2">Obrázek události</label>
+
+                    <!-- Obrázek s efektem ztmavnutí při najetí -->
+                    <div class="relative group cursor-pointer max-w-md mx-auto"
+                         id="image-container"
+                         ondrop="handleDrop(event)"
+                         ondragover="handleDragOver(event)"
+                         ondragleave="handleDragLeave(event)">
+                        <img id="current-image" src="{% static 'img/static.jpg' %}" alt="Obrázek"
+                             class="w-full h-full rounded-lg shadow-lg group-hover:opacity-50 transition-opacity duration-300"
+                             onclick="triggerFileInput()">
+                        <!-- Ikona pro nahrání souboru a text nápovědy -->
+                        <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                             onclick="triggerFileInput()">
+                            <i class="ml-5 fas fa-cloud-upload-alt text-4xl mb-2"></i>
+                            <div class="text-sm text-center">Přetáhněte soubor sem nebo klikněte na obrázek pro
+                                nahrání nového.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Skrytý input pro výběr souboru -->
+                    <input type="file" id="image-upload" name="image"
+                           class="hidden"
+                           accept="image/*"
+                           onchange="handleFileSelect(event)">
+                </div>
+
+                <script>
+                    // Funkce pro aktivaci inputu při kliknutí na obrázek nebo text
+                    function triggerFileInput() {
+                        document.getElementById('image-upload').click();
+                    }
+
+                    // Funkce pro zpracování přetahování souboru
+                    function handleFileSelect(event) {
+                        const file = event.target.files[0];
+
+                        if (file) {
+                            const reader = new FileReader();
+
+                            // Přečte soubor a nastaví ho jako obrázek
+                            reader.onload = function (e) {
+                                document.getElementById('current-image').src = e.target.result;
+                            };
+
+                            reader.readAsDataURL(file);
+                        }
+                    }
+
+                    // Funkce pro drag-and-drop (volitelně)
+                    function handleDragOver(event) {
+                        event.preventDefault();  // Umožní přetahování
+                    }
+
+                    function handleDragLeave(event) {
+                        event.preventDefault();  // Předchází výchozímu chování
+                    }
+
+                    function handleDrop(event) {
+                        event.preventDefault();  // Zabrání výchozímu chování
+                        const file = event.dataTransfer.files[0];
+                        if (file) {
+                            handleFileSelect({target: {files: [file]}});
+                        }
+                    }
                 </script>
 
-                <div class="mt-8">
-                    <h2 class="text-xl font-bold text-gray-800 mb-4">Přidat vstupenku</h2>
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full table-auto border-collapse border border-gray-200">
-                            <thead class="bg-gray-100">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 border-b border-gray-200">
-                                    Jméno
-                                </th>
-                                <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 border-b border-gray-200">
-                                    Cena
-                                </th>
-                                <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 border-b border-gray-200">
-                                    Počet
-                                </th>
-                                <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 border-b border-gray-200">
-                                    Akce
-                                </th>
-                            </tr>
-                            </thead>
-                            <tbody id="item-ticket_types">
-                            {% for error in formset.non_form_errors %}
-                                <tr>
-                                    <td colspan="3" class="text-red-500 text-center py-2">{{ error }}</td>
-                                </tr>
-                            {% endfor %}
-                            {% for formss in formset %}
-                                {{ formss.management_form }}
-                                <tr id="ticket_types-{{ forloop.counter0 }}" class="border-b border-gray-200">
-                                    <td class="p-4">
-                                        {{ formss.name|add_class:"w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300" }}
-                                    </td>
-                                    <td class="p-4">
-                                        {{ formss.price|add_class:"w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300" }}
-                                    </td>
-                                    <td class="p-4">
-                                        {{ formss.quantity|add_class:"w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300" }}
-                                    </td>
-                                    <td class="p-4">
-                                        <button type="button"
-                                                class="remove-ticket_type text-red-500 hover:text-red-700">
-                                            <i class="fas fa-trash-alt"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                    <a href="#" id="add-ticket_types-button"
-                       class="mt-4 inline-flex items-center px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 shadow-md">
-                        <i class="fas fa-plus mr-2"></i>Přidat více
-                    </a>
-                </div>
-            {% endwith %}
 
-            <div class="mt-6">
-                <button type="submit"
-                        class="w-full py-3 px-6 bg-blue-600 text-white rounded-lg hover:bg-blue-500 focus:outline-none focus:ring focus:ring-blue-300">
-                    Uložit
-                </button>
-            </div>
+                <div class="mb-4">
+                    <label for="category" class="block text-sm font-medium text-gray-700 mb-2">Kategorie
+                        eventu</label>
+                    {% if form.instance.category.field.required %}
+                        <span class="text-red-500 font-semibold">*</span>
+                    {% endif %}
+
+                    <!-- Custom dropdown -->
+                    <div class="relative">
+                        <button type="button" id="categoryDropdown"
+                                class="w-full p-3 border border-gray-300 rounded-lg text-gray-600 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            Vyberte kategorii
+                            <span class="ml-2">&#9662;</span>
+                        </button>
+                        <div id="categoryOptions"
+                             class="absolute hidden w-full bg-white border border-gray-300 rounded-lg shadow-lg mt-1 z-10">
+                            {% for value, label in categories %}
+                                <a href="#" class="block px-3 py-2 text-gray-700 hover:bg-gray-100"
+                                   data-value="{{ value }}">
+                                    {{ label }}
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Hidden input to store the selected category value -->
+                    <input type="hidden" id="category" name="category" value="{{ form.instance.category }}">
+
+                    {% if form.instance.category.help_text %}
+                        <small class="text-gray-500">{{ form.instance.category.help_text }}</small>
+                    {% endif %}
+
+                    {% for error in form.instance.category.errors %}
+                        <p class="text-red-500 text-sm mt-1">{{ error }}</p>
+                    {% endfor %}
+                </div>
+
+                <!-- Formulář pro adresu eventu -->
+                <div class="mb-8">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Adresa eventu</h2>
+                    <div class="flex gap-4 mb-4">
+                        <input type="text" name="street" placeholder="{{ event_address_form.street.help_text }}"
+                               class="w-2/3 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300">
+                        <input type="text" name="number" placeholder="{{ event_address_form.number.help_text }}"
+                               class="w-1/3 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300">
+                    </div>
+                    <div class="flex gap-4 mb-4">
+                        <input type="text" name="city" placeholder="{{ event_address_form.city.help_text }}"
+                               class="w-1/3 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300">
+                        <input type="text" name="postal_code"
+                               placeholder="{{ event_address_form.postal_code.help_text }}"
+                               class="w-1/3 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300">
+                        <input type="text" name="country" placeholder="{{ event_address_form.country.help_text }}"
+                               class="w-1/3 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300">
+                    </div>
+                </div>
+
+                <!-- Formulář pro ticket types -->
+                {% with named_formsets.ticket_types as formset %}
+                    {{ formset.management_form }}
+                    <script type="text/html" id="ticket_types-template">
+                        <tr id="ticket_types-__prefix__" class="border-b border-gray-200">
+                            <td class="p-4">
+                                <input type="text" name="ticket_types-__prefix__-name"
+                                       class="form-control w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+                                       maxlength="255">
+                            </td>
+                            <td class="p-4">
+                                <input type="number" name="ticket_types-__prefix__-price"
+                                       class="form-control w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+                                       step="0.01">
+                            </td>
+                            <td class="p-4">
+                                <input type="number" name="ticket_types-__prefix__-quantity"
+                                       class="form-control w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300">
+                            </td>
+                            <td class="p-4">
+                                <button type="button" class="remove-ticket_type text-red-500 hover:text-red-700">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </script>
+
+                    <div class="mt-8">
+                        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Vstupenky eventu</h2>
+                        <div class="overflow-x-auto">
+                            <table class="w-full border-collapse shadow-lg rounded-lg overflow-hidden">
+                                <thead class="bg-gradient-to-r from-gray-100 to-gray-300 text-gray-800">
+                                <tr>
+                                    <th class="px-6 py-4 text-left font-medium uppercase text-sm" scope="col">
+                                        Jméno
+                                    </th>
+                                    <th class="px-6 py-4 text-left font-medium uppercase text-sm" scope="col">
+                                        Cena
+                                    </th>
+                                    <th class="px-6 py-4 text-left font-medium uppercase text-sm" scope="col">
+                                        Počet
+                                    </th>
+                                    <th class="px-6 py-4 text-center font-medium uppercase text-sm" scope="col">
+                                        Akce
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody id="item-ticket_types" class="bg-white">
+                                {% for formss in formset %}
+                                    {{ formss.management_form }}
+                                    <tr id="ticket_types-{{ forloop.counter0 }}"
+                                        class="hover:bg-gray-100 transition-colors border-b border-gray-200">
+                                        <td class="px-6 py-4 text-gray-700">
+                                            {{ formss.name|add_class:"w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300" }}
+                                        </td>
+                                        <td class="px-6 py-4 text-gray-700">
+                                            {{ formss.price|add_class:"w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300" }}
+                                        </td>
+                                        <td class="px-6 py-4 text-gray-700">
+                                            {{ formss.quantity|add_class:"w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300" }}
+                                        </td>
+                                        <td class="px-6 py-4 text-gray-700">
+                                            <button type="button"
+                                                    class="remove-ticket_type text-red-500 hover:text-red-700">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="flex mt-6">
+                            <a href="#" id="add-ticket_types-button"
+                               class="w-full py-3 px-6 bg-purple-600 text-white text-center rounded-lg hover:bg-purple-500 focus:outline-none focus:ring focus:ring-blue-300">
+                                <i class="fas fa-plus mr-2"></i>Přidat více
+                            </a>
+                        </div>
+                    </div>
+                {% endwith %}
+
+                <div class="flex gap-4 mt-6">
+                    <button type="submit"
+                            class="w-3/4 py-3 px-6 bg-blue-600 text-white rounded-lg hover:bg-blue-500 focus:outline-none focus:ring focus:ring-blue-300">
+                        Uložit
+                    </button>
+                    <button type='button' onclick="goBack()"
+                            class="w-1/4 px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                        Zrušit
+                    </button>
+
+                    <script>
+                        function goBack() {
+                            if (window.history.length > 1) {
+                                window.history.back(); // Pokud je historie, jdeme zpět
+                            } else {
+                                window.location.href = '/'; // Pokud není historie, přesměrujeme na domovskou stránku
+                            }
+                        }
+                    </script>
+                </div>
         </form>
     </div>
 
@@ -282,4 +405,20 @@
             });
         });
     </script>
+    <style>
+        input, textarea, #categoryDropdown, #categoryOptions {
+            background-color: #f7f8fa;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 12px;
+            color: #4a5568;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.2s ease-in-out;
+        }
+
+        input:focus, textarea:focus, #categoryDropdown:focus, #categoryOptions:focus {
+            border-color: #5a67d8;
+            outline: none;
+        }
+    </style>
 {% endblock %}

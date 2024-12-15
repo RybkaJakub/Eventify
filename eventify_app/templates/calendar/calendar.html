@@ -4,81 +4,108 @@
 {% block title %}Kalendář{% endblock %}
 
 {% block content %}
-    <div class="container mx-auto mt-10">
-        <!-- Navigace mezi měsíci -->
-        <div class="flex justify-between items-center mb-6">
-            <a href="?year={{ previous_year }}&month={{ previous_month }}"
-               class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Předchozí měsíc</a>
-            <h1 class="text-2xl font-bold">{{ current_year }} - {{ current_month }}</h1>
-            <a href="?year={{ next_year }}&month={{ next_month }}"
-               class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Další měsíc</a>
-        </div>
+    <div class="min-h-screen flex bg-gray-50">
 
-        <!-- Tabulka kalendáře -->
-        <table class="table-auto w-full bg-white rounded-lg shadow-md">
-            <thead>
-            <tr>
-                {% for day_name in weekdays %}
-                    <th class="p-3 border-b text-sm font-medium text-gray-600">{{ day_name }}</th>
-                {% endfor %}
-            </tr>
-            </thead>
-            <tbody>
-            {% for week in calendar_weeks %}
+        <main class="flex-1 p-8">
+            <div class="date w-full bg-white shadow-xl rounded-lg p-8 mb-5 flex items-center justify-between">
+                <!-- Tlačítko pro předchozí měsíc -->
+                <a href="?year={{ previous_year }}&month={{ previous_month }}" class="text-gray-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                         stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                    </svg>
+                </a>
+
+                <div class="flex items-center space-x-4">
+                    <!-- Dropdown pro výběr měsíce -->
+                    <select class="border border-gray-300 rounded px-4 py-2"
+                            onchange="window.location.href='?year={{ current_year }}&month=' + this.value">
+                        {% for month_num, month_name in months.items %}
+                            <option value="{{ month_num }}"
+                                    {% if month_num == current_month %}selected{% endif %}>{{ month_name }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <!-- Dropdown pro výběr roku -->
+                    <select class="border border-gray-300 rounded px-4 py-2"
+                            onchange="window.location.href='?year=' + this.value + '&month={{ current_month }}'">
+                        {% for year in available_years %}
+                            <option value="{{ year }}"
+                                    {% if year == current_year %}selected{% endif %}>{{ year }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Tlačítko pro další měsíc -->
+                <a href="?year={{ next_year }}&month={{ next_month }}" class="text-gray-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                         stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </div>
+
+            <!-- Tabulka kalendáře -->
+            <table class="table-auto w-full bg-white rounded-lg shadow-md">
+                <thead>
                 <tr>
-                    {% for day in week %}
-                        <td class="border p-1 h-40 xl:w-40 lg:w-30 md:w-30 sm:w-20 w-10 overflow-auto transition cursor-pointer duration-500 ease hover:bg-gray-300">
-                            {% if day %}
-                                <div class="flex flex-col h-40 mx-auto xl:w-40 lg:w-30 md:w-30 sm:w-full w-10 overflow-hidden">
-                                    <!-- Datum -->
-                                    <div class="top h-5 w-full">
-                                        <span class="text-gray-500">{{ day.day.day }}</span>
-                                    </div>
-                                    <!-- Události -->
-                                    <div class="bottom flex-grow h-30 py-1 w-full cursor-pointer">
-                                        {% if day.events %}
-                                            {% for event in day.events %}
-                                                <div class="event rounded p-1 text-sm mb-1" onclick="window.location.href='{% url 'event_detail' event.id %}'"
-                                                     style="
-                                                             {% if event.category == 'conference' %}
-                                                                 background-color: #4CFFCC; color: white;
-                                                             {% elif event.category == 'festival' %}
-                                                                 background-color: #FF5733; color: white; /* oranžová */
-                                                             {% elif event.category == 'workshop' %}
-                                                                 background-color: #FF8C00; color: white; /* tmavě oranžová */
-                                                             {% elif event.category == 'sport' %}
-                                                                 background-color: #1E90FF; color: white; /* modrá */
-                                                             {% elif event.category == 'social' %}
-                                                                 background-color: #FFD700; color: white; /* zlatá */
-                                                             {% elif event.category == 'exhibition' %}
-                                                                 background-color: #8A2BE2; color: white; /* modrofialová */
-                                                             {% elif event.category == 'concert' %}
-                                                                 background-color: #FF1493; color: white; /* růžová */
-                                                             {% elif event.category == 'online' %}
-                                                                 background-color: #32CD32; color: white; /* zelená */
-                                                             {% elif event.category == 'local' %}
-                                                                 background-color: #FF6347; color: white; /* rajčatová červená */
-                                                             {% else %}
-                                                                 background-color: gray; color: white;
-                                                             {% endif %}">
-                                                <span class="event-name">{{ event.name }}</span>
-                                                {% if event.start_time and event.end_time %}
-                                                    <span class="time">{{ event.start_time|time:"H:i" }}~{{ event.end_time|time:"H:i" }}</span>
-                                                {% endif %}
-                                                </div>
-                                            {% endfor %}
-                                        {% else %}
-                                            <!-- Pokud nejsou události -->
-                                            <div class="text-gray-400 italic text-sm">Žádné události</div>
-                                        {% endif %}
-                                </div>
-                                </div>
-                            {% endif %}
-                        </td>
+                    {% for day_name in weekdays %}
+                        <th class="p-3 border-b text-sm font-medium text-gray-600">{{ day_name }}</th>
                     {% endfor %}
                 </tr>
-            {% endfor %}
-    </tbody>
-    </table>
+                </thead>
+                <tbody>
+                {% for week in calendar_weeks %}
+                    <tr>
+                        {% for day in week %}
+                            <td class="border p-1 h-40 xl:w-40 lg:w-30 md:w-30 sm:w-20 w-10 overflow-auto transition cursor-pointer duration-500 ease hover:bg-gray-300">
+                                {% if day %}
+                                    <div class="flex flex-col h-40 mx-auto xl:w-40 lg:w-30 md:w-30 sm:w-full w-10 overflow-hidden">
+                                        <!-- Datum -->
+                                        <div class="top h-5 w-full">
+                                            <span class="text-gray-500">{{ day.day.day }}</span>
+                                        </div>
+                                        <!-- Události -->
+                                        <div class="bottom flex-grow h-30 py-1 w-full cursor-pointer">
+                                            {% if day.events %}
+                                                {% for event in day.events %}
+                                                    <div class="event rounded p-1 text-sm mb-1"
+                                                         onclick="window.location.href='{% url 'event_detail' event.id %}'"
+                                                         style="{% if event.category == 'conference' %} background-color: #4CFFCC; color: white; {% elif event.category == 'festival' %} background-color: #FF5733; color: white; {% else %} background-color: gray; color: white; {% endif %}">
+                                                        <span class="event-name">{{ event.name }}</span>
+                                                        {% if event.start_time and event.end_time %}
+                                                            <span class="time">{{ event.start_time|time:"H:i" }}~{{ event.end_time|time:"H:i" }}</span>
+                                                        {% endif %}
+                                                    </div>
+                                                {% endfor %}
+                                            {% else %}
+                                                <div class="text-gray-400 italic text-sm">Žádné události</div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </main>
     </div>
+    <style>
+        .date select {
+            background-color: #f7f8fa;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 12px;
+            color: #4a5568;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.2s ease-in-out;
+        }
+
+        .date select:focus {
+            border-color: #5a67d8;
+            outline: none;
+        }
+    </style>
 {% endblock %}

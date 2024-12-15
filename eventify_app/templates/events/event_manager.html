@@ -4,62 +4,75 @@
 {% block title %}Správce eventů {% endblock %}
 
 {% block content %}
-    <div class="container mx-auto mt-5">
+<div class="container mx-auto px-4 py-8">
+    <div class="bg-white shadow-xl rounded-lg p-8 mt-5">
+
         {% if in_organization %}
-            <div class="text-center mb-5">
-                <h2 class="text-2xl font-semibold text-gray-800">Události organizace: {{ organization.name }}</h2>
-            </div>
-            <div class="text-center mb-4">
-                <a class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700" href="{% url 'create_event' %}">Přidat
-                    událost</a>
+            <div class="mb-10 text-center">
+                <h2 class="text-4xl font-extrabold text-gray-900 mb-6">Události organizace: {{ organization.name }}</h2>
+                
+                <a href="{% url 'create_event' %}" 
+                   class="inline-block bg-gray-600 text-white font-medium py-3 px-8 rounded-lg shadow-md hover:bg-gray-700 transition">
+                    Přidat událost
+                </a>
             </div>
         {% endif %}
 
-        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                <thead class="bg-gray-100 text-xs text-gray-700 uppercase">
-                <tr>
-                    <th scope="col" class="px-6 py-3" colspan="2">Název události</th>
-                    <th scope="col" class="px-6 py-3">Datum</th>
-                    <th scope="col" class="px-6 py-3">Čas</th>
-                    <th scope="col" class="px-6 py-3">Místo</th>
-                    <th scope="col" class="px-6 py-3" colspan="2">Popisek</th>
-                    <th scope="col" class="px-6 py-3" colspan="2">Akce</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for item in events_with_addresses %}
-                    <tr class="bg-white border-b hover:bg-gray-50">
-                        <th scope="row"
-                            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap" colspan="2">{{ item.event.name }}</th>
-                        <td class="px-6 py-4">{{ item.event.day }}</td>
-                        <td class="px-6 py-4">{{ item.event.time }}</td>
-                        <td class="px-6 py-4">{{ item.address.street }}, {{ item.address.number }},
-                            {{ item.address.city }} {{ item.address.postal_code }}, {{ item.address.country }}</td>
-                        <td class="px-6 py-4" colspan="2">{{ item.event.description }}</td>
-                        <td class="px-6 py-4" colspan="2">
-                            <a href="{% url 'event_detail' item.event.id %}" class="text-blue-600 hover:underline mx-2">
-                                <i class="fa-solid fa-eye fa-2x"></i>
-                            </a>
-                            <a href="{% url 'edit_event' item.event.id %}" class="text-yellow-600 hover:underline mx-2">
-                                <i class="fa-solid fa-pen-to-square fa-2x"></i>
-                            </a>
-                            <a href="{% url 'edit_ticket' item.event.id %}" class="text-purple-600 hover:underline mx-2">
-                                <i class="fa-solid fa-ticket fa-2x"></i>
-                            </a>
-                            <a href="{% url 'delete_event' item.event.id %}" class="text-red-600 hover:underline mx-2">
-                                <i class="fa-solid fa-xmark fa-2x"></i>
-                            </a>
-                        </td>
-
-                    </tr>
-                {% empty %}
+        <div class="relative overflow-hidden shadow-2xl rounded-2xl bg-white">
+            <table class="w-full text-sm text-left text-gray-800">
+                <thead class="bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 text-sm uppercase tracking-wide">
                     <tr>
-                        <td colspan="5" class="px-6 py-4 text-center text-gray-500">Žádné události</td>
+                        <th scope="col" class="px-6 py-4 text-left">Název události</th>
+                        <th scope="col" class="px-6 py-4 text-left">Datum</th>
+                        <th scope="col" class="px-6 py-4 text-left">Čas</th>
+                        <th scope="col" class="px-6 py-4 text-left">Místo</th>
+                        <th scope="col" class="px-6 py-4 text-left">Popisek</th>
+                        <th scope="col" class="px-6 py-4 text-center">Akce</th>
                     </tr>
-                {% endfor %}
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    {% for item in events_with_addresses %}
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-6 py-4 font-semibold text-gray-900">{{ item.event.name }}</td>
+                            <td class="px-6 py-4">{{ item.event.day }}</td>
+                            <td class="px-6 py-4">{{ item.event.time }}</td>
+                            <td class="px-6 py-4">
+                                <p>{{ item.address.street }} {{ item.address.number }}</p>
+                                <p>{{ item.address.city }}, {{ item.address.postal_code }}</p>
+                                <p>{{ item.address.country }}</p>
+                            </td>
+                            <td class="px-6 py-4 text-gray-700 truncate max-w-xs">{{ item.event.description }}</td>
+                            <td class="px-6 py-4 text-center">
+                                <div class="flex justify-center items-center space-x-4">
+                                    <a href="{% url 'event_detail' item.event.id %}" 
+                                       class="text-blue-600 hover:text-blue-800 transition">
+                                        <i class="fa-solid fa-eye fa-xl"></i>
+                                    </a>
+                                    <a href="{% url 'edit_event' item.event.id %}" 
+                                       class="text-yellow-600 hover:text-yellow-800 transition">
+                                        <i class="fa-solid fa-pen-to-square fa-xl"></i>
+                                    </a>
+                                    <a href="{% url 'edit_ticket' item.event.id %}" 
+                                       class="text-purple-600 hover:text-purple-800 transition">
+                                        <i class="fa-solid fa-ticket fa-xl"></i>
+                                    </a>
+                                    <a href="{% url 'delete_event' item.event.id %}" 
+                                       class="text-red-600 hover:text-red-800 transition">
+                                        <i class="fa-solid fa-trash fa-xl"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="6" class="px-6 py-8 text-center text-gray-500">
+                                <p class="text-lg font-medium">Žádné události</p>
+                            </td>
+                        </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
     </div>
+</div>
 {% endblock %}
