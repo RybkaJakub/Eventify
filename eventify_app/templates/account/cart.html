@@ -4,158 +4,153 @@
 {% block title %}Košík{% endblock %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-8">
-    <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Tvůj košík</h2>
-    
-    <div id="progress" class="flex justify-center items-center">
-        <ol class="flex w-full max-w-4xl justify-between items-center space-x-4">
-            <li class="flex-1">
-                <div class="flex flex-col items-center">
-                    <div class="flex items-center justify-center w-8 h-8 bg-yellow-500 rounded-full ring-8 ring-yellow-200 dark:bg-yellow-600 dark:ring-yellow-800">
-                        <span class="text-white font-bold">1</span>
-                    </div>
-                    <h3 class="mt-4 text-center font-medium text-yellow-900 dark:text-yellow-600">Položky v košíku</h3>
-                </div>
-            </li>
+    <div class="container mx-auto px-4 py-8">
+        <div class="bg-white shadow-xl rounded-lg p-8 mt-5">
+            <h1 class="text-3xl font-bold text-center mb-10">Tvůj košík</h1>
 
-            <li class="flex-1">
-                <div class="flex flex-col items-center">
-                    <div class="flex items-center justify-center w-8 h-8 bg-gray-200 rounded-full ring-8 ring-gray-300 dark:bg-gray-700 dark:ring-gray-900">
-                        <span class="text-gray-500 dark:text-gray-400 font-bold">2</span>
-                    </div>
-                    <h3 class="mt-4 text-center font-medium text-gray-500 dark:text-gray-400">Doručovací údaje</h3>
-                </div>
-            </li>
+            <div id="progress" class="flex justify-center items-center">
+                <ol class="flex w-full max-w-4xl justify-between items-center space-x-4">
+                    <li class="flex-1">
+                        <div class="flex flex-col items-center">
+                            <div class="flex items-center justify-center w-8 h-8 bg-yellow-500 rounded-full ring-8 ring-yellow-200 dark:bg-yellow-600 dark:ring-yellow-800">
+                                <span class="text-white font-bold">1</span>
+                            </div>
+                            <h3 class="mt-4 text-center font-medium text-yellow-900 dark:text-yellow-600">Položky v
+                                košíku</h3>
+                        </div>
+                    </li>
 
-            <li class="flex-1">
-                <div class="flex flex-col items-center">
-                    <div class="flex items-center justify-center w-8 h-8 bg-gray-200 rounded-full ring-8 ring-gray-300 dark:bg-gray-700 dark:ring-gray-900">
-                        <span class="text-gray-500 dark:text-gray-400 font-bold">3</span>
-                    </div>
-                    <h3 class="mt-4 text-center font-medium text-gray-500 dark:text-gray-400">Platební metoda</h3>
-                </div>
-            </li>
+                    <li class="flex-1">
+                        <div class="flex flex-col items-center">
+                            <div class="flex items-center justify-center w-8 h-8 bg-gray-200 rounded-full ring-8 ring-gray-300 dark:bg-gray-700 dark:ring-gray-900">
+                                <span class="text-gray-500 dark:text-gray-400 font-bold">2</span>
+                            </div>
+                            <h3 class="mt-4 text-center font-medium text-gray-500 dark:text-gray-400">Doručovací
+                                údaje</h3>
+                        </div>
+                    </li>
 
-            <li class="flex-1">
-                <div class="flex flex-col items-center">
-                    <div class="flex items-center justify-center w-8 h-8 bg-gray-200 rounded-full ring-8 ring-gray-300 dark:bg-gray-700 dark:ring-gray-900">
-                        <span class="text-gray-500 dark:text-gray-400 font-bold">4</span>
-                    </div>
-                    <h3 class="mt-4 text-center font-medium text-gray-500 dark:text-gray-400">Potvrzení objednávky</h3>
-                </div>
-            </li>
-        </ol>
-    </div>
+                    <li class="flex-1">
+                        <div class="flex flex-col items-center">
+                            <div class="flex items-center justify-center w-8 h-8 bg-gray-200 rounded-full ring-8 ring-gray-300 dark:bg-gray-700 dark:ring-gray-900">
+                                <span class="text-gray-500 dark:text-gray-400 font-bold">3</span>
+                            </div>
+                            <h3 class="mt-4 text-center font-medium text-gray-500 dark:text-gray-400">Platební
+                                metoda</h3>
+                        </div>
+                    </li>
 
-    <div class="overflow-x-auto mt-10">
-        <form method="POST">
-            {% csrf_token %}
-            <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow custom-table">
-                <thead>
-                    <tr class="bg-gray-200 text-gray-600 uppercase text-sm tracking-wider">
-                        <th class="py-3 px-4 text-left font-semibold">Event</th>
-                        <th class="py-3 px-2 text-left font-semibold w-16">Typ</th>
-                        <th class="py-3 px-2 text-center font-semibold w-12">Počet</th>
-                        <th class="py-3 px-2 text-right font-semibold w-24">Jedn. cena</th>
-                        <th class="py-3 px-2 text-right font-semibold w-24">Celková cena</th>
-                        <th class="py-3 px-2 text-center font-semibold">Akce</th>
-                    </tr>
-                </thead>
-                <tbody class="text-gray-800 text-sm">
-                    {% if items %}
-                    {% for item in items %}
-                    <tr class="border-b border-gray-200 hover:bg-gray-100 transition ease-in-out duration-100" id="{{ item.id }}">
-                        <td class="py-4 px-4 text-left truncate event-cell" title="{{ item.event.name }}">{{ item.event.name }}</td>
-                        <td class="py-4 px-2 text-left truncate type-cell" title="{{ item.ticket_type.name }}">{{ item.ticket_type.name }}</td>
-                        <td class="py-4 px-2 text-center">
-                            <input type="number" name="quantity_{{ item.id }}" value="{{ item.quantity }}" min="1" max="{{ item.ticket_type.left }}" class="quantity-input w-16 text-center border border-gray-300 rounded">
-                        </td>
-                        <td class="py-4 px-2 text-right">{{ item.ticket_type.price }} Kč</td>
-                        <td class="py-4 px-2 text-right font-semibold">{{ item.total_amount }} Kč</td>
-                        <td class="py-4 px-2 text-center">
-                            <form action="{% url 'remove_item' item.id %}" method="POST" style="display: inline;">
-                                {% csrf_token %}
-                                <button type="submit" class="text-red-500 hover:text-red-700">Odstranit</button>
-                            </form>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                    {% else %}
-                    <tr class="border-b border-gray-200 hover:bg-gray-100 transition ease-in-out duration-100" id="NONE">
-                        <td class="py-4 px-4 text-center truncate" title="No Tickets" colspan="6">Nemáte žádné vstupenky v košíku.</td>
-                    </tr>
-                    {% endif %}  
-                </tbody>
-            </table>
-
-            <div class="flex justify-end mt-4">
-                <button type="submit" id="update-button" class="bg-gray-600 text-white py-2 px-4 rounded hover:bg-gray-700" style="display:none;">Aktualizovat košík</button>
+                    <li class="flex-1">
+                        <div class="flex flex-col items-center">
+                            <div class="flex items-center justify-center w-8 h-8 bg-gray-200 rounded-full ring-8 ring-gray-300 dark:bg-gray-700 dark:ring-gray-900">
+                                <span class="text-gray-500 dark:text-gray-400 font-bold">4</span>
+                            </div>
+                            <h3 class="mt-4 text-center font-medium text-gray-500 dark:text-gray-400">Potvrzení
+                                objednávky</h3>
+                        </div>
+                    </li>
+                </ol>
             </div>
+            <form method="POST">
+                <div class="relative overflow-hidden shadow-2xl rounded-2xl bg-white mt-10">
+                    {% csrf_token %}
+                    <table class="w-full text-sm text-left text-gray-800">
+                        <thead class="bg-gray-200 text-gray-700 text-sm uppercase tracking-wide">
+                        <tr>
+                            <th scope="col" class="px-6 py-4 text-center w-24">Akce</th>
+                            <th scope="col" class="px-6 py-4 text-left">Event</th>
+                            <th scope="col" class="px-6 py-4 text-left">Typ</th>
+                            <th scope="col" class="px-6 py-4 text-left">Počet</th>
+                            <th scope="col" class="px-6 py-4 text-left">Jedn. cena</th>
+                            <th scope="col" class="px-6 py-4 text-left">Celková cena</th>
+                        </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                        {% if items %}
+                            {% for item in items %}
+                                <tr class="hover:bg-gray-50 transition" id="{{ item.id }}">
+                                    <td class="px-6 py-4 text-center">
+                                        <!-- Samostatný formulář pro odstranění -->
+                                        <button formaction="{% url 'remove_item' item.id %}"
+                                                formmethod="POST"
+                                                class="text-red-500 hover:text-red-700">
+                                            <i
+                                            class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </td>
+                                    <td class="px-6 py-4 font-semibold text-gray-900 text-left" title="{{ item.event.name }}">
+                                        {{ item.event.name }}
+                                    </td>
+                                    <td class="px-6 py-4 text-left" title="{{ item.ticket_type.name }}">
+                                        {{ item.ticket_type.name }}
+                                    </td>
+                                    <td class="px-6 py-4 text-left">
+                                        <input type="number" name="quantity_{{ item.id }}" value="{{ item.quantity }}"
+                                               min="1" max="{{ item.ticket_type.left }}"
+                                               class="transition quantity-input w-16 text-center border border-gray-300 rounded">
+                                    </td>
+                                    <td class="px-6 py-4 text-left">{{ item.ticket_type.price }} Kč</td>
+                                    <td class="px-6 py-4 text-left">{{ item.total_amount }} Kč</td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="6" class="px-6 py-8 text-center text-gray-500">
+                                    <p class="text-lg font-medium">Žádné události</p>
+                                </td>
+                            </tr>
+                        {% endif %}
+                        </tbody>
+                    <tfoot class="bg-gray-200 text-gray-700 text-sm uppercase tracking-wide">
+                        <tr>
+                            <th scope="col" colspan="4"></th>
+                            <th scope="col" class="px-6 py-4 text-left">Celková cena:</th>
+                            <th scope="col" class="px-6 py-4 text-left font-black">{{ total_price }} Kč</th>
+                        </tr>
+                        </tfoot>
 
-        </form>
-            <div class="flex justify-between mt-16">
-                <p class="font-semibold">Celková cena:</p>
-                <p class="font-semibold">{{ total_price }} Kč</p>
-            </div>
+                    </table>
+                </div>
+
+                <!-- Aktualizace počtu položek v košíku -->
+                <div id="update-div" class="flex justify-end mt-4" style="display:none;">
+                    <button type="submit" id="update-button"
+                            class="bg-gray-600 text-white py-2 px-4 rounded hover:bg-gray-700">
+                        Aktualizovat košík
+                    </button>
+                </div>
+            </form>
 
             <div class="flex justify-between mt-20">
-                <div class="justify-start" style="margin-left: 0">
-                    <form action="{% url 'clear_cart' %}" method="POST" style="display: inline;">
-                        {% csrf_token %}
-                        <button type="submit" class="text-gray-600 border border-gray-600 py-2 px-4 rounded hover:bg-gray-100">Vymazat košík</button>
-                    </form>
-                </div>
-
-                <button type="button" onclick="location.href='{% url 'cart_informations' %}'" class="bg-gray-600 text-white py-2 px-4 rounded hover:bg-gray-700">Další</button>
-            </div>
+    <!-- Vymazání košíku -->
+    <div class="flex justify-start" style="margin-left: 0">
+        <form action="{% url 'clear_cart' %}" method="POST" class="inline-block">
+            {% csrf_token %}
+            <button type="submit" class="text-red-600 border border-red-600 py-2 px-6 rounded-lg hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-300">
+                Vymazat košík
+            </button>
+        </form>
     </div>
+
+    <!-- Pokračování -->
+    <button type="button" onclick="location.href='{% url 'cart_informations' %}'"
+            class="bg-gray-600 text-white py-2 px-6 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300">
+        Další
+    </button>
 </div>
 
-<style>
-th:first-child,
-td:first-child {
-    width: 10%;
-}
+        </div>
+    </div>
 
-th:nth-child(2),
-td:nth-child(2) {
-    width: 5%;
-}
+    <script>
+        // JavaScript to show the update button when input values change
+        const quantityInputs = document.querySelectorAll('.quantity-input');
+        const updateButton = document.getElementById('update-div');
 
-th:nth-child(3),
-td:nth-child(3) {
-    width: 5%;
-}
-
-th:nth-child(4),
-td:nth-child(4) {
-    width: 5%;
-}
-
-th:nth-child(5),
-td:nth-child(5) {
-    width: 8%;
-}
-
-th:last-child,
-td:last-child {
-    width: 8%;
-}
-.quantity-input + div {
-    transform: translateX(-50%);
-    white-space: nowrap;
-}
-</style>
-
-<script>
-    // JavaScript to show the update button when input values change
-    const quantityInputs = document.querySelectorAll('.quantity-input');
-    const updateButton = document.getElementById('update-button');
-
-    quantityInputs.forEach(input => {
-        input.addEventListener('input', () => {
-            updateButton.style.display = 'inline-block'; // Show the button
+        quantityInputs.forEach(input => {
+            input.addEventListener('input', () => {
+                updateButton.style.display = 'inline-block'; // Show the button
+            });
         });
-    });
-</script>
+    </script>
 {% endblock %}
