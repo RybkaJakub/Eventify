@@ -341,7 +341,6 @@ class EditTicketView(View):
 
     def get(self, request, pk):
         event = get_object_or_404(Event, pk=pk)
-        messages = []
 
         # Formset pro existující TicketType objekty
         TicketTypeFormSet = modelformset_factory(TicketType, form=TicketTypeForm, extra=0)
@@ -720,10 +719,11 @@ class CartInformationsView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         user = self.request.user
         context['user'] = user
+
         delivery_address = DeliveryAddress.objects.filter(user=user).first()
         context['delivery_address'] = delivery_address
         context['user_form'] = CustomUserForm(instance=user)
-        context['address_form'] = DeliveryAddressForm(instance=DeliveryAddress.objects.filter(user=user).first())
+        context['address_form'] = DeliveryAddressForm(instance=delivery_address)
 
         # Kontrola pro profilový obrázek
         has_picture = False
@@ -735,27 +735,33 @@ class CartInformationsView(LoginRequiredMixin, TemplateView):
         context['has_picture'] = has_picture
         context['profile_picture'] = profile_picture
 
+        context['new_message'] = False
+
         return context
 
     def post(self, request, *args, **kwargs):
         user_form = CustomUserForm(request.POST, instance=request.user)
-        address_form = DeliveryAddressForm(request.POST,
-                                           instance=DeliveryAddress.objects.filter(user=request.user).first())
-
+        address_instance = DeliveryAddress.objects.filter(user=request.user).first() or DeliveryAddress(
+            user=request.user)
+        address_form = DeliveryAddressForm(request.POST, instance=address_instance)
         if user_form.is_valid() and address_form.is_valid():
             user_form.save()
-            address_form.instance.user = request.user
             address_form.save()
             messages.success(request, 'Vaše informace byly úspěšně aktualizovány.')
-            return redirect('cart_informations')
+            context = self.get_context_data()
+            context['user_form'] = user_form
+            context['address_form'] = address_form
+            context['new_message'] = True
+            return self.render_to_response(context)
         else:
             messages.error(request, 'Chyba při aktualizaci informací. Zkontrolujte zadání.')
 
-        # V případě neplatného formuláře znovu načti formuláře s chybami
+            # Vrátí formuláře s chybami
         context = self.get_context_data()
-        context['user_form'] = user_form  # Zahrnout formuláře s chybami
+        context['user_form'] = user_form  # Vrátí formuláře s chybami
         context['address_form'] = address_form
-        return render(request, self.template_name, context)
+        context['new_message'] = True
+        return self.render_to_response(context)
 
 
 class CartPaymentView(LoginRequiredMixin, TemplateView):

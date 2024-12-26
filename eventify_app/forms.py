@@ -1,3 +1,5 @@
+from typing import re
+
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit, Button
@@ -155,6 +157,15 @@ class DeliveryAddressForm(forms.ModelForm):
     class Meta:
         model = DeliveryAddress
         fields = ['street', 'number', 'city', 'postal_code', 'country']
+
+    def clean_street_number(self):
+        street_number = self.cleaned_data.get('street_number')
+        if not street_number:
+            raise forms.ValidationError('Číslo popisné je povinné.')
+        if not re.match(r'^\d+(\s?\/\s?\d+)?$', street_number):  # Povolit čísla a formát "632/7" s volitelnými mezerami
+            raise forms.ValidationError('Zadejte platné číslo popisné, například "742" nebo "421/21".')
+        return street_number
+
 
 class PaymentMethodForm(forms.ModelForm):
     class Meta:

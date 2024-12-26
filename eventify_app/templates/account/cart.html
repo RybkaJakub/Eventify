@@ -51,6 +51,8 @@
                     </li>
                 </ol>
             </div>
+        </div>
+        <div class="bg-white shadow-xl rounded-lg p-8 mt-5">
             <form method="POST">
                 <div class="relative overflow-hidden shadow-2xl rounded-2xl bg-white mt-10">
                     {% csrf_token %}
@@ -75,10 +77,11 @@
                                                 formmethod="POST"
                                                 class="text-red-500 hover:text-red-700">
                                             <i
-                                            class="fas fa-trash-alt"></i>
+                                                    class="fas fa-trash-alt"></i>
                                         </button>
                                     </td>
-                                    <td class="px-6 py-4 font-semibold text-gray-900 text-left" title="{{ item.event.name }}">
+                                    <td class="px-6 py-4 font-semibold text-gray-900 text-left"
+                                        title="{{ item.event.name }}">
                                         {{ item.event.name }}
                                     </td>
                                     <td class="px-6 py-4 text-left" title="{{ item.ticket_type.name }}">
@@ -101,7 +104,7 @@
                             </tr>
                         {% endif %}
                         </tbody>
-                    <tfoot class="bg-gray-200 text-gray-700 text-sm uppercase tracking-wide">
+                        <tfoot class="bg-gray-200 text-gray-700 text-sm uppercase tracking-wide">
                         <tr>
                             <th scope="col" colspan="4"></th>
                             <th scope="col" class="px-6 py-4 text-left">Celková cena:</th>
@@ -122,23 +125,23 @@
             </form>
 
             <div class="flex justify-between mt-20">
-    <!-- Vymazání košíku -->
-    <div class="flex justify-start" style="margin-left: 0">
-        <form action="{% url 'clear_cart' %}" method="POST" class="inline-block">
-            {% csrf_token %}
-            <button type="submit" class="text-red-600 border border-red-600 py-2 px-6 rounded-lg hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-300">
-                Vymazat košík
-            </button>
-        </form>
-    </div>
+                <!-- Vymazání košíku -->
+                <div class="flex justify-start" style="margin-left: 0">
+                    <form action="{% url 'clear_cart' %}" method="POST" class="inline-block">
+                        {% csrf_token %}
+                        <button type="submit"
+                                class="text-red-600 border border-red-600 py-2 px-6 rounded-lg hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-300">
+                            Vymazat košík
+                        </button>
+                    </form>
+                </div>
 
-    <!-- Pokračování -->
-    <button type="button" onclick="location.href='{% url 'cart_informations' %}'"
-            class="bg-gray-600 text-white py-2 px-6 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300">
-        Další
-    </button>
-</div>
-
+                <!-- Pokračování -->
+                <button type="button" onclick="location.href='{% url 'cart_informations' %}'"
+                        class="bg-gray-600 text-white py-2 px-6 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300">
+                    Další
+                </button>
+            </div>
         </div>
     </div>
 

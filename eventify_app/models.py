@@ -49,7 +49,7 @@ class OrganizationAddress(models.Model):
     number = models.PositiveSmallIntegerField(verbose_name="Číslo popisné", help_text="Zadejte číslo popisné", blank=True, null=True)
     city = models.TextField(verbose_name="Město", help_text="Zadejte město")
     postal_code = models.TextField(validators=[validate_postal_code], verbose_name="PSČ", help_text="Zadejte PSČ")
-    country = models.CharField(max_length=255, verbose_name="Stát", help_text="Zadejte stát", default="Česká republika")
+    country = models.CharField(max_length=255, verbose_name="Stát", help_text="Zadejte stát", default="Česko")
 
     class Meta:
         verbose_name = 'Adresa Organizace'
@@ -147,7 +147,7 @@ class EventAddress(models.Model):
     number = models.PositiveSmallIntegerField(verbose_name="Číslo popisné", help_text="Zadejte číslo popisné", blank=True, null=True)
     city = models.TextField(verbose_name="Město", help_text="Zadejte město")
     postal_code = models.TextField(validators=[validate_postal_code], verbose_name="PSČ", help_text="Zadejte PSČ")
-    country = models.CharField(max_length=255, verbose_name="Stát", help_text="Zadejte stát", default="Česká republika")
+    country = models.CharField(max_length=255, verbose_name="Stát", help_text="Zadejte stát", default="Česko")
     latitude = models.FloatField(blank=True, null=True)
     longitude = models.FloatField(blank=True, null=True)
 
@@ -221,7 +221,7 @@ class DeliveryAddress(models.Model):
     number = models.PositiveSmallIntegerField(verbose_name="Číslo popisné", help_text="Zadejte číslo popisné")
     city = models.TextField(verbose_name="Město", help_text="Zadejte město")
     postal_code = models.TextField(validators=[validate_postal_code], verbose_name="PSČ", help_text="Zadejte PSČ")
-    country = models.CharField(max_length=255, verbose_name="Stát", help_text="Zadejte stát", default="Česká republika")
+    country = models.CharField(max_length=255, verbose_name="Stát", help_text="Zadejte stát", default="Česko")
 
     class Meta:
         verbose_name = 'Doručovací adresa'

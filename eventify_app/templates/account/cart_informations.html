@@ -1,91 +1,147 @@
 {% extends "base.html" %}
-{% load crispy_forms_tags %}
+{% load static %}
 
 {% block title %}Údaje o nákupu{% endblock %}
 
 {% block content %}
-    
+
     <div class="container mx-auto px-4 py-8">
-        <!-- Title -->
-        <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Tvůj košík</h2>
+        <div class="bg-white shadow-xl rounded-lg p-8 mt-5">
+            <!-- Title -->
+            <h1 class="text-3xl font-bold text-center mb-10">Tvůj košík</h1>
 
-        <!-- Progress Tracker -->
-        <div id="progress" class="flex justify-center items-center mb-8">
-            <ol class="flex w-full max-w-4xl justify-between items-center space-x-4">
-                <li class="flex-1">
-                <div class="flex flex-col items-center">
-                    <a href="{% url 'cart' %}" class="flex items-center justify-center w-8 h-8 bg-blue-600 rounded-full ring-8 ring-blue-300 dark:bg-cyan-700 dark:ring-cyan-900">
-                        <svg class="w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5"/>
-                        </svg>
-                    </a>
-                    <h3 class="mt-4 text-center font-medium text-blue-900 dark:text-cyan-600">Položky v košíku</h3>
-                </div>
-            </li>
-                <li class="flex-1">
-                <div class="flex flex-col items-center">
-                    <div class="flex items-center justify-center w-8 h-8 bg-yellow-500 rounded-full ring-8 ring-yellow-200 dark:bg-yellow-600 dark:ring-yellow-800">
-                        <span class="text-white font-bold">2</span>
-                    </div>
-                    <h3 class="mt-4 text-center font-medium text-yellow-900 dark:text-yellow-600">Doručovací údaje</h3>
-                </div>
-            </li>
-                <li class="flex-1">
-                    <div class="flex flex-col items-center">
-                        <div class="flex items-center justify-center w-8 h-8 bg-gray-200 rounded-full ring-8 ring-gray-300 dark:bg-gray-700 dark:ring-gray-900">
-                            <span class="text-gray-500 dark:text-gray-400 font-bold">3</span>
+            <!-- Progress Tracker -->
+            <div id="progress" class="flex justify-center items-center mb-8">
+                <ol class="flex w-full max-w-4xl justify-between items-center space-x-4">
+                    <li class="flex-1">
+                        <div class="flex flex-col items-center">
+                            <a href="{% url 'cart' %}"
+                               class="flex items-center justify-center w-8 h-8 bg-blue-600 rounded-full ring-8 ring-blue-300 dark:bg-cyan-700 dark:ring-cyan-900">
+                                <svg class="w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                     viewBox="0 0 16 12">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                          stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5"/>
+                                </svg>
+                            </a>
+                            <h3 class="mt-4 text-center font-medium text-blue-900 dark:text-cyan-600">Položky v
+                                košíku</h3>
                         </div>
-                        <h3 class="mt-4 text-center font-medium text-gray-500 dark:text-gray-400">Platební metoda</h3>
-                    </div>
-                </li>
-                <li class="flex-1">
-                    <div class="flex flex-col items-center">
-                        <div class="flex items-center justify-center w-8 h-8 bg-gray-200 rounded-full ring-8 ring-gray-300 dark:bg-gray-700 dark:ring-gray-900">
-                            <span class="text-gray-500 dark:text-gray-400 font-bold">4</span>
+                    </li>
+                    <li class="flex-1">
+                        <div class="flex flex-col items-center">
+                            <div class="flex items-center justify-center w-8 h-8 bg-yellow-500 rounded-full ring-8 ring-yellow-200 dark:bg-yellow-600 dark:ring-yellow-800">
+                                <span class="text-white font-bold">2</span>
+                            </div>
+                            <h3 class="mt-4 text-center font-medium text-yellow-900 dark:text-yellow-600">Doručovací
+                                údaje</h3>
                         </div>
-                        <h3 class="mt-4 text-center font-medium text-gray-500 dark:text-gray-400">Potvrzení
-                            objednávky</h3>
-                    </div>
-                </li>
-            </ol>
+                    </li>
+                    <li class="flex-1">
+                        <div class="flex flex-col items-center">
+                            <div class="flex items-center justify-center w-8 h-8 bg-gray-200 rounded-full ring-8 ring-gray-300 dark:bg-gray-700 dark:ring-gray-900">
+                                <span class="text-gray-500 dark:text-gray-400 font-bold">3</span>
+                            </div>
+                            <h3 class="mt-4 text-center font-medium text-gray-500 dark:text-gray-400">Platební
+                                metoda</h3>
+                        </div>
+                    </li>
+                    <li class="flex-1">
+                        <div class="flex flex-col items-center">
+                            <div class="flex items-center justify-center w-8 h-8 bg-gray-200 rounded-full ring-8 ring-gray-300 dark:bg-gray-700 dark:ring-gray-900">
+                                <span class="text-gray-500 dark:text-gray-400 font-bold">4</span>
+                            </div>
+                            <h3 class="mt-4 text-center font-medium text-gray-500 dark:text-gray-400">Potvrzení
+                                objednávky</h3>
+                        </div>
+                    </li>
+                </ol>
+            </div>
         </div>
+        <div class="bg-white shadow-xl rounded-lg p-8 mt-5">
+            {% if messages and new_message %}
+                {% include 'snippets/message.html' %}
+            {% endif %}
 
-        <!-- Main Content Section -->
-        <div class="flex justify-center w-full max-w-4xl bg-white shadow-lg rounded-lg p-10 mt-10 overflow-auto">
+            <!-- Main Content Section -->
             {% if delivery_address %}
                 <!-- Display Address Card -->
                 <div id="address-card"
-                     class="w-full bg-white border border-gray-200 rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-700 p-8">
-                    <div class="flex items-center mb-6">
-                        <img class="w-24 h-24 mr-4 rounded-full shadow-lg" src="{{ profile_picture }}"
-                             alt="Profilová fotka"/>
-                        <div>
-                            <h5 class="text-2xl font-semibold text-gray-900 dark:text-white">{{ user.first_name }} {{ user.last_name }}</h5>
-                            <span class="text-sm text-gray-500 dark:text-gray-400 block mt-1">
-                                {{ delivery_address.street }} {{ delivery_address.number }}, {{ delivery_address.city }} {{ delivery_address.postal_code }}
-                            </span>
-                        </div>
+                     class="w-full bg-white border border-gray-200 rounded-lg shadow-lg p-8 flex flex-col md:flex-row items-center">
+                    <!-- Levá část: Fotka uživatele -->
+                    <div class="w-full md:w-1/3 flex flex-col items-center">
+                        {% if has_picture %}
+                            <img class="w-full h-auto object-cover rounded-lg shadow-md" src="{{ profile_picture }}"
+                                 alt="user photo">
+                        {% elif user.image %}
+                            <img class="w-full h-auto object-cover rounded-lg shadow-md" src="{{ user.image.url }}"
+                                 alt="user photo">
+                        {% else %}
+                            <img class="w-full h-auto object-cover rounded-lg shadow-md"
+                                 src="{% static 'img/default_profile.jpg' %}" alt="user photo">
+                        {% endif %}
                     </div>
-                    <!-- Action Buttons -->
-                    <div class="flex justify-between mt-8">
-                        <button type="button" onclick="toggleForm()"
-                                class="text-gray-600 hover:text-yellow-600 font-semibold">
-                            Upravit údaje
+
+                    <!-- Vertikální divider s automatickou výškou -->
+                    <div class="w-px bg-gray-300 mx-8 h-auto self-stretch"></div>
+
+
+                    <!-- Pravá část: Údaje uživatele -->
+                    <div class="w-full relative h-auto flex-grow">
+                        <div class="flex justify-between items-center p-4">
+                            <!-- Údaje uživatele -->
+                            <div>
+                                <h5 class="text-2xl font-semibold text-gray-900">{{ user.first_name }} {{ user.last_name }}</h5>
+                                <p class="text-gray-500 mt-2">{{ user.email }}</p>
+                                <p class="text-gray-500 mt-1">{{ user.telephone }}</p>
+                                <p class="text-gray-500 mt-1">{{ user.date_birth }}</p>
+                                <div class="mt-4">
+                                    <h6 class="text-lg font-medium text-gray-900">Adresa:</h6>
+                                    <p class="text-gray-500 mt-2">
+                                        {{ delivery_address.street }} {{ delivery_address.number }},
+                                        {{ delivery_address.city }} {{ delivery_address.postal_code }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="toggleForm()"
+                                class="absolute top-4 right-4 text-blue-600 hover:text-blue-600">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                                 stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                      d="M16.862 3.487a2.25 2.25 0 013.182 3.182L6.75 19.965l-4.5.75.75-4.5L16.862 3.487z"/>
+                            </svg>
                         </button>
-                        <a href="{% url 'cart' %}"
-                           class="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded-md">
-                            Zpět
-                        </a>
-                        <a href="{% url 'cart_payment' %}"
-                           class="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded-md">
-                            Pokračovat k platbě
-                        </a>
+
+
+                        <!-- Akční tlačítka -->
+                        <div class="flex justify-between mt-6">
+                            <a href="{% url 'cart' %}"
+                               class="inline-flex items-center justify-center bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-6 border border-gray-300 rounded-lg shadow-sm transition-all duration-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                                     stroke="currentColor" class="w-5 h-5 mr-2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                          d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/>
+                                </svg>
+                                Zpět
+                            </a>
+                            <a href="{% url 'cart_payment' %}"
+                               class="inline-flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-6 rounded-lg shadow-lg transition-all duration-200">
+                                Pokračovat k platbě
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                                     stroke="currentColor" class="w-5 h-5 ml-2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                          d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
+                                </svg>
+                            </a>
+                        </div>
+
                     </div>
                 </div>
 
+
                 <!-- Edit Address Form (Initially Hidden) -->
-                <div id="edit-address-form" class="hidden w-full bg-white shadow-md rounded-lg p-8">
-                    <form class="space-y-6" method="post" action="{% url 'cart_informations' %}">
+                <div id="edit-address-form" class="hidden w-full p-8">
+                    <form class="space-y-6" method="POST" action="{% url 'cart_informations' %}">
                         {% csrf_token %}
 
                         <h2 class="text-2xl font-semibold mb-4">Osobní údaje</h2>
@@ -93,7 +149,8 @@
                         <!-- Jméno a Příjmení na jednom řádku -->
                         <div class="grid grid-cols-2 gap-4">
                             <div class="flex flex-col w-full">
-                                {{ user_form.first_name.label_tag }}
+                                <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Křestní
+                                    jméno</label>
                                 <input type="text" name="{{ user_form.first_name.name }}"
                                        id="{{ user_form.first_name.id_for_label }}"
                                        class="border border-gray-300 rounded-md p-2 w-full"
@@ -181,134 +238,127 @@
                                        value="{{ address_form.postal_code.value|default_if_none:'' }}">
                             </div>
                             <div class="col-span-3 flex flex-col w-full">
-                            {{ address_form.country.label_tag }}
-                            <input type="text" name="{{ address_form.country.name }}" 
-                                   id="id_country" 
-                                   autocomplete="off" 
-                                   class="border border-gray-300 rounded-md p-2 w-full"
-                                   placeholder="Začněte psát stát" required
-                                   value="{{ address_form.country.value|default_if_none:'' }}">
-                        </div>
+                                {{ address_form.country.label_tag }}
+                                <input type="text" name="{{ address_form.country.name }}"
+                                       id="id_country"
+                                       autocomplete="off"
+                                       class="border border-gray-300 rounded-md p-2 w-full"
+                                       placeholder="Začněte psát stát" required
+                                       value="{{ address_form.country.value|default_if_none:'' }}">
+                            </div>
                         </div>
 
                         <!-- Submit Button -->
                         <button type="submit"
-                                class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md mt-6">
+                                class="w-full bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-md mt-6">
                             Uložit změny
                         </button>
                     </form>
                 </div>
             {% else %}
-                <div id="edit-address-form" class="w-full bg-white shadow-md rounded-lg p-8">
+                <div id="edit-address-form"
+                     class="w-full bg-white border shadow-md border-gray-200 rounded-lg p-8 mt-5">
                     <form class="space-y-6" method="post" action="{% url 'cart_informations' %}">
                         {% csrf_token %}
 
-                        <h2 class="text-2xl font-semibold mb-4">Osobní údaje</h2>
+                        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Osobní údaje</h2>
 
                         <!-- Jméno a Příjmení na jednom řádku -->
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="flex flex-col w-full">
-                                {{ user_form.first_name.label_tag }}
-                                <input type="text" name="{{ user_form.first_name.name }}"
-                                       id="{{ user_form.first_name.id_for_label }}"
-                                       class="border border-gray-300 rounded-md p-2 w-full"
+                        <div class="flex gap-4 mb-4">
+                            <div class="w-1/2">
+                                <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Křestní
+                                    jméno</label>
+                                <input type="text" name="name"
+                                       value="{{ user_form.first_name.value|default_if_none:'' }}"
                                        placeholder="Jméno" required
-                                       value="{{ user_form.first_name.value|default_if_none:'' }}">
+                                       class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300">
                             </div>
-                            <div class="flex flex-col w-full">
-                                {{ user_form.last_name.label_tag }}
-                                <input type="text" name="{{ user_form.last_name.name }}"
-                                       id="{{ user_form.last_name.id_for_label }}"
-                                       class="border border-gray-300 rounded-md p-2 w-full"
+                            <div class="w-1/2">
+                                <label for="surname"
+                                       class="block text-sm font-medium text-gray-700 mb-2">Příjmení</label>
+                                <input type="text" name="surname"
+                                       value="{{ user_form.last_name.value|default_if_none:'' }}"
                                        placeholder="Příjmení" required
-                                       value="{{ user_form.last_name.value|default_if_none:'' }}">
+                                       class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300">
                             </div>
                         </div>
 
-                        <!-- Telefonní číslo a Email na jednom řádku -->
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="flex flex-col w-full">
-                                {{ user_form.telephone.label_tag }}
-                                <input type="tel" name="{{ user_form.telephone.name }}"
-                                       id="{{ user_form.telephone.id_for_label }}"
-                                       class="border border-gray-300 rounded-md p-2 w-full"
+                        <div class="flex gap-4 mb-4">
+                            <div class="w-1/2">
+                                <label for="telephone" class="block text-sm font-medium text-gray-700 mb-2">Telefonní
+                                    číslo</label>
+                                <input type="text" name="telephone"
+                                       value="{{ user_form.telephone.value|default_if_none:'' }}"
                                        placeholder="Telefonní číslo" required
-                                       value="{{ user_form.telephone.value|default_if_none:'' }}">
+                                       class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300">
                             </div>
-                            <div class="flex flex-col w-full">
-                                {{ user_form.email.label_tag }}
-                                <input type="email" name="{{ user_form.email.name }}"
-                                       id="{{ user_form.email.id_for_label }}"
-                                       class="border border-gray-300 rounded-md p-2 w-full"
-                                       placeholder="Email" required
-                                       value="{{ user_form.email.value|default_if_none:'' }}">
+                            <div class="w-1/2">
+                                <label for="email"
+                                       class="block text-sm font-medium text-gray-700 mb-2">E-mail</label>
+                                <input type="text" name="email"
+                                       value="{{ user_form.email.value|default_if_none:'' }}" placeholder="E-mail"
+                                       required
+                                       class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300">
                             </div>
                         </div>
 
-                        <!-- Datum narození -->
-                        <div class="flex flex-col w-full">
-                            {{ user_form.date_birth.label_tag }}
-                            <input type="date" name="{{ user_form.date_birth.name }}"
-                                   id="{{ user_form.date_birth.id_for_label }}"
-                                   class="border border-gray-300 rounded-md p-2 w-full" required
-                                   value="{{ user_form.instance.date_birth|date:'Y-m-d' }}">
+                        <div class="mb-4">
+                            <label for="day" class="block text-sm font-medium text-gray-700 mb-2">Datum
+                                narození</label>
+                            <input type="date" name="day"
+                                   value="{{ user_form.date_birth.value|date:'Y-m-d'|default_if_none:'' }}"
+                                   class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300">
                         </div>
 
+                        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Doručovací adresa</h2>
 
-                        <h2 class="text-2xl font-semibold mt-6 mb-4">Doručovací adresa</h2>
-
-                        <!-- Ulice a Číslo na jednom řádku (70% a 30%) -->
-                        <div class="grid grid-cols-7 gap-4">
-                            <div class="col-span-5 flex flex-col w-full">
-                                {{ address_form.street.label_tag }}
-                                <input type="text" name="{{ address_form.street.name }}"
-                                       id="{{ address_form.street.id_for_label }}"
-                                       class="border border-gray-300 rounded-md p-2 w-full"
+                        <div class="flex gap-4 mb-4">
+                            <div class="w-3/4">
+                                <label for="street"
+                                       class="block text-sm font-medium text-gray-700 mb-2">Ulice</label>
+                                <input type="text" name="street"
+                                       value="{{ address_form.street.value|default_if_none:'' }}"
                                        placeholder="Ulice" required
-                                       value="{{ address_form.street.value|default_if_none:'' }}">
+                                       class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300">
                             </div>
-                            <div class="col-span-2 flex flex-col w-full">
-                                {{ address_form.number.label_tag }}
-                                <input type="text" name="{{ address_form.number.name }}"
-                                       id="{{ address_form.number.id_for_label }}"
-                                       class="border border-gray-300 rounded-md p-2 w-full"
-                                       placeholder="Číslo" required
-                                       value="{{ address_form.number.value|default_if_none:'' }}">
+                            <div class="w-1/4">
+                                <label for="number" class="block text-sm font-medium text-gray-700 mb-2">Číslo
+                                    popisné</label>
+                                <input type="text" name="number"
+                                       value="{{ address_form.number.value|default_if_none:'' }}"
+                                       placeholder="Číslo popisné" required
+                                       class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300">
                             </div>
                         </div>
 
-                        <!-- Město a PSČ na jednom řádku (70% a 30%) -->
-                        <div class="grid grid-cols-7 gap-4">
-                            <div class="col-span-2 flex flex-col w-full">
-                                {{ address_form.city.label_tag }}
-                                <input type="text" name="{{ address_form.city.name }}"
-                                       id="{{ address_form.city.id_for_label }}"
-                                       class="border border-gray-300 rounded-md p-2 w-full"
-                                       placeholder="Město" required
-                                       value="{{ address_form.city.value|default_if_none:'' }}">
+                        <div class="flex gap-4 mb-4">
+                            <div class="w-1/3">
+                                <label for="city" class="block text-sm font-medium text-gray-700 mb-2">Město</label>
+                                <input type="text" name="city"
+                                       value="{{ address_form.city.value|default_if_none:'' }}" placeholder="Město"
+                                       required
+                                       class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300">
                             </div>
-                            <div class="col-span-2 flex flex-col w-full">
-                                {{ address_form.postal_code.label_tag }}
-                                <input type="text" name="{{ address_form.postal_code.name }}"
-                                       id="{{ address_form.postal_code.id_for_label }}"
-                                       class="border border-gray-300 rounded-md p-2 w-full"
+                            <div class="w-1/3">
+                                <label for="postal_code"
+                                       class="block text-sm font-medium text-gray-700 mb-2">PSČ</label>
+                                <input type="text" name="postal_code"
+                                       value="{{ address_form.postal_code.value|default_if_none:'' }}"
                                        placeholder="PSČ" required
-                                       value="{{ address_form.postal_code.value|default_if_none:'' }}">
+                                       class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300">
                             </div>
-                            <div class="col-span-3 flex flex-col w-full">
-                            {{ address_form.country.label_tag }}
-                            <input type="text" name="{{ address_form.country.name }}" 
-                                   id="id_country" 
-                                   autocomplete="off" 
-                                   class="border border-gray-300 rounded-md p-2 w-full"
-                                   placeholder="Začněte psát stát" required
-                                   value="{{ address_form.country.value|default_if_none:'' }}">
+                            <div class="w-1/3">
+                                <label for="country"
+                                       class="block text-sm font-medium text-gray-700 mb-2">Stát</label>
+                                <input type="text" id="country" name="country"
+                                       value="{{ address_form.country.value|default_if_none:'' }}"
+                                       placeholder="Česko" required
+                                       class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300">
+                            </div>
                         </div>
-                        </div>
-
                         <!-- Submit Button -->
                         <button type="submit"
-                                class="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md mt-6">
+                                class="w-full bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-md mt-6">
                             Uložit změny
                         </button>
                     </form>
@@ -327,42 +377,58 @@
         }
     </script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
-<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-<script>
-$(document).ready(function() {
-    $("input[name='country']").autocomplete({
-        source: function(request, response) {
-            $.ajax({
-                url: "https://restcountries.com/v3.1/all",
-                dataType: "json",
-                success: function(data) {
-                    var filteredCountries = data.filter(function(country) {
-                        // Filtrace podle českého názvu, pokud je dostupný, nebo podle anglického názvu
-                        var nameInCzech = country.translations && country.translations.ces ? country.translations.ces.common : null;
-                        var nameInEnglish = country.name.common;
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script>
+        $(document).ready(function () {
+            $("input[name='country']").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: "https://restcountries.com/v3.1/all",
+                        dataType: "json",
+                        success: function (data) {
+                            var filteredCountries = data.filter(function (country) {
+                                // Filtrace podle českého názvu, pokud je dostupný, nebo podle anglického názvu
+                                var nameInCzech = country.translations && country.translations.ces ? country.translations.ces.common : null;
+                                var nameInEnglish = country.name.common;
 
-                        // Pokud český název existuje, filtrujeme podle něj, jinak podle anglického názvu
-                        return (nameInCzech && nameInCzech.toLowerCase().startsWith(request.term.toLowerCase())) ||
-                               (nameInEnglish && nameInEnglish.toLowerCase().startsWith(request.term.toLowerCase()));
+                                // Pokud český název existuje, filtrujeme podle něj, jinak podle anglického názvu
+                                return (nameInCzech && nameInCzech.toLowerCase().startsWith(request.term.toLowerCase())) ||
+                                    (nameInEnglish && nameInEnglish.toLowerCase().startsWith(request.term.toLowerCase()));
+                            });
+
+                            var countries = filteredCountries.map(function (item) {
+                                // Použití českého názvu pokud je k dispozici, jinak anglický
+                                var nameInCzech = item.translations && item.translations.ces ? item.translations.ces.common : item.name.common;
+                                return nameInCzech; // Vracíme název státu v češtině, pokud je k dispozici
+                            });
+
+                            // Vrátíme seznam názvů států
+                            response(countries);
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Chyba při načítání dat:", status, error);
+                        }
                     });
-
-                    var countries = filteredCountries.map(function(item) {
-                        // Použití českého názvu pokud je k dispozici, jinak anglický
-                        var nameInCzech = item.translations && item.translations.ces ? item.translations.ces.common : item.name.common;
-                        return nameInCzech; // Vracíme název státu v češtině, pokud je k dispozici
-                    });
-
-                    // Vrátíme seznam názvů států
-                    response(countries);
-                },
-                error: function(xhr, status, error) {
-                    console.error("Chyba při načítání dat:", status, error);
                 }
             });
+        });
+    </script>
+    <style>
+        input {
+            background-color: #f7f8fa;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 12px;
+            color: #4a5568;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.2s ease-in-out;
         }
-    });
-});
-</script>
+
+        input:focus {
+            border-color: #5a67d8;
+            outline: none;
+        }
+    </style>
 
 {% endblock %}
