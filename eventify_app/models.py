@@ -235,7 +235,7 @@ class PaymentMethod(models.Model):
     name_on_card = models.TextField(default="", verbose_name="Jméno na kartě", help_text="Jméno, které je uvedeno na kartě.", max_length=255)
     card_number = models.TextField(validators=[validate_card_number], verbose_name="Číslo karty", help_text="Zadejte 16místné číslo karty.", max_length=16)
     cvv = models.TextField(validators=[validate_cvv], verbose_name="CVV", help_text="Bezpečnostní kód na zadní straně karty.", max_length=3)
-    expiration_date = models.DateField(validators=[validate_expiration_date], verbose_name="Datum expirace", help_text="Datum expirace karty ve formátu MM/RR.", null=True)
+    expiration_date = models.DateField(verbose_name="Datum expirace", help_text="Datum expirace karty ve formátu MM/RR.", null=True)
 
     class Meta:
         verbose_name = 'Platební metoda'

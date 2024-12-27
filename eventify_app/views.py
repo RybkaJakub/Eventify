@@ -786,21 +786,24 @@ class CartPaymentView(LoginRequiredMixin, TemplateView):
         return context
 
     def post(self, request, *args, **kwargs):
-        # Získání nebo vytvoření metody platby, pokud neexistuje
-        payment_method, created = PaymentMethod.objects.get_or_create(user=request.user)
+        payment_method = PaymentMethod.objects.filter(user=request.user).first() or PaymentMethod(user=request.user)
         payment_form = PaymentMethodForm(request.POST, instance=payment_method)
 
         if payment_form.is_valid():
             payment_form.save()
-            messages.success(request, 'Vaše informace byly úspěšně aktualizovány.')
-            return redirect('cart_payment')
+            messages.success(request, 'Vaše platební údaje byly úspěšně aktualizovány.')
+            context = self.get_context_data()
+            context['payment_form'] = payment_form
+            context['new_message'] = True
+            return self.render_to_response(context)
         else:
-            messages.error(request, 'Chyba při aktualizaci informací. Zkontrolujte zadání.')
+            messages.error(request, 'Chyba při aktualizaci platebních údajů. Zkontrolujte zadání.')
 
-        # V případě neplatného formuláře znovu načítání kontextu
+        # Vrátí formulář s chybami
         context = self.get_context_data()
         context['payment_form'] = payment_form
-        return render(request, self.template_name, context)
+        context['new_message'] = True
+        return self.render_to_response(context)
 
 
 class CartConfirmationView(LoginRequiredMixin, TemplateView):
