@@ -4,111 +4,142 @@
 {% block title %}Potvrzení objednávky{% endblock %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-8">
-     <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Potvrzení objednávky</h2>
-    
-    <div id="progress" class="flex justify-center items-center">
-        <ol class="flex w-full max-w-4xl justify-between items-center space-x-4">
-            <li class="flex-1">
-                <div class="flex flex-col items-center">
-                    <a href="{% url 'cart' %}" class="flex items-center justify-center w-8 h-8 bg-blue-600 rounded-full ring-8 ring-blue-300 dark:bg-cyan-700 dark:ring-cyan-900">
-                        <svg class="w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5"/>
-                        </svg>
-                    </a>
-                    <h3 class="mt-4 text-center font-medium text-blue-900 dark:text-cyan-600">Položky v košíku</h3>
-                </div>
-            </li>
-
-            <li class="flex-1">
-                <div class="flex flex-col items-center">
-                    <a href="{% url 'cart_informations' %}" class="flex items-center justify-center w-8 h-8 bg-blue-600 rounded-full ring-8 ring-blue-300 dark:bg-cyan-700 dark:ring-cyan-900">
-                        <svg class="w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5"/>
-                        </svg>
-                    </a>
-                    <h3 class="mt-4 text-center font-medium text-blue-900 dark:text-cyan-600">Doručovací údaje</h3>
-                </div>
-            </li>
-
-            <li class="flex-1">
-                <div class="flex flex-col items-center">
-                    <a href="{% url 'cart_payment' %}" class="flex items-center justify-center w-8 h-8 bg-blue-600 rounded-full ring-8 ring-blue-300 dark:bg-cyan-700 dark:ring-cyan-900">
-                        <svg class="w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5"/>
-                        </svg>
-                    </a>
-                    <h3 class="mt-4 text-center font-medium text-blue-900 dark:text-cyan-600">Platební metoda</h3>
-                </div>
-            </li>
-
-            <li class="flex-1">
-                <div class="flex flex-col items-center">
-                    <div class="flex items-center justify-center w-8 h-8 bg-yellow-500 rounded-full ring-8 ring-yellow-200 dark:bg-yellow-600 dark:ring-yellow-800">
-                        <span class="text-white font-bold">4</span>
-                    </div>
-                    <h3 class="mt-4 text-center font-medium text-yellow-500 dark:text-yellow-400">Potvrzení objednávky</h3>
-                </div>
-            </li>
-        </ol>
-    </div>
-
-    <div class="flex justify-center w-full max-w-4xl bg-white shadow-lg rounded-lg p-10 mt-10 overflow-auto">
-                <div id="address-card"
-                     class="w-full bg-white border border-gray-200 rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-700 p-8">
-                    <div class="flex items-center mb-6">
-                        <img class="w-24 h-24 mr-4 rounded-full shadow-lg" src="{{ profile_picture }}"
-                             alt="Profilová fotka"/>
-                        <div>
-                            <h5 class="text-2xl font-semibold text-gray-900 dark:text-white">{{ user.first_name }} {{ user.last_name }}</h5>
-                            <span class="text-sm text-gray-500 dark:text-gray-400 block mt-1">
-                                {{ delivery_address.street }} {{ delivery_address.number }}, {{ delivery_address.city }} {{ delivery_addressA.postal_code }}
-                            </span>
-                            <span class="text-sm text-gray-500 dark:text-gray-400 block mt-1">
-                                {{ payment_method.name_on_card }}
-                            </span>
-                            <span class="text-sm text-gray-500 dark:text-gray-400 block mt-1">
-                                {{ payment_method.card_number }}, {{ payment_method.cvv }}
-                            </span>
-                            <span class="text-sm text-gray-500 dark:text-gray-400 block mt-1">
-                                {{ payment_method.expiration_date }}
-                            </span>
+    <div class="container mx-auto px-4 py-8">
+        <div class="bg-white shadow-xl rounded-lg p-8 mt-5">
+            <!-- Title -->
+            <h1 class="text-3xl font-bold text-center mb-10">Potvrzení objednávky</h1>
+            <div id="progress" class="flex justify-center items-center">
+                <ol class="flex w-full max-w-4xl justify-between items-center space-x-4">
+                    <li class="flex-1">
+                        <div class="flex flex-col items-center">
+                            <a href="{% url 'cart' %}"
+                               class="flex items-center justify-center w-8 h-8 bg-blue-600 rounded-full ring-8 ring-blue-300 dark:bg-cyan-700 dark:ring-cyan-900">
+                                <svg class="w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                     viewBox="0 0 16 12">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                          stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5"/>
+                                </svg>
+                            </a>
+                            <h3 class="mt-4 text-center font-medium text-blue-900 dark:text-cyan-600">Položky v
+                                košíku</h3>
                         </div>
-                    </div>
-                    <!-- Action Buttons -->
-                    <form class="space-y-6" method="post" action="{% url 'cart_confirmation' %}">
-                        {% csrf_token %}
-                        <button type="submit">
-                            Poslat mail
-                        </button>
-                    </form>
-                    <div class="flex justify-between mt-8">
-                        <a href="{% url 'cart_payment' %}"
-                           class="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded-md">
-                            Objednat
-                        </a>
+                    </li>
+
+                    <li class="flex-1">
+                        <div class="flex flex-col items-center">
+                            <a href="{% url 'cart_informations' %}"
+                               class="flex items-center justify-center w-8 h-8 bg-blue-600 rounded-full ring-8 ring-blue-300 dark:bg-cyan-700 dark:ring-cyan-900">
+                                <svg class="w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                     viewBox="0 0 16 12">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                          stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5"/>
+                                </svg>
+                            </a>
+                            <h3 class="mt-4 text-center font-medium text-blue-900 dark:text-cyan-600">Doručovací
+                                údaje</h3>
+                        </div>
+                    </li>
+
+                    <li class="flex-1">
+                        <div class="flex flex-col items-center">
+                            <a href="{% url 'cart_payment' %}"
+                               class="flex items-center justify-center w-8 h-8 bg-blue-600 rounded-full ring-8 ring-blue-300 dark:bg-cyan-700 dark:ring-cyan-900">
+                                <svg class="w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                     viewBox="0 0 16 12">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                          stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5"/>
+                                </svg>
+                            </a>
+                            <h3 class="mt-4 text-center font-medium text-blue-900 dark:text-cyan-600">Platební
+                                metoda</h3>
+                        </div>
+                    </li>
+
+                    <li class="flex-1">
+                        <div class="flex flex-col items-center">
+                            <div class="flex items-center justify-center w-8 h-8 bg-yellow-500 rounded-full ring-8 ring-yellow-200 dark:bg-yellow-600 dark:ring-yellow-800">
+                                <span class="text-white font-bold">4</span>
+                            </div>
+                            <h3 class="mt-4 text-center font-medium text-yellow-500 dark:text-yellow-400">Potvrzení
+                                objednávky</h3>
+                        </div>
+                    </li>
+                </ol>
+            </div>
+        </div>
+        <div class="bg-white shadow-xl rounded-lg p-8 mt-5">
+            <div id="address-card" class="w-full p-6 space-y-8">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-2xl font-semibold text-gray-900">Potvrzení objednávky</h2>
+                    <span class="text-sm text-gray-500 italic">#OBJ123456</span>
+                </div>
+
+                <!-- Uživatelské údaje -->
+                <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                    <h3 class="text-lg font-medium text-gray-800 mb-4">Údaje uživatele</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <p class="text-sm text-gray-600"><span class="font-semibold text-gray-800">Jméno:</span> {{ user.first_name}} {{ user.last_name }}</p>
+                        <p class="text-sm text-gray-600"><span class="font-semibold text-gray-800">E-mail:</span>
+                            {{ user.email }}</p>
+                        <p class="text-sm text-gray-600"><span class="font-semibold text-gray-800">Telefon:</span> +420
+                            {{ user.telephone }}</p>
+                        <p class="text-sm text-gray-600"><span class="font-semibold text-gray-800">Datum narození:</span>
+                            {{ user.date_birth }}</p>
                     </div>
                 </div>
+
+                <!-- Adresa uživatele -->
+                <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                    <h3 class="text-lg font-medium text-gray-800 mb-4">Adresa uživatele</h3>
+                    <p class="text-sm text-gray-600"><span class="font-semibold text-gray-800">Ulice:</span> {{ delivery_address.street }} {{ delivery_address.number }}</p>
+                    </p>
+                    <p class="text-sm text-gray-600"><span class="font-semibold text-gray-800">Město:</span> {{ delivery_address.city }}</p>
+                    <p class="text-sm text-gray-600"><span class="font-semibold text-gray-800">PSČ:</span> {{ delivery_address.postal_code }}</p>
+                    <p class="text-sm text-gray-600"><span class="font-semibold text-gray-800">Stát:</span> {{ delivery_address.country }}</p>
+                </div>
+
+                <!-- Tabulka vstupenek -->
+                <div class="overflow-x-auto">
+                    <h3 class="text-lg font-medium text-gray-800 mb-4">Přehled vstupenek</h3>
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-gray-200 text-gray-700 uppercase text-xs tracking-wide">
+                        <tr>
+                            <th class="px-4 py-3">Event</th>
+                            <th class="px-4 py-3">Typ</th>
+                            <th class="px-4 py-3">Počet</th>
+                            <th class="px-4 py-3">Jedn. cena</th>
+                            <th class="px-4 py-3">Celková cena</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for ticket in items %}
+                        <tr class="bg-white border-b">
+                            <td class="px-4 py-3">{{ ticket.event.name }}</td>
+                            <td class="px-4 py-3 text-center">{{ ticket.ticket_type.name }}</td>
+                            <td class="px-4 py-3">{{ ticket.quantity }}</td>
+                            <td class="px-4 py-3 font-medium text-gray-800">{{ ticket.ticket_type.price }} Kč</td>
+                            <td class="px-4 py-3 font-medium text-gray-800">{{ ticket.total_amount }} Kč</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                        <tfoot>
+                        <tr class="bg-gray-100 text-gray-800">
+                            <td colspan="4" class="px-4 py-3 text-right font-semibold">Celková cena:</td>
+                            <td class="px-4 py-3 font-bold text-lg">{{ total_price }}</td>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <!-- Akční tlačítka -->
+                <div class="flex justify-end space-x-4">
+                    <button class="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg font-medium hover:bg-gray-300">Zpět
+                    </button>
+                    <button class="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700">Dokončit
+                        objednávku
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
-
-<style>
-    .custom-table .event-cell {
-        max-width: 150px;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-    }
-
-    .custom-table .type-cell {
-        max-width: 100px;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-    }
-
-    .custom-table th.w-16, .custom-table td.w-16 {
-        width: 50px;
-    }
-</style>
 {% endblock %}
