@@ -2,6 +2,7 @@ import os
 from calendar import monthrange
 from datetime import timedelta, datetime
 from lib2to3.fixes.fix_input import context
+from random import random
 
 from allauth.account.views import SignupView
 from django.conf import settings
@@ -18,8 +19,8 @@ from django.urls import reverse
 from django.utils.html import strip_tags
 from django.views import View
 
-from .models import Event, TicketType, TicketPurchase, Address, CustomUser, Cart, DeliveryAddress, PaymentMethod, \
-    EventAddress
+from .models import Event, TicketType, Address, CustomUser, Cart, DeliveryAddress, PaymentMethod, \
+    EventAddress, PurchasedTickets, Order
 from allauth.socialaccount.models import SocialAccount
 from .forms import UserProfileEditForm, DeliveryAddressForm, CustomUserForm, PaymentMethodForm, ContactForm, \
     SupportForm, EventAddressForm, TicketTypeForm
@@ -79,7 +80,7 @@ def index(request):
 ).order_by('day', 'time')
 
     if request.user.is_authenticated:
-        registered_events = TicketPurchase.objects.filter(user=request.user).distinct('event')
+        registered_events = PurchasedTickets.objects.filter(user=request.user).distinct('event')
         organization_events = Event.objects.filter(organization=request.user.organization)
         social_accounts = SocialAccount.objects.filter(user=request.user)
         profile_picture = UserProfileView.get_user_profile_picture(request, social_accounts)
@@ -446,7 +447,7 @@ class EventDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context['isAdmin'] = False
         context['userOrganization'] = False
-        context['purchasedTickets'] = TicketPurchase.objects.filter(event=self.object)
+        context['purchasedTickets'] = PurchasedTickets.objects.filter(event=self.object)
         current_url_name = resolve(self.request.path_info).url_name
         context['current_url'] = current_url_name
         context['ticket_types'] = TicketType.objects.filter(event=self.object)
@@ -466,11 +467,11 @@ class EventDetailView(DetailView):
             context['has_picture'] = has_picture
             context['profile_picture'] = profile_picture
             # Pouze pro přihlášené uživatele
-            context['userTickets'] = TicketPurchase.objects.filter(
+            context['userTickets'] = PurchasedTickets.objects.filter(
                 user=self.request.user,
                 event=self.object
             )
-            context['registered'] = TicketPurchase.objects.filter(
+            context['registered'] = PurchasedTickets.objects.filter(
                 user=self.request.user,
                 event=self.object
             ).exists()
@@ -601,7 +602,7 @@ class MyEventsListView(ListView):
         if (self.request.user.is_authenticated):
             user = self.request.user
 
-            registered_events = TicketPurchase.objects.filter(user=user).values_list('event', flat=True)
+            registered_events = PurchasedTickets.objects.filter(user=user).values_list('event', flat=True)
             context['events'] = Event.objects.filter(id__in=registered_events)
             context['isAuth'] = True
         else:

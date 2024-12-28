@@ -188,21 +188,32 @@ class TicketType(models.Model):
         return self.name
 
 
-class TicketPurchase(models.Model):
+class Order(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    event = models.ForeignKey(Event, on_delete=models.CASCADE)
-    ticket_type = models.ForeignKey(TicketType, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField(verbose_name='Počet zakoupených vstupenek', help_text='Zadejte počet zakoupených vstupenek')
+    order_id = models.CharField(max_length=255, verbose_name='ID objednávky')
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Celková částka', help_text='Zadejte celkovou částku')
     date = models.DateTimeField(verbose_name='Datum vytvoření', default=timezone.now)
 
     class Meta:
-        verbose_name = 'Nákup vstupenky'
-        verbose_name_plural = 'Nákupy vstupenek'
+        verbose_name = 'Objednávka'
+        verbose_name_plural = 'Objednávka'
+
+    def __str__(self):
+        return f"{self.order_id}"
+
+class PurchasedTickets(models.Model):
+    order_id = models.ForeignKey(Order, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    ticket_type = models.ForeignKey(TicketType, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(verbose_name='Počet zakoupených vstupenek', help_text='Zadejte počet zakoupených vstupenek')
+
+    class Meta:
+        verbose_name = 'Zakoupené vstupenky'
+        verbose_name_plural = 'Zakoupené vstupenky'
 
     def __str__(self):
         return f"{self.user.username} - {self.event.name} - {self.quantity} vstupenek"
-
 
 class Cart(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
