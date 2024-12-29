@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Podpora - Eventify</title>
+    <title>Potvrzení nákupu - Eventify</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -14,13 +14,6 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-        }
-        .main-container {
-            width: 100%;
-            padding: 20px 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
         .email-container {
             max-width: 600px;
@@ -49,16 +42,22 @@
         }
         .ticket-info {
             background-color: #f4f4f4;
-            padding: 10px;
+            padding: 15px;
             border-radius: 5px;
-            margin: 20px 0;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-        .ticket-info table {
-            width: 100%;
+        .ticket-info h3 {
+            margin: 0;
+            font-size: 18px;
+            color: #4a90e2;
         }
-        .ticket-info td {
-            padding: 8px;
-            font-size: 16px;
+        .ticket-info img {
+            display: block;
+            margin: 10px auto;
+            max-width: 150px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
         }
         .footer {
             text-align: center;
@@ -75,41 +74,33 @@
     </style>
 </head>
 <body>
-<div class="main-container">
-    <div class="email-container">
-        <div class="header">
-            Eventify - Podpora
+<div class="email-container">
+    <div class="header">
+        Potvrzení nákupu - Eventify
+    </div>
+    <div class="content">
+        <p>Vážený/á {{ user_name }},</p>
+        <p>Děkujeme za váš nákup! Zde jsou podrobnosti o vašich vstupenkách:</p>
+        
+        {% for ticket in tickets %}
+        <div class="ticket-info">
+            <h3>Vstupenka: {{ ticket.event_name }}</h3>
+            <p><strong>Datum:</strong> {{ ticket.event_date }}</p>
+            <p><strong>Místo:</strong> {{ ticket.event_location }}</p>
+            <p><strong>Počet vstupenek:</strong> {{ ticket.quantity }}</p>
+            <p><strong>Cena:</strong> {{ ticket.total_amount }} Kč</p>
+            <img src="{{ ticket.qr }}" alt="QR Kód">
         </div>
-        <div class="content">
-            <p>Vážený/á {{ user_name }},</p>
-            <p>Děkujeme za kontaktování Eventify. Vaše zpráva byla úspěšně odeslána, a my se vám co nejdříve ozveme s odpovědí.</p>
-
-            <div class="ticket-info">
-                <table>
-                    <tr>
-                        <td><strong>Vaše jméno:</strong></td>
-                        <td>{{ name }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Váš e-mail:</strong></td>
-                        <td>{{ email }}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Vaše zpráva:</strong></td>
-                        <td>{{ message }}</td>
-                    </tr>
-                </table>
-            </div>
-
-            <p>Pokud máte další dotazy, neváhejte se na nás obrátit.</p>
-            <p>S pozdravem,<br>tým Eventify</p>
-        </div>
-        <div class="footer">
-            Eventify, s.r.o., Václavské náměstí 17, 110 00 Praha<br>
-            <a href="https://www.eventify.cz/obchodni-podminky" target="_blank" rel="noopener">Obchodní podmínky</a> |
-            <a href="https://www.eventify.cz/ochrana-osobnich-udaju" target="_blank" rel="noopener">Ochrana osobních údajů</a> |
-            <a href="https://www.eventify.cz/podpora" target="_blank" rel="noopener">Podpora</a>
-        </div>
+        {% endfor %}
+        
+        <p>Pokud máte další dotazy, neváhejte nás kontaktovat.</p>
+        <p>S pozdravem,<br>tým Eventify</p>
+    </div>
+    <div class="footer">
+        Eventify, s.r.o., Za humny 268/23, 398 43 Bernatice u Milevska<br>
+        <a href="https://lakoba.xyz/eventify_app/privacy/" target="_blank" rel="noopener">Zásady ochrany soukromí</a> |
+        <a href="https://lakoba.xyz/eventify_app/terms/" target="_blank" rel="noopener">Ochrana osobních údajů</a> |
+        <a href="https://lakoba.xyz/eventify_app/support/" target="_blank" rel="noopener">Podpora</a>
     </div>
 </div>
 </body>

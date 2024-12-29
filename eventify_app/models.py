@@ -191,7 +191,7 @@ class TicketType(models.Model):
 class Order(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     order_id = models.CharField(max_length=255, verbose_name='ID objednávky')
-    total_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Celková částka', help_text='Zadejte celkovou částku')
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Celková částka', help_text='Zadejte celkovou částku', default=0)
     date = models.DateTimeField(verbose_name='Datum vytvoření', default=timezone.now)
 
     class Meta:
@@ -202,11 +202,12 @@ class Order(models.Model):
         return f"{self.order_id}"
 
 class PurchasedTickets(models.Model):
-    order_id = models.ForeignKey(Order, on_delete=models.CASCADE)
+    order_id = models.CharField(max_length=255, verbose_name='ID objednávky')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     ticket_type = models.ForeignKey(TicketType, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(verbose_name='Počet zakoupených vstupenek', help_text='Zadejte počet zakoupených vstupenek')
+    qr_code = models.ImageField(upload_to='qr_codes/', blank=True, null=True, verbose_name='QR kód', help_text='Vyberte QR kód', default='qr_codes/default.png')
 
     class Meta:
         verbose_name = 'Zakoupené vstupenky'

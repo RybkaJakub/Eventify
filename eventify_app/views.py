@@ -9,6 +9,7 @@ from django.conf import settings
 from django.contrib.auth import logout
 import json
 
+from django.core.files.base import ContentFile
 from django.db.models import Q
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.shortcuts import redirect
@@ -806,6 +807,9 @@ class CartPaymentView(LoginRequiredMixin, TemplateView):
         context['new_message'] = True
         return self.render_to_response(context)
 
+import qrcode
+from io import BytesIO
+import random
 
 class CartConfirmationView(LoginRequiredMixin, TemplateView):
     template_name = "account/cart_confirmation.html"
@@ -835,22 +839,97 @@ class CartConfirmationView(LoginRequiredMixin, TemplateView):
 
         return context
 
+    def generate_order_id(self):
+        year = timezone.now().year  # Aktuální rok
+        part1 = ''.join([str(random.randint(0, 9)) for _ in range(4)])  # Čtyři čísla
+        part2 = ''.join([str(random.randint(0, 9)) for _ in range(4)])  # Čtyři čísla
+        part3 = ''.join([str(random.randint(0, 9)) for _ in range(4)])  # Čtyři čísla
+
+        return f"{year}-{part1}-{part2}-{part3}"
+
     def post(self, request, *args, **kwargs):
         user = request.user
+        delivery_address = DeliveryAddress.objects.filter(user=user).first()
+        payment_method = PaymentMethod.objects.filter(user=user).first()
+        items = Cart.objects.filter(user=user)
+        total_amount = sum(item.total_amount for item in items)
+        order_id = self.generate_order_id()
+        logger.info(f"Objednávka vstupenek: {order_id}")
         address = user.email
         subject = "Objednávka vstupenek"
-        tickets = Cart.objects.filter(user=request.user)
 
-        if address and subject:
-            subject = 'Potvrzení nákupu vstupenek - Eventify'
-            html_message = render_to_string('email/email.html',
-                                            {'tickets': tickets,
-                                             'user_name': f'{{ user.first_name }} {{ user.last_name }}'})
-            plain_message = strip_tags(html_message)
-            from_email = settings.EMAIL_HOST_USER
+        if delivery_address and payment_method and items:
+            # Vytvoření objednávky
+            order = Order.objects.create(
+                user=user,
+                order_id=order_id,
+                total_amount=total_amount,
+                date=timezone.now()
+            )
 
-            send_mail(subject, plain_message, from_email, [address], html_message=html_message)
-        return redirect('index')
+            # Přidání vstupenek k objednávce
+            for item in items:
+                new_ticket = PurchasedTickets.objects.create(
+                    order_id=order_id,
+                    user=user,
+                    event=item.event,
+                    ticket_type=item.ticket_type,
+                    quantity=item.quantity,
+                )
+
+                qr = qrcode.QRCode(
+                    version=1,
+                    error_correction=qrcode.constants.ERROR_CORRECT_L,
+                    box_size=10,
+                    border=4,
+                )
+                qr.add_data(order_id + str(item.id))
+                qr.make(fit=True)
+
+                # Vytvoření obrázku QR kódu
+                img = qr.make_image(fill_color="black", back_color="white")
+
+                # Uložení do paměti
+                buffer = BytesIO()
+                img.save(buffer, format="PNG")
+                buffer.seek(0)
+
+                # Uložení do pole `qr_code`
+                new_ticket.qr_code.save(f"{order_id + str(new_ticket.id)}.png", ContentFile(buffer.read()), save=False)
+                buffer.close()
+
+            # Odebrání vstupenek z košíku
+            items.delete()  # QuerySet nemá `save()`
+
+            # Odeslání emailu
+            tickets = PurchasedTickets.objects.filter(order_id=order_id)
+
+            logger.info(f"Objednávka vstupenek: {order_id}")
+            logger.info(f"Uživatel: {user.email}")
+            logger.info(f"Adresa: {delivery_address}")
+            logger.info(f"Platba: {payment_method}")
+            logger.info(f"Vstupenky: {tickets}")
+            logger.info(f"address: {address}")
+            logger.info(f"subject: {subject}")
+
+            if address and subject:
+
+                logger.info(f"Odesílání emailu na adresu: {address}")
+
+                subject = 'Potvrzení nákupu vstupenek - Eventify'
+                html_message = render_to_string(
+                    'email/email.html',
+                    {'tickets': tickets, 'user_name': f'{user.first_name} {user.last_name}'}
+                )
+                plain_message = strip_tags(html_message)
+                from_email = settings.EMAIL_HOST_USER
+
+                send_mail(subject, plain_message, from_email, [address], html_message=html_message)
+
+                logger.info(f"Email byl úspěšně odeslán na adresu: {address}")
+
+
+            return redirect('index')
 
 
 class RemoveItemView(LoginRequiredMixin, View):

@@ -77,12 +77,15 @@
                 <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg">
                     <h3 class="text-lg font-medium text-gray-800 mb-4">Údaje uživatele</h3>
                     <div class="grid grid-cols-2 gap-4">
-                        <p class="text-sm text-gray-600"><span class="font-semibold text-gray-800">Jméno:</span> {{ user.first_name}} {{ user.last_name }}</p>
+                        <p class="text-sm text-gray-600"><span
+                                class="font-semibold text-gray-800">Jméno:</span> {{ user.first_name }} {{ user.last_name }}
+                        </p>
                         <p class="text-sm text-gray-600"><span class="font-semibold text-gray-800">E-mail:</span>
                             {{ user.email }}</p>
                         <p class="text-sm text-gray-600"><span class="font-semibold text-gray-800">Telefon:</span> +420
                             {{ user.telephone }}</p>
-                        <p class="text-sm text-gray-600"><span class="font-semibold text-gray-800">Datum narození:</span>
+                        <p class="text-sm text-gray-600"><span
+                                class="font-semibold text-gray-800">Datum narození:</span>
                             {{ user.date_birth }}</p>
                     </div>
                 </div>
@@ -90,11 +93,16 @@
                 <!-- Adresa uživatele -->
                 <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg">
                     <h3 class="text-lg font-medium text-gray-800 mb-4">Adresa uživatele</h3>
-                    <p class="text-sm text-gray-600"><span class="font-semibold text-gray-800">Ulice:</span> {{ delivery_address.street }} {{ delivery_address.number }}</p>
+                    <p class="text-sm text-gray-600"><span
+                            class="font-semibold text-gray-800">Ulice:</span> {{ delivery_address.street }} {{ delivery_address.number }}
                     </p>
-                    <p class="text-sm text-gray-600"><span class="font-semibold text-gray-800">Město:</span> {{ delivery_address.city }}</p>
-                    <p class="text-sm text-gray-600"><span class="font-semibold text-gray-800">PSČ:</span> {{ delivery_address.postal_code }}</p>
-                    <p class="text-sm text-gray-600"><span class="font-semibold text-gray-800">Stát:</span> {{ delivery_address.country }}</p>
+                    </p>
+                    <p class="text-sm text-gray-600"><span
+                            class="font-semibold text-gray-800">Město:</span> {{ delivery_address.city }}</p>
+                    <p class="text-sm text-gray-600"><span
+                            class="font-semibold text-gray-800">PSČ:</span> {{ delivery_address.postal_code }}</p>
+                    <p class="text-sm text-gray-600"><span
+                            class="font-semibold text-gray-800">Stát:</span> {{ delivery_address.country }}</p>
                 </div>
 
                 <!-- Tabulka vstupenek -->
@@ -112,13 +120,13 @@
                         </thead>
                         <tbody>
                         {% for ticket in items %}
-                        <tr class="bg-white border-b">
-                            <td class="px-4 py-3">{{ ticket.event.name }}</td>
-                            <td class="px-4 py-3 text-center">{{ ticket.ticket_type.name }}</td>
-                            <td class="px-4 py-3">{{ ticket.quantity }}</td>
-                            <td class="px-4 py-3 font-medium text-gray-800">{{ ticket.ticket_type.price }} Kč</td>
-                            <td class="px-4 py-3 font-medium text-gray-800">{{ ticket.total_amount }} Kč</td>
-                        </tr>
+                            <tr class="bg-white border-b">
+                                <td class="px-4 py-3">{{ ticket.event.name }}</td>
+                                <td class="px-4 py-3 text-center">{{ ticket.ticket_type.name }}</td>
+                                <td class="px-4 py-3">{{ ticket.quantity }}</td>
+                                <td class="px-4 py-3 font-medium text-gray-800">{{ ticket.ticket_type.price }} Kč</td>
+                                <td class="px-4 py-3 font-medium text-gray-800">{{ ticket.total_amount }} Kč</td>
+                            </tr>
                         {% endfor %}
                         </tbody>
                         <tfoot>
@@ -131,12 +139,27 @@
                 </div>
 
                 <!-- Akční tlačítka -->
-                <div class="flex justify-end space-x-4">
-                    <button class="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg font-medium hover:bg-gray-300">Zpět
-                    </button>
-                    <button class="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700">Dokončit
-                        objednávku
-                    </button>
+                <div class="flex justify-between mt-6">
+                    <a href="{% url 'cart_payment' %}"
+                       class="inline-flex items-center justify-center bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-6 border border-gray-300 rounded-lg shadow-sm transition-all duration-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                             stroke="currentColor" class="w-5 h-5 mr-2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                  d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/>
+                        </svg>
+                        Zpět
+                    </a>
+                    <form action="{% url 'cart_confirmation' %}" method="POST">
+                        {% csrf_token %}
+                       <button class="inline-flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-6 rounded-lg shadow-lg transition-all duration-200">
+                        Zakoupit
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                             stroke="currentColor" class="w-5 h-5 ml-2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                  d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
+                        </svg>
+                           </button>
+                    </form>
                 </div>
             </div>
         </div>
