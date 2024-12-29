@@ -922,6 +922,8 @@ class CartConfirmationView(LoginRequiredMixin, TemplateView):
 
 
             return redirect('index')
+        else:
+            return redirect('index')
 
 
 class RemoveItemView(LoginRequiredMixin, View):

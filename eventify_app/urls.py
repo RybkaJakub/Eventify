@@ -8,7 +8,7 @@ from .views import index, purchase_ticket, EventManagerView, EventCreateView, Ev
     EventUpdateView, UserProfileView, MyProfileView, UserProfileEditView, CartView, RemoveItemView, ClearCartView, \
     CartInformationsView, \
     CartPaymentView, CartConfirmationView, TermsOfUseView, SupportView, PrivacyPolicy, Faq, ContactView, \
-    AboutUs, EditTicketView, DeleteTicketView, AddTicketView, EventsListView, CalendarView
+    AboutUs, EditTicketView, DeleteTicketView, AddTicketView, EventsListView, CalendarView, MyEventsListView
 
 urlpatterns = [
     path('', index, name='index'),
@@ -25,6 +25,7 @@ urlpatterns = [
     path('eventmanager/add_ticket/<int:event_pk>/', AddTicketView.as_view(), name='add_ticket'),
     path('eventmanager/delete/<int:pk>/', EventDeleteView.as_view(), name='delete_event'),
     path('events_list/', EventsListView.as_view(), name='events_list'),
+    path('my_tickets/', MyEventsListView.as_view(), name='my_tickets'),
     path('cart/', CartView.as_view(), name='cart'),
     path('cart/remove/<int:item_id>/', RemoveItemView.as_view(), name='remove_item'),
     path('cart/clear', ClearCartView.as_view(), name='clear_cart'),
