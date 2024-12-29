@@ -94,63 +94,63 @@
                         {% if registered_events %}
                             {% for registration in registered_events %}
                                 <div class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-auto">
-                                    {% if registration.image %}
+                                    {% if registration.event.image %}
                                         <div class="relative w-full h-48">
-                                            <img src="{{ registration.image.url }}" class="w-full h-full object-cover"
-                                                 alt="{{ registration.name }}">
+                                            <img src="{{ registration.event.image.url }}" class="w-full h-full object-cover"
+                                                 alt="{{ registration.event.name }}">
                                             <div class="absolute top-2 left-2 px-3 py-1 text-white font-semibold rounded-md"
                                                  style="background-color:
-                                                         {% if registration.category == 'conference' %} #4CFFCC
-                                                         {% elif registration.category == 'festival' %} #FF5733
-                                                         {% elif registration.category == 'workshop' %} #FF8C00
-                                                         {% elif registration.category == 'sport' %} #1E90FF
-                                                         {% elif registration.category == 'social' %} #FFD700
-                                                         {% elif registration.category == 'exhibition' %} #8A2BE2
-                                                         {% elif registration.category == 'concert' %} #FF1493
-                                                         {% elif registration.category == 'online' %} #32CD32
-                                                         {% elif registration.category == 'local' %} #FF6347
+                                                         {% if registration.event.category == 'conference' %} #4CFFCC
+                                                         {% elif registration.event.category == 'festival' %} #FF5733
+                                                         {% elif registration.event.category == 'workshop' %} #FF8C00
+                                                         {% elif registration.event.category == 'sport' %} #1E90FF
+                                                         {% elif registration.event.category == 'social' %} #FFD700
+                                                         {% elif registration.event.category == 'exhibition' %} #8A2BE2
+                                                         {% elif registration.event.category == 'concert' %} #FF1493
+                                                         {% elif registration.event.category == 'online' %} #32CD32
+                                                         {% elif registration.event.category == 'local' %} #FF6347
                                                          {% else %} gray {% endif %}
                                                          ">
-                                                {{ registration.get_category_display }}
+                                                {{ registration.event.get_category_display }}
                                             </div>
                                         </div>
                                     {% else %}
                                         <div class="relative w-full h-48 bg-gray-200">
                                             <img src="{% static 'img/static.jpg' %}" class="w-full h-full object-cover"
-                                                 alt="{{ registration.name }}">
+                                                 alt="{{ registration.event.name }}">
                                             <div class="absolute top-2 left-2 px-3 py-1 text-white font-semibold rounded-md"
                                                  style="background-color:
-                                                         {% if registration.category == 'conference' %} #4CFFCC
-                                                         {% elif registration.category == 'festival' %} #FF5733
-                                                         {% elif registration.category == 'workshop' %} #FF8C00
-                                                         {% elif registration.category == 'sport' %} #1E90FF
-                                                         {% elif registration.category == 'social' %} #FFD700
-                                                         {% elif registration.category == 'exhibition' %} #8A2BE2
-                                                         {% elif registration.category == 'concert' %} #FF1493
-                                                         {% elif registration.category == 'online' %} #32CD32
-                                                         {% elif registration.category == 'local' %} #FF6347
+                                                         {% if registration.event.category == 'conference' %} #4CFFCC
+                                                         {% elif registration.event.category == 'festival' %} #FF5733
+                                                         {% elif registration.event.category == 'workshop' %} #FF8C00
+                                                         {% elif registration.event.category == 'sport' %} #1E90FF
+                                                         {% elif registration.event.category == 'social' %} #FFD700
+                                                         {% elif registration.event.category == 'exhibition' %} #8A2BE2
+                                                         {% elif registration.event.category == 'concert' %} #FF1493
+                                                         {% elif registration.event.category == 'online' %} #32CD32
+                                                         {% elif registration.event.category == 'local' %} #FF6347
                                                          {% else %} gray {% endif %}
                                                          ">
-                                                {{ registration.get_category_display }}
+                                                {{ registration.event.get_category_display }}
                                             </div>
                                         </div>
                                     {% endif %}
 
                                     <div class="p-4 flex-1 flex flex-col">
-                                        <h5 class="font-bold text-lg line-clamp-2 h-[48px] flex-shrink-0">{{ registration.name }}</h5>
-                                        <p class="text-gray-700 text-sm mt-2 line-clamp-3 flex-grow">{{ registration.description }}</p>
-                                        {% if registration.eventaddress_set.exists %}
+                                        <h5 class="font-bold text-lg line-clamp-2 h-[48px] flex-shrink-0">{{ registration.event.name }}</h5>
+                                        <p class="text-gray-700 text-sm mt-2 line-clamp-3 flex-grow">{{ registration.event.description }}</p>
+                                        {% if registration.event.eventaddress_set.exists %}
                                             <p class="text-gray-600 text-sm mt-1">
-                                                Adresa: {{ registration.eventaddress_set.first }}
+                                                Adresa: {{ registration.event.eventaddress_set.first }}
                                             </p>
                                         {% else %}
                                             <p class="text-gray-600 text-sm mt-1">Adresa není k dispozici.</p>
                                         {% endif %}
-                                        <p class="text-gray-700 text-sm mt-2 line-clamp-4">{{ registration.day }} {{ registration.time }}</p>
+                                        <p class="text-gray-700 text-sm mt-2 line-clamp-4">{{ registration.event.day }} {{ registration.event.time }}</p>
                                     </div>
 
                                     <div class="p-4 bg-gray-100 mt-auto w-full">
-                                        <a href="{% url 'event_detail' registration.id %}"
+                                        <a href="{% url 'event_detail' registration.event.id %}"
                                            class="text-indigo-500 font-medium block text-center">Detail události</a>
                                     </div>
                                 </div>
@@ -175,63 +175,63 @@
                     {% if registered_events %}
                         {% for registration in registered_events %}
                             <div class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-auto">
-                                {% if registration.image %}
+                                {% if registration.event.image %}
                                     <div class="relative w-full h-48">
-                                        <img src="{{ registration.image.url }}" class="w-full h-full object-cover"
-                                             alt="{{ registration.name }}">
+                                        <img src="{{ registration.event.image.url }}" class="w-full h-full object-cover"
+                                             alt="{{ registration.event.name }}">
                                         <div class="absolute top-2 left-2 px-3 py-1 text-white font-semibold rounded-md"
                                              style="background-color:
-                                                     {% if registration.category == 'conference' %} #4CFFCC
-                                                     {% elif registration.category == 'festival' %} #FF5733
-                                                     {% elif registration.category == 'workshop' %} #FF8C00
-                                                     {% elif registration.category == 'sport' %} #1E90FF
-                                                     {% elif registration.category == 'social' %} #FFD700
-                                                     {% elif registration.category == 'exhibition' %} #8A2BE2
-                                                     {% elif registration.category == 'concert' %} #FF1493
-                                                     {% elif registration.category == 'online' %} #32CD32
-                                                     {% elif registration.category == 'local' %} #FF6347
+                                                     {% if registration.event.category == 'conference' %} #4CFFCC
+                                                     {% elif registration.event.category == 'festival' %} #FF5733
+                                                     {% elif registration.event.category == 'workshop' %} #FF8C00
+                                                     {% elif registration.event.category == 'sport' %} #1E90FF
+                                                     {% elif registration.event.category == 'social' %} #FFD700
+                                                     {% elif registration.event.category == 'exhibition' %} #8A2BE2
+                                                     {% elif registration.event.category == 'concert' %} #FF1493
+                                                     {% elif registration.event.category == 'online' %} #32CD32
+                                                     {% elif registration.event.category == 'local' %} #FF6347
                                                      {% else %} gray {% endif %}
                                                      ">
-                                            {{ registration.get_category_display }}
+                                            {{ registration.event.get_category_display }}
                                         </div>
                                     </div>
                                 {% else %}
                                     <div class="relative w-full h-48 bg-gray-200">
                                         <img src="{% static 'img/static.jpg' %}" class="w-full h-full object-cover"
-                                             alt="{{ registration.name }}">
+                                             alt="{{ registration.event.name }}">
                                         <div class="absolute top-2 left-2 px-3 py-1 text-white font-semibold rounded-md"
                                              style="background-color:
-                                                     {% if registration.category == 'conference' %} #4CFFCC
-                                                     {% elif registration.category == 'festival' %} #FF5733
-                                                     {% elif registration.category == 'workshop' %} #FF8C00
-                                                     {% elif registration.category == 'sport' %} #1E90FF
-                                                     {% elif registration.category == 'social' %} #FFD700
-                                                     {% elif registration.category == 'exhibition' %} #8A2BE2
-                                                     {% elif registration.category == 'concert' %} #FF1493
-                                                     {% elif registration.category == 'online' %} #32CD32
-                                                     {% elif registration.category == 'local' %} #FF6347
+                                                     {% if registration.event.category == 'conference' %} #4CFFCC
+                                                     {% elif registration.event.category == 'festival' %} #FF5733
+                                                     {% elif registration.event.category == 'workshop' %} #FF8C00
+                                                     {% elif registration.event.category == 'sport' %} #1E90FF
+                                                     {% elif registration.event.category == 'social' %} #FFD700
+                                                     {% elif registration.event.category == 'exhibition' %} #8A2BE2
+                                                     {% elif registration.event.category == 'concert' %} #FF1493
+                                                     {% elif registration.event.category == 'online' %} #32CD32
+                                                     {% elif registration.event.category == 'local' %} #FF6347
                                                      {% else %} gray {% endif %}
                                                      ">
-                                            {{ registration.get_category_display }}
+                                            {{ registration.event.get_category_display }}
                                         </div>
                                     </div>
                                 {% endif %}
 
                                 <div class="p-4 flex-1 flex flex-col">
-                                    <h5 class="font-bold text-lg line-clamp-2 h-[48px] flex-shrink-0">{{ registration.name }}</h5>
-                                    <p class="text-gray-700 text-sm mt-2 line-clamp-3 flex-grow">{{ registration.description }}</p>
-                                    {% if registration.eventaddress_set.exists %}
+                                    <h5 class="font-bold text-lg line-clamp-2 h-[48px] flex-shrink-0">{{ registration.event.name }}</h5>
+                                    <p class="text-gray-700 text-sm mt-2 line-clamp-3 flex-grow">{{ registration.event.description }}</p>
+                                    {% if registration.event.eventaddress_set.exists %}
                                         <p class="text-gray-600 text-sm mt-1">
-                                            Adresa: {{ registration.eventaddress_set.first }}
+                                            Adresa: {{ registration.event.eventaddress_set.first }}
                                         </p>
                                     {% else %}
                                         <p class="text-gray-600 text-sm mt-1">Adresa není k dispozici.</p>
                                     {% endif %}
-                                    <p class="text-gray-700 text-sm mt-2 line-clamp-4">{{ registration.day }} {{ registration.time }}</p>
+                                    <p class="text-gray-700 text-sm mt-2 line-clamp-4">{{ registration.event.day }} {{ registration.event.time }}</p>
                                 </div>
 
                                 <div class="p-4 bg-gray-100 mt-auto w-full">
-                                    <a href="{% url 'event_detail' registration.id %}"
+                                    <a href="{% url 'event_detail' registration.event.id %}"
                                        class="text-indigo-500 font-medium block text-center">Detail události</a>
                                 </div>
                             </div>

@@ -1,3 +1,4 @@
+{% load custom_filters %}
 <!DOCTYPE html>
 <html lang="cs">
 <head>
@@ -81,15 +82,15 @@
     <div class="content">
         <p>Vážený/á {{ user_name }},</p>
         <p>Děkujeme za váš nákup! Zde jsou podrobnosti o vašich vstupenkách:</p>
-        
+        <p>{{ tickets }}</p>
         {% for ticket in tickets %}
         <div class="ticket-info">
-            <h3>Vstupenka: {{ ticket.event_name }}</h3>
-            <p><strong>Datum:</strong> {{ ticket.event_date }}</p>
+            <h3>Vstupenka: {{ ticket.event.name }}</h3>
+            <p><strong>Datum:</strong> {{ ticket.event.day }} {{ ticket.event.time }}</p>
             <p><strong>Místo:</strong> {{ ticket.event_location }}</p>
             <p><strong>Počet vstupenek:</strong> {{ ticket.quantity }}</p>
-            <p><strong>Cena:</strong> {{ ticket.total_amount }} Kč</p>
-            <img src="{{ ticket.qr }}" alt="QR Kód">
+            <p><strong>Cena:</strong>{{ ticket.ticket_type.price|multiply:ticket.quantity }} Kč</p>
+            <img src="https://{{ request.get_host }}{{ ticket.qr_code.url }}" alt="QR Kód">
         </div>
         {% endfor %}
         

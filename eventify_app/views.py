@@ -854,7 +854,6 @@ class CartConfirmationView(LoginRequiredMixin, TemplateView):
         items = Cart.objects.filter(user=user)
         total_amount = sum(item.total_amount for item in items)
         order_id = self.generate_order_id()
-        logger.info(f"Objednávka vstupenek: {order_id}")
         address = user.email
         subject = "Objednávka vstupenek"
 
@@ -897,20 +896,13 @@ class CartConfirmationView(LoginRequiredMixin, TemplateView):
                 # Uložení do pole `qr_code`
                 new_ticket.qr_code.save(f"{order_id + str(new_ticket.id)}.png", ContentFile(buffer.read()), save=False)
                 buffer.close()
+                new_ticket.save()
 
             # Odebrání vstupenek z košíku
             items.delete()  # QuerySet nemá `save()`
 
             # Odeslání emailu
             tickets = PurchasedTickets.objects.filter(order_id=order_id)
-
-            logger.info(f"Objednávka vstupenek: {order_id}")
-            logger.info(f"Uživatel: {user.email}")
-            logger.info(f"Adresa: {delivery_address}")
-            logger.info(f"Platba: {payment_method}")
-            logger.info(f"Vstupenky: {tickets}")
-            logger.info(f"address: {address}")
-            logger.info(f"subject: {subject}")
 
             if address and subject:
 
@@ -919,7 +911,7 @@ class CartConfirmationView(LoginRequiredMixin, TemplateView):
                 subject = 'Potvrzení nákupu vstupenek - Eventify'
                 html_message = render_to_string(
                     'email/email.html',
-                    {'tickets': tickets, 'user_name': f'{user.first_name} {user.last_name}'}
+                    {'request': request,'tickets': tickets, 'user_name': f'{user.first_name} {user.last_name}'}
                 )
                 plain_message = strip_tags(html_message)
                 from_email = settings.EMAIL_HOST_USER
