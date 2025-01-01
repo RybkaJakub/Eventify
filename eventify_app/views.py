@@ -19,6 +19,7 @@ from django.contrib import messages
 from django.urls import reverse
 from django.utils.html import strip_tags
 from django.views import View
+from weasyprint import HTML
 
 from .models import Event, TicketType, Address, CustomUser, Cart, DeliveryAddress, PaymentMethod, \
     EventAddress, PurchasedTickets, Order
@@ -591,16 +592,15 @@ class UserProfileEditView(UpdateView):
         messages.error(self.request, "Opravit chyby ve formuláři.")
         return super().form_invalid(form)
 
-
 class MyEventsListView(ListView):
     model = Event
-    template_name = 'events/events_list.html'
+    template_name = 'events/my_tickets.html'
     context_object_name = 'events'
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        if (self.request.user.is_authenticated):
+        if self.request.user.is_authenticated:
             user = self.request.user
 
             registered_events = PurchasedTickets.objects.filter(user=user).values_list('event', flat=True)
@@ -609,9 +609,8 @@ class MyEventsListView(ListView):
         else:
             context['events'] = []
             context['isAuth'] = False
-        current_url_name = resolve(self.request.path_info).url_name
-        context['current_url'] = current_url_name
 
+        # Profilový obrázek
         has_picture = False
         profile_picture = UserProfileView.get_user_profile_picture(self.request,
                                                                    SocialAccount.objects.filter(user=self.request.user))
@@ -621,7 +620,17 @@ class MyEventsListView(ListView):
         context['has_picture'] = has_picture
         context['profile_picture'] = profile_picture
 
+        userOrders = Order.objects.filter(user=self.request.user)
+
+        for order in userOrders:
+            purchasedTickets = PurchasedTickets.objects.filter(order_id=order.order_id)
+            order.tickets = purchasedTickets  # Dynamicky přidáme tikety k objednávce
+
+        # Nastavíme všechny objednávky (včetně tiketů) do kontextu
+        context['orders'] = userOrders
+
         return context
+
 
 
 @login_required
@@ -876,27 +885,41 @@ class CartConfirmationView(LoginRequiredMixin, TemplateView):
                     quantity=item.quantity,
                 )
 
+                data = {
+                    "order_id": order_id,
+                    "ticket_id": item.id,
+                    "total_price": float(item.quantity * item.ticket_type.price),
+                    "quantity": item.quantity,
+                    "event_name": item.event.name
+                }
+
+                # Serializace dat do JSON
+                qr_data = json.dumps(data)
+
+                # Vytvoření QR kódu
                 qr = qrcode.QRCode(
                     version=1,
                     error_correction=qrcode.constants.ERROR_CORRECT_L,
                     box_size=10,
                     border=4,
                 )
-                qr.add_data(order_id + str(item.id))
+                qr.add_data(qr_data)
                 qr.make(fit=True)
 
                 # Vytvoření obrázku QR kódu
                 img = qr.make_image(fill_color="black", back_color="white")
 
-                # Uložení do paměti
+                # Uložení QR kódu do paměti
                 buffer = BytesIO()
                 img.save(buffer, format="PNG")
                 buffer.seek(0)
 
                 # Uložení do pole `qr_code`
-                new_ticket.qr_code.save(f"{order_id + str(new_ticket.id)}.png", ContentFile(buffer.read()), save=False)
+                new_ticket.qr_code.save(f"{order_id}_{item.id}.png", ContentFile(buffer.read()), save=False)
                 buffer.close()
+
                 new_ticket.save()
+
 
             # Odebrání vstupenek z košíku
             items.delete()  # QuerySet nemá `save()`
@@ -924,6 +947,27 @@ class CartConfirmationView(LoginRequiredMixin, TemplateView):
             return redirect('index')
         else:
             return redirect('index')
+
+def generate_ticket_pdf(request, order_id):
+    # Načtěte objednávku a tickety
+    try:
+        order = Order.objects.get(id=order_id)
+    except Order.DoesNotExist:
+        return HttpResponse('Objednávka nenalezena', status=404)
+
+    tickets = PurchasedTickets.objects.filter(order_id=order.order_id)
+
+    # Renderujte HTML šablonu s daty
+    html_content = render_to_string('tickets/pdf_template.html', {'tickets': tickets, 'order': order})
+
+    # Vytvoření PDF pomocí WeasyPrint
+    pdf = HTML(string=html_content, base_url=request.build_absolute_uri('/')).write_pdf()
+
+    # Vytvořte HTTP odpověď
+    response = HttpResponse(pdf, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="order_{order.order_id}.pdf"'
+
+    return response
 
 
 class RemoveItemView(LoginRequiredMixin, View):

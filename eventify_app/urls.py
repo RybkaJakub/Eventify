@@ -8,7 +8,8 @@ from .views import index, purchase_ticket, EventManagerView, EventCreateView, Ev
     EventUpdateView, UserProfileView, MyProfileView, UserProfileEditView, CartView, RemoveItemView, ClearCartView, \
     CartInformationsView, \
     CartPaymentView, CartConfirmationView, TermsOfUseView, SupportView, PrivacyPolicy, Faq, ContactView, \
-    AboutUs, EditTicketView, DeleteTicketView, AddTicketView, EventsListView, CalendarView, MyEventsListView
+    AboutUs, EditTicketView, DeleteTicketView, AddTicketView, EventsListView, CalendarView, MyEventsListView, \
+    generate_ticket_pdf
 
 urlpatterns = [
     path('', index, name='index'),
@@ -41,4 +42,5 @@ urlpatterns = [
     path('about_us/', AboutUs.as_view(), name='aboutus'),
     path('support/', SupportView.as_view(), name='support'),
     path('calendar/', CalendarView.as_view(), name='calendar'),
+    path('order/<int:order_id>/pdf/', generate_ticket_pdf, name='generate_ticket_pdf'),
 ]

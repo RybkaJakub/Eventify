@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'django_filters',
     'geopy',
+    'weasyprint',
 ]
 
 MIDDLEWARE = [
