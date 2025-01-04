@@ -22,7 +22,7 @@ from django.views import View
 from weasyprint import HTML
 
 from .models import Event, TicketType, Address, CustomUser, Cart, DeliveryAddress, PaymentMethod, \
-    EventAddress, PurchasedTickets, Order
+    EventAddress, PurchasedTickets, Order, Organization
 from allauth.socialaccount.models import SocialAccount
 from .forms import UserProfileEditForm, DeliveryAddressForm, CustomUserForm, PaymentMethodForm, ContactForm, \
     SupportForm, EventAddressForm, TicketTypeForm
@@ -1087,15 +1087,158 @@ class AboutUs(TemplateView):
 
     def get_context_data(self, **kwargs):
         team_members = [
-            {"name": "Jan Novák", "role": "CEO & Zakladatel", "bio": "Zakladatel naší společnosti.",
-             "image": "/static/img/novak.jpeg"},
-            {"name": "Petra Svobodová", "role": "Projektový manažer", "bio": "Má na starosti všechny projekty.",
-             "image": "/static/img/svobodova.png"},
-            {"name": "Tomáš Dvořák", "role": "Marketingový specialista", "bio": "Zodpovědný za propagaci.",
-             "image": "/static/img/dvorak.jpeg"},
+            {
+                "name": "Jan Novák",
+                "role": "CEO & Zakladatel",
+                "bio": (
+                    "Jan, náš zakladatel, si vždy kladl za cíl propojit kreativitu s byznysovou precizností. "
+                    "Po letech strávených v zahraničí se vrátil domů, aby zde vybudoval inovativní platformu, "
+                    "která změní způsob, jakým lidé plánují a prožívají eventy. Jan věří, že každá akce má "
+                    "moci přinášet nejen zábavu, ale i trvalý dopad na komunitu a společnost."
+                ),
+                "image": "/static/img/novak.jpeg"
+            },
+            {
+                "name": "Petra Svobodová",
+                "role": "Projektová manažerka",
+                "bio": (
+                    "Petra je zkušená koordinátorka s vášní pro organizaci, harmonogramy a detailní plánování. "
+                    "V Eventify dohlíží na rozmanité projekty a zajišťuje, že spolupráce mezi našimi týmy probíhá "
+                    "hladce. Její přirozená schopnost vést a motivovat ostatní je jedním z hlavních důvodů, proč "
+                    "každý event, který se u nás připravuje, dopadne nad očekávání."
+                ),
+                "image": "/static/img/svobodova.png"
+            },
+            {
+                "name": "Tomáš Dvořák",
+                "role": "Marketingový specialista",
+                "bio": (
+                    "Tomáš je odborník na digitální marketing, který má za sebou úspěšné kampaně v různých "
+                    "sektorech od e-commerce až po neziskové projekty. V Eventify zodpovídá za komunikaci s "
+                    "veřejností, budování brandu a online propagaci akcí, které pomáháme realizovat. Jeho "
+                    "kreativní nápady a precizní strategie přitahují pozornost stále širšího publika."
+                ),
+                "image": "/static/img/dvorak.jpeg"
+            },
+            {
+                "name": "Lucie Procházková",
+                "role": "Hlavní koordinátorka eventů",
+                "bio": (
+                    "Lucie se specializuje na organizaci středních a velkých akcí, ať už jde o firemní konference "
+                    "nebo kulturní festivaly pro tisíce lidí. Jejím posláním je propojovat dovednosti napříč týmy, "
+                    "udržovat vysokou kvalitu služeb a podporovat všechny členy produkce, aby z akce vznikl "
+                    "jedinečný zážitek. Vystudovala ekonomii i kulturní management, a tyto dvě oblasti dokáže "
+                    "skvěle spojit v jednom projektu."
+                ),
+                "image": "/static/img/prochazkova.jpg"
+            },
+            {
+                "name": "David Horák",
+                "role": "Vedoucí vývojového týmu",
+                "bio": (
+                    "David je duší našeho technického řešení. Za sebou má praxi z několika softwarových "
+                    "společností, kde vedl vývoj pokročilých webových aplikací. V Eventify je zodpovědný "
+                    "za stabilitu platformy, návrh architektury a implementaci nových funkcí, které posouvají "
+                    "celý projekt na vyšší úroveň. Miluje moderní technologie, open-source a agilní metody."
+                ),
+                "image": "/static/img/horak.jpg"
+            },
+            {
+                "name": "Alena Králová",
+                "role": "Head of Customer Experience",
+                "bio": (
+                    "Alena se stará o to, aby zkušenosti a dojmy všech uživatelů Eventify byly naprosto špičkové. "
+                    "Kombinuje data, průzkumy a lidskou empatii, aby vylepšovala uživatelské rozhraní a "
+                    "podporovala dlouhodobou spokojenost. Je přesvědčená, že úspěch projektu stojí a padá s tím, "
+                    "jak moc si zákazník cení komfortu a podpory, kterou mu poskytujeme."
+                ),
+                "image": "/static/img/kralova.jpg"
+            },
+            {
+                "name": "Marek Čermák",
+                "role": "Produktový designér",
+                "bio": (
+                    "Marek je člověkem, který stojí za vizuální identitou a funkčním designem Eventify. "
+                    "Od drátových modelů, přes uživatelské testy, až k finálnímu prototypu – Marek má v oku "
+                    "nejen estetiku, ale i přirozenou použitelnost. Neustále zkoumá nejnovější trendy v "
+                    "UI/UX a nebojí se experimentovat, pokud to může přinést lepší zážitek pro uživatele."
+                ),
+                "image": "/static/img/cermak.jpg"
+            },
+            {
+                "name": "Karolína Veselá",
+                "role": "Senior Event Manager",
+                "bio": (
+                    "Karolína se vyzná v produkci kulturních akcí, přednášek i gastronomických festivalů. "
+                    "V Eventify pomáhá klientům s plánováním harmonogramů, tvorbou rozpočtů i nastavováním "
+                    "správných procesů, aby každý event proběhl včas a bez stresu. Její organizační schopnosti "
+                    "a empatický přístup k lidem z ní dělají srdce mnoha úspěšných projektů."
+                ),
+                "image": "/static/img/vesela.jpg"
+            },
+            {
+                "name": "Pavel Mach",
+                "role": "Finanční strateg",
+                "bio": (
+                    "Pavel má na starost celkovou finanční strategii a plánování rozpočtů pro rozvoj Eventify. "
+                    "Jeho hlavním cílem je hledat dlouhodobě udržitelné obchodní modely, které nám umožní "
+                    "financovat inovace a současně udržet příznivé ceny pro uživatele. Před nástupem do Eventify "
+                    "působil jako finanční ředitel ve dvou významných startupech."
+                ),
+                "image": "/static/img/mach.jpg"
+            },
+            {
+                "name": "Denisa Zahradníková",
+                "role": "PR a Media Relations",
+                "bio": (
+                    "Denisa se vyzná v tom, jak o vás dát vědět světu. Stará se o mediální komunikaci a "
+                    "zajišťuje, že se o našich nových funkcích a úspěšných projektech dozvědí nejen novináři, "
+                    "ale i široká veřejnost. Díky svým kontaktům dokáže pro Eventify i naše klienty zajistit "
+                    "viditelnost v online i offline médiích."
+                ),
+                "image": "/static/img/zahradnikova.jpg"
+            },
+            {
+                "name": "Michal Nedvěd",
+                "role": "Backend Developer",
+                "bio": (
+                    "Michal je backendový mág, který se stará o hladký chod databází, API a veškeré logiky "
+                    "na pozadí. Je zastáncem clean code a optimalizovaných dotazů, aby naše aplikace fungovala "
+                    "rychle i při tisících požadavků za minutu. Vždy se snaží přijít s elegantním řešením "
+                    "i na zdánlivě složité problémy."
+                ),
+                "image": "/static/img/nedved.jpg"
+            },
+            {
+                "name": "Nikola Tichá",
+                "role": "Konzultantka pro firemní akce",
+                "bio": (
+                    "Nikola se specializuje na velké firemní konference, gala večery a teambuildingy. "
+                    "Jejím úkolem je sestavit koncept akce, najít vhodné dodavatele a sladit branding s "
+                    "hlavní myšlenkou. Díky svému vřelému a profesionálnímu přístupu dokáže proměnit i "
+                    "formální večer v přátelskou a inspirativní událost."
+                ),
+                "image": "/static/img/ticha.jpg"
+            },
+            {
+                "name": "Jiří Vlk",
+                "role": "Analytik a Data Scientist",
+                "bio": (
+                    "Jiří se věnuje analýze dat a vyhodnocování všech procesů, které v Eventify probíhají. "
+                    "Na základě čísel a metrik navrhuje způsoby, jak zlepšit uživatelskou spokojenost, "
+                    "zvyšovat efektivitu plánování akcí a rozšiřovat tržní potenciál. Tím pomáhá "
+                    "snižovat náklady a maximalizovat přínosy nejen pro náš tým, ale také pro naše klienty."
+                ),
+                "image": "/static/img/vlk.jpg"
+            }
         ]
+
         context = super().get_context_data(**kwargs)
         context['team_members'] = team_members
+        context['total_customers'] = CustomUser.objects.count()
+        context['total_events'] = Event.objects.count()
+        context['total_orders'] = Order.objects.count()
+        context['total_organizations'] = Organization.objects.count()
         return context
 
 
