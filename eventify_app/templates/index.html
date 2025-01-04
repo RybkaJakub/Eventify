@@ -491,7 +491,7 @@
                         }
                     }, 50)
                     // Přehrání zvuku
-                    new Audio('{% static 'sound/popup.mp3' %}').play()
+                    new Audio('{% static 'sounds/notification.mp3' %}').play()
                       .catch(e => console.log('Audio play blocked:', e))
                 },
                 hide() {
@@ -509,12 +509,12 @@
             x-transition:leave-start="opacity-100 translate-x-0"
             x-transition:leave-end="opacity-0 translate-x-10"
 
-            class="w-72 bg-gray-200 p-4 text-gray-800 shadow-lg rounded relative flex flex-col justify-center"
+            class="w-72 bg-gray-900 p-4 text-gray-400 shadow-lg rounded relative flex flex-col justify-center"
         >
             <!-- Horní část: ikona a text -->
             <div class="flex items-center">
                 <!-- Ikona (větší a tlustší) -->
-                <div class="mr-3 flex items-center justify-center">
+                <div class="mr-3 flex items-center justify-center bg-gray-800 rounded-lg">
                     <!-- Success ikona -->
                     <svg x-show="toast.tag.includes('success')" 
                          xmlns="http://www.w3.org/2000/svg" 
@@ -549,8 +549,8 @@
             </div>
 
             <!-- Fialový progress bar dole -->
-            <div class="bg-gray-300 h-2 w-full rounded mt-3 overflow-hidden">
-                <div class="h-2 bg-purple-600 transition-all duration-50"
+            <div class="bg-gray-800 h-2 w-full rounded mt-3 overflow-hidden">
+                <div class="h-2 bg-purple-900 transition-all duration-50"
                      :style="`width: ${progress}%;`">
                 </div>
             </div>

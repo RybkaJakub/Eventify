@@ -5,98 +5,190 @@
 {% block title %}Moje objednávky{% endblock %}
 
 {% block content %}
-<div class="container mx-auto p-6 min-h-screen bg-gray-100">
-    <h1 class="text-4xl font-extrabold text-center mb-10 text-gray-800">Vaše objednávky</h1>
+<div class="min-h-screen flex bg-gray-50">
+    <main class="flex-1 p-8">
+        <div class="w-full bg-white p-8 rounded-lg shadow-md mb-5">
+            <h1 class="text-3xl font-bold text-center mb-8">Mé vstupenky</h1>
 
-    <div class="space-y-8">
-        {% if orders %}
-            {% for order in orders %}
-                <div x-data="{ showTickets: false, showZoom: false }" class="bg-white rounded-lg shadow p-6">
-                    <!-- Záhlaví objednávky -->
-                    <div class="flex justify-between items-center border-b border-gray-300 pb-4">
-                        <div>
-                            <h2 class="text-xl font-bold text-gray-900">Objednávka #{{ order.order_id }}</h2>
-                            <p class="text-sm text-gray-600">Datum objednávky: {{ order.date|date:"d.m.Y H:i" }}</p>
-                            <p class="text-sm text-gray-600">Celková cena: <span class="font-semibold">{{ order.total_amount }} Kč</span></p>
-                        </div>
-                        <div class="flex items-center space-x-4">
-                            <!-- Ikona pro stažení PDF -->
-                            <a href="{% url 'generate_ticket_pdf' order.id %}" class="relative group">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-6 h-6 text-gray-500 hover:text-gray-800 transition">
-                                    <path d="M12 3c.83 0 1.5.67 1.5 1.5V12h2.29c.45 0 .67.54.35.85l-3.29 3.29a.5.5 0 01-.71 0l-3.29-3.29a.5.5 0 01.36-.85h2.29V4.5c0-.83.67-1.5 1.5-1.5z" />
-                                    <path d="M19 18.5H5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5h14c.83 0 1.5-.67 1.5-1.5s-.67-1.5-1.5-1.5z" />
-                                </svg>
-                                <span class="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs font-medium py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                    Stáhnout PDF
-                                </span>
-                            </a>
-
-                            <!-- Tlačítko pro zobrazení vstupenek -->
-                            <button @click="showTickets = !showTickets"
-                                    class="px-4 py-2 rounded-md bg-purple-600 text-white font-semibold hover:bg-purple-700 focus:ring focus:ring-purple-300 transition">
-                                <span x-show="!showTickets">Zobrazit vstupenky</span>
-                                <span x-show="showTickets" x-cloak>Skrýt vstupenky</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Tickety s plynulým přechodem -->
-                    <div x-show="showTickets"
-                         x-transition:enter="transition-transform transition-opacity duration-1000 ease-out"
-                         x-transition:enter-start="opacity-0 -translate-y-5"
-                         x-transition:enter-end="opacity-100 translate-y-0"
-                         x-transition:leave="transition-transform transition-opacity duration-700 ease-in"
-                         x-transition:leave-start="opacity-100 translate-y-0"
-                         x-transition:leave-end="opacity-0 -translate-y-5"
-                         x-cloak
-                         class="mt-6 space-y-4">
-                        {% for ticket in order.tickets.all %}
-                            <div class="flex items-center bg-gray-50 border border-gray-200 rounded-lg shadow-sm p-4">
-                                <!-- QR kód s funkcí zvětšení -->
-                                <div x-data="{ showZoom: false }" class="relative">
-                                    <img src="{{ ticket.qr_code.url }}" alt="QR kód"
-                                         @click="showZoom = true; document.body.style.overflow = 'hidden';"
-                                         class="w-16 h-16 rounded-md border border-gray-300 cursor-pointer hover:shadow-lg transition">
-                                    <!-- Zvětšený QR kód -->
-                                    <div x-show="showZoom" 
-                                         x-transition:enter="transition-opacity duration-300"
-                                         x-transition:enter-start="opacity-0"
-                                         x-transition:enter-end="opacity-100"
-                                         x-transition:leave="transition-opacity duration-300"
-                                         x-transition:leave-start="opacity-100"
-                                         x-transition:leave-end="opacity-0"
-                                         class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-                                         @click="showZoom = false; document.body.style.overflow = '';">
-                                        <div @click.stop class="bg-white rounded-lg p-4 shadow-lg relative">
-                                            <img src="{{ ticket.qr_code.url }}" alt="QR kód" class="max-w-full max-h-screen">
-                                            <button @click="showZoom = false; document.body.style.overflow = '';"
-                                                    class="absolute top-2 right-2 text-gray-500 hover:text-gray-800">
-                                                ✕
-                                            </button>
-                                        </div>
-                                    </div>
+            <div class="space-y-8">
+                {% if orders %}
+                    {% for order in orders %}
+                        <div x-data="{ showTickets: false }" class="bg-white rounded-lg shadow p-6">
+                            <!-- Záhlaví objednávky -->
+                            <div class="flex justify-between items-center border-b border-gray-300 pb-4">
+                                <div>
+                                    <h2 class="text-xl font-bold text-gray-900">
+                                        Objednávka #{{ order.order_id }}
+                                    </h2>
+                                    <p class="text-sm text-gray-600">
+                                        Datum objednávky: {{ order.date|date:"d.m.Y H:i" }}
+                                    </p>
+                                    <p class="text-sm text-gray-600">
+                                        Celková cena: <span class="font-semibold">{{ order.total_amount }} Kč</span>
+                                    </p>
                                 </div>
+                                <div class="flex items-center space-x-4">
+                                    <!-- Ikona pro stažení PDF -->
+                                    <a href="{% url 'generate_ticket_pdf' order.id %}" class="relative group">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                                             viewBox="0 0 24 24"
+                                             class="w-6 h-6 text-gray-500 hover:text-gray-800 transition">
+                                            <path d="M12 3c.83 0 1.5.67 1.5 1.5V12h2.29c.45 0 .67.54.35.85l-3.29 3.29a.5.5 0 01-.71 0l-3.29-3.29a.5.5 0 01.36-.85h2.29V4.5c0-.83.67-1.5 1.5-1.5z" />
+                                            <path d="M19 18.5H5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5h14c.83 0 1.5-.67 1.5-1.5s-.67-1.5-1.5-1.5z" />
+                                        </svg>
+                                        <span class="absolute -top-8 left-1/2 transform -translate-x-1/2
+                                                     bg-black text-white text-xs font-medium py-1 px-2 rounded
+                                                     opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                            Stáhnout PDF
+                                        </span>
+                                    </a>
 
-                                <div class="ml-4 flex-1">
-                                    <h3 class="text-base font-semibold text-gray-900">{{ ticket.event.name }}</h3>
-                                    <p class="text-sm text-gray-600">Místo: {{ ticket.event.address }}</p>
-                                    <p class="text-sm text-gray-600">Datum: {{ ticket.event.day|date:"d.m.Y" }}</p>
-                                    <p class="text-sm text-gray-600">Čas: {{ ticket.event.time|time:"H:i" }}</p>
-                                    <p class="text-sm text-gray-600">Typ vstupenky: {{ ticket.ticket_type.name }}</p>
-                                    <p class="text-sm text-gray-600">Počet: {{ ticket.quantity }}</p>
-                                    <p class="text-sm text-gray-600">Cena za kus: {{ ticket.ticket_type.price }} Kč</p>
-                                    <p class="text-base font-bold text-gray-800 mt-2">Celková cena: {{ ticket.ticket_type.price|multiply:ticket.quantity }} Kč</p>
+                                    <!-- Tlačítko pro zobrazení vstupenek -->
+                                    <button @click="showTickets = !showTickets"
+                                            class="px-4 py-2 rounded-md bg-purple-600 text-white font-semibold hover:bg-purple-700 focus:ring focus:ring-purple-300 transition">
+                                        <span x-show="!showTickets">Zobrazit vstupenky</span>
+                                        <span x-show="showTickets" x-cloak>Skrýt vstupenky</span>
+                                    </button>
                                 </div>
                             </div>
-                        {% empty %}
-                            <p class="text-gray-500">Žádné vstupenky nejsou dostupné pro tuto objednávku.</p>
+
+                            <!-- Tickety -->
+                            <div x-show="showTickets"
+                                 x-transition:enter="transition-all transform duration-500 ease-out"
+                                 x-transition:enter-start="opacity-0 scale-95"
+                                 x-transition:enter-end="opacity-100 scale-100"
+                                 x-transition:leave="transition-all transform duration-300 ease-in"
+                                 x-transition:leave-start="opacity-100 scale-100"
+                                 x-transition:leave-end="opacity-0 scale-95"
+                                 x-cloak
+                                 class="mt-6 space-y-4">
+
+                                {% for ticket in order.tickets %}
+                                    <div class="flex items-center bg-purple-50 border-l-4 border-purple-500
+                                                rounded-lg shadow-sm p-4">
+                                        <!-- QR kód + modal -->
+                                        <div x-data="{ showZoom: false }" class="relative">
+                                            <img src="{{ ticket.qr_code.url }}" alt="QR kód"
+                                                 @click="showZoom = true; document.body.style.overflow = 'hidden';"
+                                                 class="w-16 h-16 rounded-md border border-gray-300 cursor-pointer" />
+
+                                            <!-- Modal -->
+                                            <div x-show="showZoom"
+                                                 x-transition:enter="transition-opacity duration-300"
+                                                 x-transition:enter-start="opacity-0"
+                                                 x-transition:enter-end="opacity-100"
+                                                 x-transition:leave="transition-opacity duration-300"
+                                                 x-transition:leave-start="opacity-100"
+                                                 x-transition:leave-end="opacity-0"
+                                                 class="fixed inset-0 z-50 flex items-center justify-center
+                                                        bg-black bg-opacity-50"
+                                                 @click="showZoom = false; document.body.style.overflow = '';"
+                                                 style="pointer-events: auto;">
+
+                                                <div @click.stop
+                                                     class="bg-white rounded-lg p-4 shadow-lg relative pointer-events-auto">
+                                                    <img src="{{ ticket.qr_code.url }}" alt="QR kód"
+                                                         class="max-w-full max-h-screen">
+                                                    <button @click="showZoom = false; document.body.style.overflow = '';"
+                                                            class="absolute top-2 right-2 text-gray-500 hover:text-gray-800">
+                                                        ✕
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Info o ticketu -->
+                                        <div class="ml-4 flex-1">
+                                            <h3 class="text-base font-semibold text-gray-900">
+                                                {{ ticket.event.name }}
+                                            </h3>
+                                            <p class="text-sm text-gray-600">
+                                                Místo: {{ ticket.event.address }}
+                                            </p>
+                                            <p class="text-sm text-gray-600">
+                                                Datum: {{ ticket.event.day|date:"d.m.Y" }}
+                                            </p>
+                                            <p class="text-sm text-gray-600">
+                                                Čas: {{ ticket.event.time|time:"H:i" }}
+                                            </p>
+                                            <p class="text-sm text-gray-600">
+                                                Typ vstupenky: {{ ticket.ticket_type.name }}
+                                            </p>
+                                            <p class="text-sm text-gray-600">
+                                                Počet: {{ ticket.quantity }}
+                                            </p>
+                                            <p class="text-sm text-gray-600">
+                                                Cena za kus: {{ ticket.ticket_type.price }} Kč
+                                            </p>
+                                            <p class="text-base font-bold text-gray-800 mt-2">
+                                                Celková cena: {{ ticket.ticket_type.price|multiply:ticket.quantity }} Kč
+                                            </p>
+                                        </div>
+                                    </div>
+                                {% empty %}
+                                    <p class="text-gray-500">
+                                        Žádné vstupenky nejsou dostupné pro tuto objednávku.
+                                    </p>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                    <!-- Stránkování dole -->
+                    {% if is_paginated %}
+                <!-- Místo <nav> použijeme <div> a role="navigation" (kvůli přístupnosti) -->
+                <div class="mt-10 flex justify-center items-center" role="navigation" aria-label="Pagination">
+                    <!-- "Předchozí" tlačítko -->
+                    {% if page_obj.has_previous %}
+                        <a class="mx-1 px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded hover:bg-gray-100 transition-all"
+                           href="?page=
+                                   {{ page_obj.previous_page_number }}{% if name_filter %}&name={{ name_filter }}{% endif %}{% if date_filter %}&date={{ date_filter }}{% endif %}{% if location_filter %}&location={{ location_filter }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}">
+                            Předchozí
+                        </a>
+                    {% else %}
+                        <span class="mx-1 px-4 py-2 bg-gray-200 text-gray-400 border border-gray-200 rounded cursor-not-allowed">
+                Předchozí
+            </span>
+                    {% endif %}
+
+                    <!-- Číselná část -->
+                    <div class="flex space-x-1 mx-2">
+                        {% for num in paginator.page_range %}
+                            {% if num == page_obj.number %}
+                                <!-- Aktuální stránka -->
+                                <span class="px-4 py-2 bg-gray-500 text-white rounded">
+                        {{ num }}
+                    </span>
+                            {% else %}
+                                <a class="px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded hover:bg-gray-100 transition-all"
+                                   href="?page=
+                                           {{ num }}{% if name_filter %}&name={{ name_filter }}{% endif %}{% if date_filter %}&date={{ date_filter }}{% endif %}{% if location_filter %}&location={{ location_filter }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}">
+                                    {{ num }}
+                                </a>
+                            {% endif %}
                         {% endfor %}
                     </div>
+
+                    <!-- "Další" tlačítko -->
+                    {% if page_obj.has_next %}
+                        <a class="mx-1 px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded hover:bg-gray-100 transition-all"
+                           href="?page=
+                                   {{ page_obj.next_page_number }}{% if name_filter %}&name={{ name_filter }}{% endif %}{% if date_filter %}&date={{ date_filter }}{% endif %}{% if location_filter %}&location={{ location_filter }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}">
+                            Další
+                        </a>
+                    {% else %}
+                        <span class="mx-1 px-4 py-2 bg-gray-200 text-gray-400 border border-gray-200 rounded cursor-not-allowed">
+                Další
+            </span>
+                    {% endif %}
                 </div>
-            {% endfor %}
-        {% else %}
-            <p class="text-center text-gray-500">Žádné objednávky nenalezeny.</p>
-        {% endif %}
-    </div>
+            {% endif %}
+
+                {% else %}
+                    <p class="text-center text-gray-500">Žádné objednávky nenalezeny.</p>
+                {% endif %}
+            </div>
+        </div>
+    </main>
 </div>
 {% endblock %}

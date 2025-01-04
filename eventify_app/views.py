@@ -78,8 +78,8 @@ def index(request):
 
     now = timezone.now()
     upcoming_events = Event.objects.filter(
-    Q(day__gt=now.date()) | (Q(day=now.date()) & Q(time__gt=now))
-).order_by('day', 'time')
+        Q(day__gt=now.date()) | (Q(day=now.date()) & Q(time__gt=now))
+    ).order_by('day', 'time')
 
     if request.user.is_authenticated:
         registered_events = PurchasedTickets.objects.filter(user=request.user).distinct('event')
@@ -356,7 +356,8 @@ class EditTicketView(View):
 
         # Formset pro POST data
         TicketTypeFormSet = modelformset_factory(TicketType, form=TicketTypeForm, extra=0)
-        formset = TicketTypeFormSet(request.POST, queryset=TicketType.objects.filter(event=event), prefix='ticket_types')
+        formset = TicketTypeFormSet(request.POST, queryset=TicketType.objects.filter(event=event),
+                                    prefix='ticket_types')
 
         if formset.is_valid():
             tickets = formset.save(commit=False)  # Uloží pouze instance bez jejich uložení do DB
@@ -592,45 +593,40 @@ class UserProfileEditView(UpdateView):
         messages.error(self.request, "Opravit chyby ve formuláři.")
         return super().form_invalid(form)
 
+
 class MyEventsListView(ListView):
-    model = Event
+    model = Order  # <--- ZMĚNA: stránkujeme objednávky
     template_name = 'events/my_tickets.html'
-    context_object_name = 'events'
+    context_object_name = 'orders'  # <--- V šabloně pak iteruješ přes 'orders'
+    paginate_by = 6  # <--- 2 objednávky na stránku
+
+    def get_queryset(self):
+        """Vrátí objednávky pro přihlášeného uživatele, seřazené od nejnovější."""
+        if not self.request.user.is_authenticated:
+            return Order.objects.none()
+        return Order.objects.filter(user=self.request.user).order_by('-date')
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        if self.request.user.is_authenticated:
-            user = self.request.user
-
-            registered_events = PurchasedTickets.objects.filter(user=user).values_list('event', flat=True)
-            context['events'] = Event.objects.filter(id__in=registered_events)
-            context['isAuth'] = True
-        else:
-            context['events'] = []
-            context['isAuth'] = False
-
         # Profilový obrázek
         has_picture = False
-        profile_picture = UserProfileView.get_user_profile_picture(self.request,
-                                                                   SocialAccount.objects.filter(user=self.request.user))
+        profile_picture = UserProfileView.get_user_profile_picture(
+            self.request, SocialAccount.objects.filter(user=self.request.user)
+        )
         if profile_picture:
             has_picture = True
 
         context['has_picture'] = has_picture
         context['profile_picture'] = profile_picture
+        context['isAuth'] = self.request.user.is_authenticated
 
-        userOrders = Order.objects.filter(user=self.request.user)
-
-        for order in userOrders:
+        # K objednávkám přidáme rovnou tikety do `order.tickets`
+        for order in context['orders']:
             purchasedTickets = PurchasedTickets.objects.filter(order_id=order.order_id)
-            order.tickets = purchasedTickets  # Dynamicky přidáme tikety k objednávce
-
-        # Nastavíme všechny objednávky (včetně tiketů) do kontextu
-        context['orders'] = userOrders
+            order.tickets = purchasedTickets
 
         return context
-
 
 
 @login_required
@@ -816,9 +812,11 @@ class CartPaymentView(LoginRequiredMixin, TemplateView):
         context['new_message'] = True
         return self.render_to_response(context)
 
+
 import qrcode
 from io import BytesIO
 import random
+
 
 class CartConfirmationView(LoginRequiredMixin, TemplateView):
     template_name = "account/cart_confirmation.html"
@@ -920,7 +918,6 @@ class CartConfirmationView(LoginRequiredMixin, TemplateView):
 
                 new_ticket.save()
 
-
             # Odebrání vstupenek z košíku
             items.delete()  # QuerySet nemá `save()`
 
@@ -928,25 +925,43 @@ class CartConfirmationView(LoginRequiredMixin, TemplateView):
             tickets = PurchasedTickets.objects.filter(order_id=order_id)
 
             if address and subject:
-
-                logger.info(f"Odesílání emailu na adresu: {address}")
-
-                subject = 'Potvrzení nákupu vstupenek - Eventify'
+                subject = f'Potvrzení nákupu vstupenek objednávky {order.order_id} - Eventify'
                 html_message = render_to_string(
                     'email/email.html',
-                    {'request': request,'tickets': tickets, 'user_name': f'{user.first_name} {user.last_name}'}
+                    {
+                        'request': request,
+                        'tickets': tickets,
+                        'user_name': f'{user.first_name} {user.last_name}'
+                    }
                 )
                 plain_message = strip_tags(html_message)
                 from_email = settings.EMAIL_HOST_USER
+                to_email = [address]
 
-                send_mail(subject, plain_message, from_email, [address], html_message=html_message)
+                email = EmailMessage(
+                    subject=subject,
+                    body=html_message,
+                    from_email=from_email,
+                    to=to_email
+                )
+                email.content_subtype = 'html'
 
-                logger.info(f"Email byl úspěšně odeslán na adresu: {address}")
+                # 1) Zavoláme tvou funkci, která vrací HttpResponse (PDF)
+                pdf_response = generate_ticket_pdf(request, order.id)  # Tohle pravděpodobně vrací HttpResponse
 
+                # 2) Získáme binární obsah PDF
+                pdf_content = pdf_response.content  # .content = bytes v těle odpovědi
+
+                # 3) Přidáme jako přílohu
+                email.attach(f"{order.order_id}.pdf", pdf_content, "application/pdf")
+
+                # 4) Odeslání
+                email.send()
 
             return redirect('index')
         else:
             return redirect('index')
+
 
 def generate_ticket_pdf(request, order_id):
     # Načtěte objednávku a tickety
@@ -983,10 +998,19 @@ class ClearCartView(LoginRequiredMixin, View):
         return redirect('cart')  # Přesměrování zpět na stránku s košíkem
 
 
+from django.views.generic import ListView
+from geopy import Nominatim
+from geopy.distance import geodesic
+from .models import Event, EventAddress
+
+
 class EventsListView(ListView):
     model = Event
     template_name = 'events/events_list.html'
-    context_object_name = 'events'
+
+    # context_object_name nepoužijeme,
+    # aby Django použilo výchozí jméno: "object_list" + "page_obj", "paginator", "is_paginated".
+    paginate_by = 10  # Tady nastavíš, kolik eventů na stránku
 
     def get_queryset(self):
         events = super().get_queryset()
@@ -994,21 +1018,14 @@ class EventsListView(ListView):
         date_filter = self.request.GET.get('date')
         location_filter = self.request.GET.get('location')
         category_filter = self.request.GET.get('category')
-        filtered_events = events
 
-        # Filtrování dle názvu
+        # Filtrování
         if name_filter:
-            filtered_events = filtered_events.filter(name__icontains=name_filter)
-
-        # Filtrování dle data
+            events = events.filter(name__icontains=name_filter)
         if date_filter:
-            filtered_events = filtered_events.filter(day=date_filter)
-
-        # Filtrování dle kategorie
+            events = events.filter(day=date_filter)
         if category_filter:
-            filtered_events = filtered_events.filter(category=category_filter)
-
-        # Filtrování dle města (EventAddress)
+            events = events.filter(category=category_filter)
         if location_filter:
             geolocator = Nominatim(user_agent="eventify")
             location = geolocator.geocode(location_filter)
@@ -1021,15 +1038,14 @@ class EventsListView(ListView):
                         event_location = (address.latitude, address.longitude)
                         if geodesic(user_location, event_location).km <= 20:
                             nearby_events.append(address.event.id)
-                filtered_events = filtered_events.filter(id__in=nearby_events)
+                events = events.filter(id__in=nearby_events)
 
-        return filtered_events
+        return events
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        category_filter = self.request.GET.get('category', '')
 
-        # Přidáme lidsky čitelný název kategorie
+        category_filter = self.request.GET.get('category', '')
         categories = dict(Event.CATEGORY_CHOICES)
         selected_category_label = categories.get(category_filter, '')
 

@@ -4,49 +4,60 @@
 {% block title %}Kalendář{% endblock %}
 
 {% block content %}
-    <div class="container mx-auto p-6">
-            <h1 class="text-3xl font-bold text-center mb-8">Seznam eventů</h1>
-        </div>
     <div class="min-h-screen flex bg-gray-50">
-        
+
         <main class="flex-1 p-8">
-            <div class="date w-full bg-white shadow-xl rounded-lg p-8 mb-5 flex items-center justify-between">
-                <!-- Tlačítko pro předchozí měsíc -->
-                <a href="?year={{ previous_year }}&month={{ previous_month }}" class="text-gray-400">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                         stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                    </svg>
-                </a>
 
-                <div class="flex items-center space-x-4">
-                    <!-- Dropdown pro výběr měsíce -->
-                    <select class="border border-gray-300 rounded px-4 py-2"
-                            onchange="window.location.href='?year={{ current_year }}&month=' + this.value">
-                        {% for month_num, month_name in months.items %}
-                            <option value="{{ month_num }}"
-                                    {% if month_num == current_month %}selected{% endif %}>{{ month_name }}</option>
-                        {% endfor %}
-                    </select>
+            <div class="date w-full bg-white shadow-md rounded-lg p-8 mb-5">
+                <!-- Nadpis na samostatném řádku -->
+                <h1 class="text-3xl font-bold text-center mb-8">Kalendář</h1>
 
-                    <!-- Dropdown pro výběr roku -->
-                    <select class="border border-gray-300 rounded px-4 py-2"
-                            onchange="window.location.href='?year=' + this.value + '&month={{ current_month }}'">
-                        {% for year in available_years %}
-                            <option value="{{ year }}"
-                                    {% if year == current_year %}selected{% endif %}>{{ year }}</option>
-                        {% endfor %}
-                    </select>
+                <!-- Navigační lišta pro měsíce/roky -->
+                <div class="flex items-center justify-between">
+                    <!-- Tlačítko pro předchozí měsíc -->
+                    <a href="?year={{ previous_year }}&month={{ previous_month }}" class="text-gray-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                             viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M15 19l-7-7 7-7"/>
+                        </svg>
+                    </a>
+
+                    <div class="flex items-center space-x-4">
+                        <!-- Dropdown pro výběr měsíce -->
+                        <select class="border border-gray-300 rounded px-4 py-2"
+                                onchange="window.location.href='?year={{ current_year }}&month=' + this.value">
+                            {% for month_num, month_name in months.items %}
+                                <option value="{{ month_num }}"
+                                        {% if month_num == current_month %}selected{% endif %}>
+                                    {{ month_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+
+                        <!-- Dropdown pro výběr roku -->
+                        <select class="border border-gray-300 rounded px-4 py-2"
+                                onchange="window.location.href='?year=' + this.value + '&month={{ current_month }}'">
+                            {% for year in available_years %}
+                                <option value="{{ year }}"
+                                        {% if year == current_year %}selected{% endif %}>
+                                    {{ year }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Tlačítko pro další měsíc -->
+                    <a href="?year={{ next_year }}&month={{ next_month }}" class="text-gray-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                             viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </a>
                 </div>
-
-                <!-- Tlačítko pro další měsíc -->
-                <a href="?year={{ next_year }}&month={{ next_month }}" class="text-gray-400">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                         stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                    </svg>
-                </a>
             </div>
+
 
             <!-- Tabulka kalendáře -->
             <table class="table-auto w-full bg-white rounded-lg shadow-md">
