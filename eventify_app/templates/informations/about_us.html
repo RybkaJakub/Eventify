@@ -4,25 +4,25 @@
 {% block title %}O nás | Eventify{% endblock %}
 
 {% block content %}
-<!-- Pokud Alpine.js nenačítáš globálně, odkomentuj:
-<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
--->
+    <!-- Pokud Alpine.js nenačítáš globálně, odkomentuj:
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    -->
 
-<div class="container mx-auto py-12 px-6" x-data>
-    <!-- Úvodní sekce -->
-    <div class="text-center mb-12">
-        <h1 class="text-5xl font-extrabold text-gray-800 tracking-wide">O nás | Eventify</h1>
-        <p class="text-lg text-gray-600 mt-4 max-w-2xl mx-auto leading-relaxed">
-            Vítejte v <span class="font-semibold">Eventify</span> – platformě, 
-            která vám pomůže organizovat nezapomenutelné akce a setkání, 
-            ať už se jedná o malý workshop nebo rozsáhlý festival. 
-            Na této stránce se dozvíte, co nás pohání vpřed, jak pracujeme 
-            a v čem věříme, že dokážeme posunout svět eventů o kus dál.
-        </p>
-    </div>
+    <div class="container mx-auto py-12 px-6" x-data>
+        <!-- Úvodní sekce -->
+        <div class="text-center mb-12">
+            <h1 class="text-5xl font-extrabold text-gray-800 tracking-wide">O nás | Eventify</h1>
+            <p class="text-lg text-gray-600 mt-4 max-w-2xl mx-auto leading-relaxed">
+                Vítejte v <span class="font-semibold">Eventify</span> – platformě,
+                která vám pomůže organizovat nezapomenutelné akce a setkání,
+                ať už se jedná o malý workshop nebo rozsáhlý festival.
+                Na této stránce se dozvíte, co nás pohání vpřed, jak pracujeme
+                a v čem věříme, že dokážeme posunout svět eventů o kus dál.
+            </p>
+        </div>
 
-    <!-- Sekce statistiky (dynamický counter) -->
-    <div x-data="{
+        <!-- Sekce statistiky (dynamický counter) -->
+        <div x-data="{
             stats: {
                 events: 0,
                 orgs: 0,
@@ -30,7 +30,7 @@
                 orders: 0
             },
             eventGoal: {{ total_events|default:0 }},
-            orgGoal: {{ total_orgs|default:0 }},
+            orgGoal: {{ total_organizations|default:0 }},
             customerGoal: {{ total_customers|default:0 }},
             orderGoal: {{ total_orders|default:0 }},
             startCounting() {
@@ -54,142 +54,150 @@
                 requestAnimationFrame(animate);
             }
         }"
-         x-init="startCounting()"
-         class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-12">
-        
-        <div class="bg-white shadow rounded-xl p-6 text-center">
-            <h2 class="text-3xl font-bold text-purple-600 mb-2" x-text="stats.events"></h2>
-            <p class="text-gray-600">Eventů</p>
-        </div>
-        <div class="bg-white shadow rounded-xl p-6 text-center">
-            <h2 class="text-3xl font-bold text-purple-600 mb-2" x-text="stats.orgs"></h2>
-            <p class="text-gray-600">Organizací</p>
-        </div>
-        <div class="bg-white shadow rounded-xl p-6 text-center">
-            <h2 class="text-3xl font-bold text-purple-600 mb-2" x-text="stats.customers"></h2>
-            <p class="text-gray-600">Zákazníků</p>
-        </div>
-        <div class="bg-white shadow rounded-xl p-6 text-center">
-            <h2 class="text-3xl font-bold text-purple-600 mb-2" x-text="stats.orders"></h2>
-            <p class="text-gray-600">Objednávek</p>
-        </div>
-    </div>
-
-    <!-- Náš příběh (zmodernizovaný a rozšířený) -->
-    <div class="bg-purple-50 rounded-xl p-8 shadow mb-12 hover:shadow-lg transition-shadow duration-300">
-        <h2 class="text-3xl font-semibold mb-4 text-gray-800">Náš příběh</h2>
-        <p class="text-lg text-gray-700 leading-relaxed mb-4">
-            V <span class="font-bold">Eventify</span> se spojuje vášeň pro inovace s hlubokou znalostí 
-            eventového prostředí. Vše začalo jako malý projekt, který měl usnadnit kamarádům 
-            organizaci lokálních koncertů a workshopů. Postupně jsme však zjistili, že podobnou 
-            potřebu mají i větší organizace, neziskovky a firmy – všichni touží po efektivním, 
-            jednoduchém a přehledném řešení, které by jim dovolilo soustředit se na samotné 
-            zážitky a neřešit zbytečnosti okolo.
-        </p>
-        <p class="text-lg text-gray-700 leading-relaxed">
-            Díky neustálé zpětné vazbě od lidí, kteří se rozhodli jít do toho s námi, 
-            se <span class="font-semibold">Eventify</span> rozrůstá do platformy, 
-            která kombinuje kreativitu s technickou precizností. Ať už plánujeme firemní konference, 
-            teambuildingy s netradičními prvky nebo dobročinné akce na podporu komunit, 
-            vždy usilujeme o to, aby si každý odnesl nejen příjemný dojem, ale i chuť zapojit se 
-            do dalšího pokračování.
-        </p>
-    </div>
-
-    <!-- Koho obsluhujeme + jedinečná hodnota -->
-    <div class="bg-white shadow rounded-xl p-8 mb-12 hover:shadow-lg transition-shadow duration-300">
-        <h2 class="text-3xl font-semibold text-gray-800 mb-6">Koho obsluhujeme</h2>
-        <p class="text-lg text-gray-600 leading-relaxed mb-4">
-            Představte si **(nyní: "představte si" bez bold, ale můžeme s "font-semibold")** 
-            <span class="font-semibold">freelancer</span>, který chce uspořádat malý workshop 
-            pro svých pár stálých klientů, nebo <span class="font-semibold">firma</span>, 
-            která plánuje výroční konferenci pro stovky účastníků. 
-            <span class="font-semibold">Eventify</span> jim oběma dokáže nabídnout jednoduchý 
-            a přizpůsobitelný systém, který pokryje správu pozvánek, QR vstupenek i komunikaci 
-            s účastníky. 
-        </p>
-        <p class="text-lg text-gray-600 leading-relaxed mb-4">
-            Naše jedinečná hodnota spočívá v ochotě jít s vámi do hloubky. 
-            Sami jsme v minulosti pořádali různorodé akce – od lokálních hackathonů 
-            přes letní festivaly, až po netradiční formáty firemních školení. 
-            <span class="font-semibold">Díky této zkušenosti</span> rozumíme, 
-            že každá akce má svá specifika a neexistuje jediné univerzální řešení. 
-            Proto jsme postavili Eventify jako modulární platformu, kde si vy sami určujete, 
-            co chcete využít a co naopak nepotřebujete.
-        </p>
-        <p class="text-lg text-gray-600 leading-relaxed">
-            Do budoucna plánujeme ještě více rozšiřovat integrace s pokročilými nástroji 
-            na marketing, analytiku či interakci s účastníky. Pokud hledáte partnera, 
-            který rozumí vašim potřebám a neustále inovuje, <span class="font-bold">Eventify</span> 
-            je tady, aby vám pomohlo proměnit každou akci v úspěch, 
-            na který budou hosté rádi vzpomínat.
-        </p>
-    </div>
-
-    <!-- Jak to děláme -->
-    <div class="bg-gray-100 text-gray-800 rounded-xl p-8 shadow mb-12 hover:shadow-lg transition-shadow duration-300">
-        <h2 class="text-3xl font-semibold mb-4">Jak to děláme</h2>
-        <p class="text-lg text-gray-700 leading-relaxed mb-4">
-            V základu stojí <span class="font-bold">technologie</span> – Django, Docker, Tailwind, 
-            to vše nám umožňuje rychle nasazovat nové funkce a udržovat vysokou stabilitu. 
-            Avšak jen o kódu to není. Klademe důraz i na <span class="font-semibold">lidský přístup</span> 
-            a dlouhodobé partnerství s organizátory. Nemyslíme si, že nasadíme hotovou šablonu a tím 
-            to končí. Právě naopak – chceme se potkávat, sbírat feedback a posouvat Eventify kupředu, 
-            aby dokázalo plnit vaše sny a představy, ať už jsou jakkoli ambiciózní.
-        </p>
-        <p class="text-lg text-gray-700 leading-relaxed">
-            Každá akce je pro nás výzvou k vylepšování – testujeme nové funkce v reálném provozu, 
-            bavíme se s návštěvníky a někdy i sami vyrazíme na plac, abychom viděli, co se děje. 
-            Díky tomu získáváme <span class="font-bold">prvotřídní zkušenost</span> z první ruky 
-            a můžeme náš produkt dolaďovat tak, abyste vy i vaši hosté měli vždy 
-            <span class="font-semibold">pozitivní</span> a bezproblémový zážitek.
-        </p>
-    </div>
-
-    <!-- Tým -->
-    <div class="bg-white shadow rounded-xl p-8 mb-12">
-        <h2 class="text-3xl font-semibold text-gray-800 text-center mb-6">Náš tým</h2>
-        <p class="text-md text-gray-600 text-center max-w-3xl mx-auto mb-8 leading-relaxed">
-            Každý z nás do projektu vkládá <span class="font-bold">jedinečné schopnosti</span> 
-            a <span class="font-semibold">vášeň</span> pro svou specializaci. 
-            Spojuje nás ale společná motivace – usnadnit lidem organizaci akce a nabídnout jim 
-            nástroje, které jim skutečně pomohou. Věříme, že dohromady můžeme měnit 
-            zaběhnuté pořádání eventů k lepšímu.
-        </p>
-        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {% for member in team_members %}
-            <div class="text-center bg-gray-50 shadow rounded-lg p-6 hover:shadow-lg transition-shadow duration-300">
-                <div class="w-32 h-32 rounded-full overflow-hidden mx-auto mb-4 border border-gray-300">
-                    <img class="w-full h-full object-cover" src="{{ member.image }}" alt="{{ member.name }}">
+             x-init="startCounting()"
+             class="bg-purple-50 rounded-xl p-8 shadow mb-12 hover:shadow-lg transition-shadow duration-300">
+            <div class="container mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-4 divide-x divide-gray-300 text-center">
+                    <!-- Eventy -->
+                    <div class="p-6">
+                        <h2 class="text-4xl font-extrabold text-purple-600 mb-2" x-text="stats.events"></h2>
+                        <p class="text-lg text-gray-700 font-medium">Eventů</p>
+                    </div>
+                    <!-- Organizace -->
+                    <div class="p-6">
+                        <h2 class="text-4xl font-extrabold text-purple-600 mb-2" x-text="stats.orgs"></h2>
+                        <p class="text-lg text-gray-700 font-medium">Organizací</p>
+                    </div>
+                    <!-- Zákazníci -->
+                    <div class="p-6">
+                        <h2 class="text-4xl font-extrabold text-purple-600 mb-2" x-text="stats.customers"></h2>
+                        <p class="text-lg text-gray-700 font-medium">Zákazníků</p>
+                    </div>
+                    <!-- Objednávky -->
+                    <div class="p-6">
+                        <h2 class="text-4xl font-extrabold text-purple-600 mb-2" x-text="stats.orders"></h2>
+                        <p class="text-lg text-gray-700 font-medium">Objednávek</p>
+                    </div>
                 </div>
-                <h3 class="text-xl font-semibold text-gray-800">{{ member.name }}</h3>
-                <p class="text-sm text-gray-500">{{ member.role }}</p>
-                <p class="mt-4 text-sm text-gray-600 leading-relaxed">
-                    {{ member.bio }}
-                </p>
             </div>
-            {% endfor %}
+        </div>
+
+
+        <!-- Náš příběh (zmodernizovaný a rozšířený) -->
+        <div class="bg-purple-50 rounded-xl p-8 shadow mb-12 hover:shadow-lg transition-shadow duration-300">
+            <h2 class="text-3xl font-semibold mb-4 text-gray-800">Náš příběh</h2>
+            <p class="text-lg text-gray-700 leading-relaxed mb-4">
+                V <span class="font-bold">Eventify</span> se spojuje vášeň pro inovace s hlubokou znalostí
+                eventového prostředí. Vše začalo jako malý projekt, který měl usnadnit kamarádům
+                organizaci lokálních koncertů a workshopů. Postupně jsme však zjistili, že podobnou
+                potřebu mají i větší organizace, neziskovky a firmy – všichni touží po efektivním,
+                jednoduchém a přehledném řešení, které by jim dovolilo soustředit se na samotné
+                zážitky a neřešit zbytečnosti okolo.
+            </p>
+            <p class="text-lg text-gray-700 leading-relaxed">
+                Díky neustálé zpětné vazbě od lidí, kteří se rozhodli jít do toho s námi,
+                se <span class="font-semibold">Eventify</span> rozrůstá do platformy,
+                která kombinuje kreativitu s technickou precizností. Ať už plánujeme firemní konference,
+                teambuildingy s netradičními prvky nebo dobročinné akce na podporu komunit,
+                vždy usilujeme o to, aby si každý odnesl nejen příjemný dojem, ale i chuť zapojit se
+                do dalšího pokračování.
+            </p>
+        </div>
+
+        <!-- Koho obsluhujeme + jedinečná hodnota -->
+        <div class="bg-white shadow rounded-xl p-8 mb-12 hover:shadow-lg transition-shadow duration-300">
+            <h2 class="text-3xl font-semibold text-gray-800 mb-6">Koho obsluhujeme</h2>
+            <p class="text-lg text-gray-600 leading-relaxed mb-4">
+                Představte si **(nyní: "představte si" bez bold, ale můžeme s "font-semibold")**
+                <span class="font-semibold">freelancer</span>, který chce uspořádat malý workshop
+                pro svých pár stálých klientů, nebo <span class="font-semibold">firma</span>,
+                která plánuje výroční konferenci pro stovky účastníků.
+                <span class="font-semibold">Eventify</span> jim oběma dokáže nabídnout jednoduchý
+                a přizpůsobitelný systém, který pokryje správu pozvánek, QR vstupenek i komunikaci
+                s účastníky.
+            </p>
+            <p class="text-lg text-gray-600 leading-relaxed mb-4">
+                Naše jedinečná hodnota spočívá v ochotě jít s vámi do hloubky.
+                Sami jsme v minulosti pořádali různorodé akce – od lokálních hackathonů
+                přes letní festivaly, až po netradiční formáty firemních školení.
+                <span class="font-semibold">Díky této zkušenosti</span> rozumíme,
+                že každá akce má svá specifika a neexistuje jediné univerzální řešení.
+                Proto jsme postavili Eventify jako modulární platformu, kde si vy sami určujete,
+                co chcete využít a co naopak nepotřebujete.
+            </p>
+            <p class="text-lg text-gray-600 leading-relaxed">
+                Do budoucna plánujeme ještě více rozšiřovat integrace s pokročilými nástroji
+                na marketing, analytiku či interakci s účastníky. Pokud hledáte partnera,
+                který rozumí vašim potřebám a neustále inovuje, <span class="font-bold">Eventify</span>
+                je tady, aby vám pomohlo proměnit každou akci v úspěch,
+                na který budou hosté rádi vzpomínat.
+            </p>
+        </div>
+
+        <!-- Jak to děláme -->
+        <div class="bg-gray-100 text-gray-800 rounded-xl p-8 shadow mb-12 hover:shadow-lg transition-shadow duration-300">
+            <h2 class="text-3xl font-semibold mb-4">Jak to děláme</h2>
+            <p class="text-lg text-gray-700 leading-relaxed mb-4">
+                V základu stojí <span class="font-bold">technologie</span> – Django, Docker, Tailwind,
+                to vše nám umožňuje rychle nasazovat nové funkce a udržovat vysokou stabilitu.
+                Avšak jen o kódu to není. Klademe důraz i na <span class="font-semibold">lidský přístup</span>
+                a dlouhodobé partnerství s organizátory. Nemyslíme si, že nasadíme hotovou šablonu a tím
+                to končí. Právě naopak – chceme se potkávat, sbírat feedback a posouvat Eventify kupředu,
+                aby dokázalo plnit vaše sny a představy, ať už jsou jakkoli ambiciózní.
+            </p>
+            <p class="text-lg text-gray-700 leading-relaxed">
+                Každá akce je pro nás výzvou k vylepšování – testujeme nové funkce v reálném provozu,
+                bavíme se s návštěvníky a někdy i sami vyrazíme na plac, abychom viděli, co se děje.
+                Díky tomu získáváme <span class="font-bold">prvotřídní zkušenost</span> z první ruky
+                a můžeme náš produkt dolaďovat tak, abyste vy i vaši hosté měli vždy
+                <span class="font-semibold">pozitivní</span> a bezproblémový zážitek.
+            </p>
+        </div>
+
+        <!-- Tým -->
+        <div class="bg-white shadow rounded-xl p-8 mb-12">
+            <h2 class="text-3xl font-semibold text-gray-800 text-center mb-6">Náš tým</h2>
+            <p class="text-md text-gray-600 text-center max-w-3xl mx-auto mb-8 leading-relaxed">
+                Každý z nás do projektu vkládá <span class="font-bold">jedinečné schopnosti</span>
+                a <span class="font-semibold">vášeň</span> pro svou specializaci.
+                Spojuje nás ale společná motivace – usnadnit lidem organizaci akce a nabídnout jim
+                nástroje, které jim skutečně pomohou. Věříme, že dohromady můžeme měnit
+                zaběhnuté pořádání eventů k lepšímu.
+            </p>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                {% for member in team_members %}
+                    <div class="text-center bg-gray-50 shadow rounded-lg p-6 hover:shadow-lg transition-shadow duration-300">
+                        <div class="w-32 h-32 rounded-full overflow-hidden mx-auto mb-4 border border-gray-300">
+                            <img class="w-full h-full object-cover" src="{{ member.image }}" alt="{{ member.name }}">
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800">{{ member.name }}</h3>
+                        <p class="text-sm text-gray-500">{{ member.role }}</p>
+                        <p class="mt-4 text-sm text-gray-600 leading-relaxed">
+                            {{ member.bio }}
+                        </p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- CTA blok (kontakt) -->
+        <div class="bg-purple-50 text-gray-800 rounded-xl p-8 shadow mb-12 hover:shadow-lg transition-shadow duration-300 text-center">
+            <h2 class="text-3xl font-semibold mb-4">Připraveni na další krok?</h2>
+            <p class="text-lg text-gray-700 leading-relaxed max-w-3xl mx-auto mb-6">
+                Pokud vás naše myšlenky zaujaly a chcete zjistit více o tom, jak <span class="font-bold">Eventify</span>
+                zapadne do vašich plánů, jsme tu pro vás. Rádi vám představíme konkrétní případy,
+                nasdílíme best practices a společně vykročíme za cílem, kterým je akce, na niž budou
+                vaši účastníci nadšeně vzpomínat.
+            </p>
+            <p class="text-lg text-gray-700 leading-relaxed max-w-3xl mx-auto mb-6">
+                Kdykoliv se nám ozvěte – ať už máte v hlavě jen hrubou představu nebo už jasný projektový
+                plán. Společně proměníme váš nápad v realitu, která dá vašemu brandu i vašim hostům
+                nový rozměr setkávání a sdílení.
+            </p>
+            <a href="{% url 'contact' %}"
+               class="inline-block px-6 py-3 bg-purple-700 text-white rounded-lg shadow hover:bg-purple-800 transition duration-300">
+                Kontaktujte nás
+            </a>
         </div>
     </div>
-
-    <!-- CTA blok (kontakt) -->
-    <div class="bg-purple-50 text-gray-800 rounded-xl p-8 shadow mb-12 hover:shadow-lg transition-shadow duration-300 text-center">
-        <h2 class="text-3xl font-semibold mb-4">Připraveni na další krok?</h2>
-        <p class="text-lg text-gray-700 leading-relaxed max-w-3xl mx-auto mb-6">
-            Pokud vás naše myšlenky zaujaly a chcete zjistit více o tom, jak <span class="font-bold">Eventify</span> 
-            zapadne do vašich plánů, jsme tu pro vás. Rádi vám představíme konkrétní případy, 
-            nasdílíme best practices a společně vykročíme za cílem, kterým je akce, na niž budou 
-            vaši účastníci nadšeně vzpomínat.
-        </p>
-        <p class="text-lg text-gray-700 leading-relaxed max-w-3xl mx-auto mb-6">
-            Kdykoliv se nám ozvěte – ať už máte v hlavě jen hrubou představu nebo už jasný projektový 
-            plán. Společně proměníme váš nápad v realitu, která dá vašemu brandu i vašim hostům 
-            nový rozměr setkávání a sdílení.
-        </p>
-        <a href="#"
-           class="inline-block px-6 py-3 bg-purple-700 text-white rounded-lg shadow hover:bg-purple-800 transition duration-300">
-            Kontaktujte nás
-        </a>
-    </div>
-</div>
 {% endblock %}
