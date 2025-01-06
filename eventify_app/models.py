@@ -22,7 +22,7 @@ def validate_card_number(value):
         raise ValidationError("Číslo karty musí být 16 číslic začínajících číslem 4 (Visa).")
 
 
-def validate_cvv(value):
+def validate_cvc(value):
     if not re.match(r'^\d{3}$', value):
         raise ValidationError("CVV musí být tříciferné číslo.")
 
@@ -187,7 +187,6 @@ class TicketType(models.Model):
     def __str__(self):
         return self.name
 
-
 class Order(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     order_id = models.CharField(max_length=255, verbose_name='ID objednávky')
@@ -246,7 +245,7 @@ class PaymentMethod(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Uživatel", help_text="Uživatel, který tuto platební metodu vlastní.")
     name_on_card = models.TextField(default="", verbose_name="Jméno na kartě", help_text="Jméno, které je uvedeno na kartě.", max_length=255)
     card_number = models.TextField(validators=[validate_card_number], verbose_name="Číslo karty", help_text="Zadejte 16místné číslo karty.", max_length=16)
-    cvv = models.TextField(validators=[validate_cvv], verbose_name="CVV", help_text="Bezpečnostní kód na zadní straně karty.", max_length=3)
+    cvc = models.TextField(validators=[validate_cvc], verbose_name="CVC", help_text="Bezpečnostní kód na zadní straně karty.", max_length=3)
     expiration_date = models.DateField(verbose_name="Datum expirace", help_text="Datum expirace karty ve formátu MM/RR.", null=True)
 
     class Meta:

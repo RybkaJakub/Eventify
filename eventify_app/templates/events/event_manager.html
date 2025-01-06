@@ -4,6 +4,7 @@
 {% block title %}Správce eventů {% endblock %}
 
 {% block content %}
+    {% if user.organization %}
 <div class="container mx-auto px-4 py-8">
     <div class="bg-white shadow-xl rounded-lg p-8 mt-5">
 
@@ -66,7 +67,7 @@
                     {% empty %}
                         <tr>
                             <td colspan="6" class="px-6 py-8 text-center text-gray-500">
-                                <p class="text-lg font-medium">Žádné položky v košíku</p>
+                                <p class="text-lg font-medium">Organizace zatím nemá žádné události.</p>
                             </td>
                         </tr>
                     {% endfor %}
@@ -75,4 +76,17 @@
         </div>
     </div>
 </div>
+    {% else %}
+        <div class="container mx-auto px-4 py-8">
+            <div class="bg-white shadow-xl rounded-lg p-8 mt-5">
+                <div class="text-center">
+                    <h2 class="text-4xl font-extrabold text-gray-900 mb-6">Nemáte přístup k tomuto obsahu</h2>
+                    <a href="{% url 'index' %}" 
+                       class="inline-block bg-gray-600 text-white font-medium py-3 px-8 rounded-lg shadow-md hover:bg-gray-700 transition">
+                        Zpět na domovskou stránku
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}

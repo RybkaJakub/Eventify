@@ -1248,16 +1248,39 @@ class ContactView(View):
         return render(request, 'informations/contact.html', {'form': form})
 
     def post(self, request):
-        form = ContactForm(request.POST)
+        form = ContactForm(request.POST)  # Načtení odeslaných dat z formuláře
+        # Ověření, zda uživatel neodeslal formulář v posledních 10 minutách
+        last_submitted = request.session.get('last_submission_time')
+        if last_submitted:
+            # Převeďte uložený čas na datetime objekt
+            last_submitted_time = timezone.datetime.fromisoformat(last_submitted)
+            time_diff = timezone.now() - last_submitted_time
+            if time_diff < timedelta(minutes=10):
+                minutes_left = 10 - time_diff.seconds // 60
+                messages.error(request, f"Formulář už byl odeslán. Počkejte ještě {minutes_left} minut(y).")
+                return render(request, 'informations/contact.html', {'form': form})
+
         if form.is_valid():
-            # Zpracování formuláře (např. odeslání e-mailu)
+            # Odeslání e-mailu adminovi
+            subject = f"Nová zprávac od {form.cleaned_data['name']}"
             name = form.cleaned_data['name']
             email = form.cleaned_data['email']
-            message = form.cleaned_data['message']
-            # Například odeslání emailu nebo uložení do databáze
-            # Zde si můžeš přizpůsobit odeslání e-mailu podle potřeby
-            return HttpResponse("Děkujeme za vaši zprávu!")
-        return render(request, 'informations/contact.html', {'form': form})
+            html_message = render_to_string('email/contact.html',
+                                            {'message': form.cleaned_data['message'], 'name': name, 'email': email})
+            plain_message = strip_tags(html_message)
+            from_email = settings.EMAIL_HOST_USER
+            address = settings.CONTACT_EMAIL
+
+            send_mail(subject, plain_message, from_email, [address], html_message=html_message)
+
+            # Uložení času odeslání do session jako ISO formátovaný řetězec pro kompatibilitu s JSON
+            request.session['last_submission_time'] = timezone.now().isoformat()
+
+            messages.success(request, "Váš tiket byl úspěšně odeslán.")  # Zobrazení úspěšné zprávy
+            return redirect('support')  # Přesměrování zpět na stránku support
+        else:
+            messages.error(request, "Formulář obsahuje chyby. Zkuste to prosím znovu.")  # Zobrazení chybové zprávy
+            return render(request, 'informations/support.html', {'form': form})
 
 
 class SupportView(View):

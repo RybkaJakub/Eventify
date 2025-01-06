@@ -170,7 +170,7 @@ class DeliveryAddressForm(forms.ModelForm):
 class PaymentMethodForm(forms.ModelForm):
     class Meta:
         model = PaymentMethod
-        fields = ['card_number', 'name_on_card', 'cvv', 'expiration_date']
+        fields = ['card_number', 'name_on_card', 'cvc', 'expiration_date']
 
 class CustomSignupForm(SignupForm):
     username = forms.CharField(max_length=30, label='Uživatelské jméno', required=True)

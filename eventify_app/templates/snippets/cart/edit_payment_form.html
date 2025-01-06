@@ -33,12 +33,12 @@
                    value="{{ payment_form.card_number.value|default_if_none:'' }}">
         </div>
         <div class="col-span-2 flex flex-col w-full">
-            <label for="cvv" class="block text-sm font-medium text-gray-700 mb-2">CVV</label>
-            <input type="text" name="{{ payment_form.cvv.name }}"
-                   id="{{ payment_form.cvv.id_for_label }}"
+            <label for="cvv" class="block text-sm font-medium text-gray-700 mb-2">CVC</label>
+            <input type="text" name="{{ payment_form.cvc.name }}"
+                   id="{{ payment_form.cvc.id_for_label }}"
                    class="border border-gray-300 rounded-md p-2 w-full h-full"
-                   placeholder="CVV" required
-                   value="{{ payment_form.cvv.value|default_if_none:'' }}">
+                   placeholder="CVC" required
+                   value="{{ payment_form.cvc.value|default_if_none:'' }}">
         </div>
         <div class="col-span-1 flex flex-col w-full expiration_date">
             <label for="expiration_date" class="block text-sm font-medium text-gray-700 mb-2">Datum expirace</label>

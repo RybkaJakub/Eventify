@@ -6,160 +6,180 @@
     {% if user.is_authenticated %}
         {% for group in user.groups.all %}
             {% if group.name == "editor" or group.name == "admin" %}
-                <div class="container mx-auto mt-5">
-                    <div class="text-center my-6">
-                        <h2 class="text-2xl font-semibold">Události organizace {{ user.organization.name }}</h2>
+                <div class="container mx-auto mt-10 bg-white py-10 px-6 rounded-lg shadow-lg">
+                    <!-- Nadpis sekce -->
+                    <div class="text-center mb-10">
+                        <h2 class="text-4xl font-extrabold text-gray-800 tracking-wide relative inline-block">
+                            <span class="relative z-10">Události organizace {{ user.organization.name }}</span>
+                        </h2>
+                        <div class="mt-3 h-1 w-20 mx-auto bg-purple-600 rounded"></div>
                     </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+
+                    <!-- Karty eventů -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                         {% if organization_events %}
                             {% for organization_event in organization_events %}
-                                <div class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-auto">
-                                    {% if organization_event.image %}
-                                        <div class="relative w-full h-48">
+                                <div class="bg-white rounded-xl shadow-lg hover:shadow-2xl overflow-hidden flex flex-col transition duration-300 transform hover:scale-105">
+                                    <!-- Obrázek eventu -->
+                                    <div class="relative w-full h-56">
+                                        {% if organization_event.image %}
                                             <img src="{{ organization_event.image.url }}"
-                                                 class="w-full h-full object-cover"
+                                                 class="w-full h-full object-cover rounded-t-xl"
                                                  alt="{{ organization_event.name }}">
-                                            <div class="absolute top-2 left-2 px-3 py-1 text-white font-semibold rounded-md"
-                                                 style="background-color:
-                                                         {% if organization_event.category == 'conference' %} #4CFFCC
-                                                         {% elif organization_event.category == 'festival' %} #FF5733
-                                                         {% elif organization_event.category == 'workshop' %} #FF8C00
-                                                         {% elif organization_event.category == 'sport' %} #1E90FF
-                                                         {% elif organization_event.category == 'social' %} #FFD700
-                                                         {% elif organization_event.category == 'exhibition' %} #8A2BE2
-                                                         {% elif organization_event.category == 'concert' %} #FF1493
-                                                         {% elif organization_event.category == 'online' %} #32CD32
-                                                         {% elif organization_event.category == 'local' %} #FF6347
-                                                         {% else %} gray {% endif %}
-                                                         ">
-                                                {{ organization_event.get_category_display }}
-                                            </div>
-                                        </div>
-                                    {% else %}
-                                        <div class="relative w-full h-48 bg-gray-200">
-                                            <img src="{% static 'img/static.jpg' %}" class="w-full h-full object-cover"
-                                                 alt="{{ organization_event.name }}">
-                                            <div class="absolute top-2 left-2 px-3 py-1 text-white font-semibold rounded-md"
-                                                 style="background-color:
-                                                         {% if organization_event.category == 'conference' %} #4CFFCC
-                                                         {% elif organization_event.category == 'festival' %} #FF5733
-                                                         {% elif organization_event.category == 'workshop' %} #FF8C00
-                                                         {% elif organization_event.category == 'sport' %} #1E90FF
-                                                         {% elif organization_event.category == 'social' %} #FFD700
-                                                         {% elif organization_event.category == 'exhibition' %} #8A2BE2
-                                                         {% elif organization_event.category == 'concert' %} #FF1493
-                                                         {% elif organization_event.category == 'online' %} #32CD32
-                                                         {% elif organization_event.category == 'local' %} #FF6347
-                                                         {% else %} gray {% endif %}
-                                                         ">
-                                                {{ organization_event.get_category_display }}
-                                            </div>
-                                        </div>
-                                    {% endif %}
-
-                                    <div class="p-4 flex-1 flex flex-col">
-                                        <h5 class="font-bold text-lg line-clamp-2 h-[48px] flex-shrink-0">{{ organization_event.name }}</h5>
-                                        <p class="text-gray-700 text-sm mt-2 line-clamp-3 flex-grow">{{ organization_event.description }}</p>
-                                        {% if organization_event.eventaddress_set.exists %}
-                                            <p class="text-gray-600 text-sm mt-1">
-                                                Adresa: {{ organization_event.eventaddress_set.first }}
-                                            </p>
                                         {% else %}
-                                            <p class="text-gray-600 text-sm mt-1">Adresa není k dispozici.</p>
+                                            <div class="w-full h-full bg-gray-200 flex items-center justify-center">
+                                                <span class="text-gray-500 text-xl font-semibold">Obrázek není dostupný</span>
+                                            </div>
                                         {% endif %}
-                                        <p class="text-gray-700 text-sm mt-2 line-clamp-4">{{ organization_event.day }} {{ organization_event.time }}</p>
+                                        <div class="absolute top-2 left-2 text-white text-xs font-medium py-1 px-2 rounded-md"
+                                             style="background-color:
+                                                     {% if organization_event.category == 'conference' %} #6B7280
+                                                     {% elif organization_event.category == 'festival' %} #EF4444
+                                                     {% elif organization_event.category == 'workshop' %} #F59E0B
+                                                     {% elif organization_event.category == 'sport' %} #3B82F6
+                                                     {% elif organization_event.category == 'social' %} #10B981
+                                                     {% elif organization_event.category == 'exhibition' %} #8B5CF6
+                                                     {% elif organization_event.category == 'concert' %} #EC4899
+                                                     {% elif organization_event.category == 'online' %} #22D3EE
+                                                     {% elif organization_event.category == 'local' %} #D97706
+                                                     {% else %} #4B5563 {% endif %}">
+                                            {{ organization_event.get_category_display }}
+                                        </div>
                                     </div>
 
-                                    <div class="p-4 bg-gray-100 mt-auto w-full">
+                                    <!-- Obsah karty -->
+                                    <div class="p-6 flex-1 flex flex-col">
+                                        <h3 class="text-lg font-semibold text-gray-800 mb-2 line-clamp-2">{{ organization_event.name }}</h3>
+                                        <p class="text-sm text-gray-600 mb-4 line-clamp-3">{{ organization_event.description }}</p>
+                                        {% if organization_event.eventaddress_set.exists %}
+                                            <p class="text-sm text-gray-500 flex items-center">
+                                                <i class="fas fa-map-marker-alt text-purple-500 mr-2"></i>
+                                                {{ organization_event.eventaddress_set.first }}
+                                            </p>
+                                        {% else %}
+                                            <p class="text-sm text-gray-500 flex items-center">
+                                                <i class="fas fa-exclamation-circle text-gray-400 mr-2"></i>
+                                                Adresa není k dispozici.
+                                            </p>
+                                        {% endif %}
+                                        <p class="text-sm text-gray-500 mt-4 flex items-center">
+                                            <i class="fas fa-calendar-alt text-indigo-500 mr-2"></i>
+                                            {{ organization_event.day|date:"d.m.Y" }}
+                                        </p>
+                                        <p class="text-sm text-gray-500 flex items-center">
+                                            <i class="fas fa-clock text-blue-500 mr-2"></i>
+                                            {{ organization_event.time|time:"H:i" }}
+                                        </p>
+                                    </div>
+
+                                    <!-- Tlačítko detailu -->
+                                    <div class="p-4">
                                         <a href="{% url 'event_detail' organization_event.id %}"
-                                           class="text-indigo-500 font-medium block text-center">Detail události</a>
+                                           class="block text-center text-white font-medium py-2 px-4 rounded transition duration-300"
+                                           style="background: linear-gradient(to right, #6D28D9, #A855F7);">
+                                            <i class="fas fa-info-circle mr-2"></i>
+                                            Zobrazit detail
+                                        </a>
                                     </div>
                                 </div>
                             {% endfor %}
                         {% else %}
-                            <div class="col-span-1 lg:col-span-4 text-center">
-                                <div class="bg-white p-6 rounded-lg shadow-md">
-                                    <h5 class="text-gray-700">Není registrován na žádném eventu </h5>
+                            <div class="col-span-1 lg:col-span-3 text-center">
+                                <div class="bg-white p-6 rounded-lg shadow-lg">
+                                    <h5 class="text-gray-700 text-lg flex items-center justify-center">
+                                        <i class="fas fa-exclamation-circle text-red-500 mr-2"></i>
+                                        Není registrován na žádném eventu.
+                                    </h5>
                                 </div>
                             </div>
                         {% endif %}
                     </div>
                 </div>
             {% else %}
-                <div class="container mx-auto mt-5">
-                    <div class="text-center my-6">
-                        <h2 class="text-2xl font-semibold">Moje události</h2>
+                <div class="container mx-auto mt-10 bg-white py-10 px-6 rounded-lg shadow-lg">
+                    <!-- Nadpis sekce -->
+                    <div class="text-center mb-10">
+                        <h2 class="text-4xl font-extrabold text-gray-800 tracking-wide relative inline-block">
+                            <span class="relative z-10">Moje údálosti</span>
+                        </h2>
+                        <div class="mt-3 h-1 w-20 mx-auto bg-purple-600 rounded"></div>
                     </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                        {% if registered_events %}
-                            {% for registration in registered_events %}
-                                <div class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-auto">
-                                    {% if registration.event.image %}
-                                        <div class="relative w-full h-48">
-                                            <img src="{{ registration.event.image.url }}"
-                                                 class="w-full h-full object-cover"
-                                                 alt="{{ registration.event.name }}">
-                                            <div class="absolute top-2 left-2 px-3 py-1 text-white font-semibold rounded-md"
-                                                 style="background-color:
-                                                         {% if registration.event.category == 'conference' %} #4CFFCC
-                                                         {% elif registration.event.category == 'festival' %} #FF5733
-                                                         {% elif registration.event.category == 'workshop' %} #FF8C00
-                                                         {% elif registration.event.category == 'sport' %} #1E90FF
-                                                         {% elif registration.event.category == 'social' %} #FFD700
-                                                         {% elif registration.event.category == 'exhibition' %} #8A2BE2
-                                                         {% elif registration.event.category == 'concert' %} #FF1493
-                                                         {% elif registration.event.category == 'online' %} #32CD32
-                                                         {% elif registration.event.category == 'local' %} #FF6347
-                                                         {% else %} gray {% endif %}
-                                                         ">
-                                                {{ registration.event.get_category_display }}
-                                            </div>
-                                        </div>
-                                    {% else %}
-                                        <div class="relative w-full h-48 bg-gray-200">
-                                            <img src="{% static 'img/static.jpg' %}" class="w-full h-full object-cover"
-                                                 alt="{{ registration.event.name }}">
-                                            <div class="absolute top-2 left-2 px-3 py-1 text-white font-semibold rounded-md"
-                                                 style="background-color:
-                                                         {% if registration.event.category == 'conference' %} #4CFFCC
-                                                         {% elif registration.event.category == 'festival' %} #FF5733
-                                                         {% elif registration.event.category == 'workshop' %} #FF8C00
-                                                         {% elif registration.event.category == 'sport' %} #1E90FF
-                                                         {% elif registration.event.category == 'social' %} #FFD700
-                                                         {% elif registration.event.category == 'exhibition' %} #8A2BE2
-                                                         {% elif registration.event.category == 'concert' %} #FF1493
-                                                         {% elif registration.event.category == 'online' %} #32CD32
-                                                         {% elif registration.event.category == 'local' %} #FF6347
-                                                         {% else %} gray {% endif %}
-                                                         ">
-                                                {{ registration.event.get_category_display }}
-                                            </div>
-                                        </div>
-                                    {% endif %}
 
-                                    <div class="p-4 flex-1 flex flex-col">
-                                        <h5 class="font-bold text-lg line-clamp-2 h-[48px] flex-shrink-0">{{ registration.event.name }}</h5>
-                                        <p class="text-gray-700 text-sm mt-2 line-clamp-3 flex-grow">{{ registration.event.description }}</p>
-                                        {% if registration.event.eventaddress_set.exists %}
-                                            <p class="text-gray-600 text-sm mt-1">
-                                                Adresa: {{ registration.event.eventaddress_set.first }}
-                                            </p>
+                    <!-- Karty eventů -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {% if registered_events %}
+                            {% for registered_event in registered_events %}
+                                <div class="bg-white rounded-xl shadow-lg hover:shadow-2xl overflow-hidden flex flex-col transition duration-300 transform hover:scale-105">
+                                    <!-- Obrázek eventu -->
+                                    <div class="relative w-full h-56">
+                                        {% if registered_event.image %}
+                                            <img src="{{ registered_event.image.url }}"
+                                                 class="w-full h-full object-cover rounded-t-xl"
+                                                 alt="{{ registered_event.name }}">
                                         {% else %}
-                                            <p class="text-gray-600 text-sm mt-1">Adresa není k dispozici.</p>
+                                            <div class="w-full h-full bg-gray-200 flex items-center justify-center">
+                                                <span class="text-gray-500 text-xl font-semibold">Obrázek není dostupný</span>
+                                            </div>
                                         {% endif %}
-                                        <p class="text-gray-700 text-sm mt-2 line-clamp-4">{{ registration.event.day }} {{ registration.event.time }}</p>
+                                        <div class="absolute top-2 left-2 text-white text-xs font-medium py-1 px-2 rounded-md"
+                                             style="background-color:
+                                                     {% if registered_event.category == 'conference' %} #6B7280
+                                                     {% elif registered_event.category == 'festival' %} #EF4444
+                                                     {% elif registered_event.category == 'workshop' %} #F59E0B
+                                                     {% elif registered_event.category == 'sport' %} #3B82F6
+                                                     {% elif registered_event.category == 'social' %} #10B981
+                                                     {% elif registered_event.category == 'exhibition' %} #8B5CF6
+                                                     {% elif registered_event.category == 'concert' %} #EC4899
+                                                     {% elif registered_event.category == 'online' %} #22D3EE
+                                                     {% elif registered_event.category == 'local' %} #D97706
+                                                     {% else %} #4B5563 {% endif %}">
+                                            {{ registered_event.get_category_display }}
+                                        </div>
                                     </div>
 
-                                    <div class="p-4 bg-gray-100 mt-auto w-full">
-                                        <a href="{% url 'event_detail' registration.event.id %}"
-                                           class="text-indigo-500 font-medium block text-center">Detail události</a>
+                                    <!-- Obsah karty -->
+                                    <div class="p-6 flex-1 flex flex-col">
+                                        <h3 class="text-lg font-semibold text-gray-800 mb-2 line-clamp-2">{{ registered_event.name }}</h3>
+                                        <p class="text-sm text-gray-600 mb-4 line-clamp-3">{{ registered_event.description }}</p>
+                                        {% if registered_event.eventaddress_set.exists %}
+                                            <p class="text-sm text-gray-500 flex items-center">
+                                                <i class="fas fa-map-marker-alt text-purple-500 mr-2"></i>
+                                                {{ registered_event.eventaddress_set.first }}
+                                            </p>
+                                        {% else %}
+                                            <p class="text-sm text-gray-500 flex items-center">
+                                                <i class="fas fa-exclamation-circle text-gray-400 mr-2"></i>
+                                                Adresa není k dispozici.
+                                            </p>
+                                        {% endif %}
+                                        <p class="text-sm text-gray-500 mt-4 flex items-center">
+                                            <i class="fas fa-calendar-alt text-indigo-500 mr-2"></i>
+                                            {{ registered_event.day|date:"d.m.Y" }}
+                                        </p>
+                                        <p class="text-sm text-gray-500 flex items-center">
+                                            <i class="fas fa-clock text-blue-500 mr-2"></i>
+                                            {{ registered_event.time|time:"H:i" }}
+                                        </p>
+                                    </div>
+
+                                    <!-- Tlačítko detailu -->
+                                    <div class="p-4">
+                                        <a href="{% url 'event_detail' registered_event.id %}"
+                                           class="block text-center text-white font-medium py-2 px-4 rounded transition duration-300"
+                                           style="background: linear-gradient(to right, #6D28D9, #A855F7);">
+                                            <i class="fas fa-info-circle mr-2"></i>
+                                            Zobrazit detail
+                                        </a>
                                     </div>
                                 </div>
                             {% endfor %}
                         {% else %}
-                            <div class="col-span-1 lg:col-span-4 text-center">
-                                <div class="bg-white p-6 rounded-lg shadow-md">
-                                    <h5 class="text-gray-700">Není registrován na žádném eventu</h5>
+                            <div class="col-span-1 lg:col-span-3 text-center">
+                                <div class="bg-white p-6 rounded-lg shadow-lg">
+                                    <h5 class="text-gray-700 text-lg flex items-center justify-center">
+                                        <i class="fas fa-exclamation-circle text-red-500 mr-2"></i>
+                                        Není registrován na žádném eventu.
+                                    </h5>
                                 </div>
                             </div>
                         {% endif %}
@@ -168,79 +188,90 @@
             {% endif %}
         {% endfor %}
         {% if not user.groups.all %}
-            <div class="container mx-auto mt-5">
-                <div class="text-center my-6">
-                    <h2 class="text-2xl font-semibold">Moje události</h2>
+            <div class="container mx-auto mt-10 bg-white py-10 px-6 rounded-lg shadow-lg">
+                <!-- Nadpis sekce -->
+                <div class="text-center mb-10">
+                    <h2 class="text-4xl font-extrabold text-gray-800 tracking-wide relative inline-block">
+                        <span class="relative z-10">Moje údálosti</span>
+                    </h2>
+                    <div class="mt-3 h-1 w-20 mx-auto bg-purple-600 rounded"></div>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {% if registered_events %}
-                        {% for registration in registered_events %}
-                            <div class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-auto">
-                                {% if registration.event.image %}
-                                    <div class="relative w-full h-48">
-                                        <img src="{{ registration.event.image.url }}" class="w-full h-full object-cover"
-                                             alt="{{ registration.event.name }}">
-                                        <div class="absolute top-2 left-2 px-3 py-1 text-white font-semibold rounded-md"
-                                             style="background-color:
-                                                     {% if registration.event.category == 'conference' %} #4CFFCC
-                                                     {% elif registration.event.category == 'festival' %} #FF5733
-                                                     {% elif registration.event.category == 'workshop' %} #FF8C00
-                                                     {% elif registration.event.category == 'sport' %} #1E90FF
-                                                     {% elif registration.event.category == 'social' %} #FFD700
-                                                     {% elif registration.event.category == 'exhibition' %} #8A2BE2
-                                                     {% elif registration.event.category == 'concert' %} #FF1493
-                                                     {% elif registration.event.category == 'online' %} #32CD32
-                                                     {% elif registration.event.category == 'local' %} #FF6347
-                                                     {% else %} gray {% endif %}
-                                                     ">
-                                            {{ registration.event.get_category_display }}
-                                        </div>
-                                    </div>
-                                {% else %}
-                                    <div class="relative w-full h-48 bg-gray-200">
-                                        <img src="{% static 'img/static.jpg' %}" class="w-full h-full object-cover"
-                                             alt="{{ registration.event.name }}">
-                                        <div class="absolute top-2 left-2 px-3 py-1 text-white font-semibold rounded-md"
-                                             style="background-color:
-                                                     {% if registration.event.category == 'conference' %} #4CFFCC
-                                                     {% elif registration.event.category == 'festival' %} #FF5733
-                                                     {% elif registration.event.category == 'workshop' %} #FF8C00
-                                                     {% elif registration.event.category == 'sport' %} #1E90FF
-                                                     {% elif registration.event.category == 'social' %} #FFD700
-                                                     {% elif registration.event.category == 'exhibition' %} #8A2BE2
-                                                     {% elif registration.event.category == 'concert' %} #FF1493
-                                                     {% elif registration.event.category == 'online' %} #32CD32
-                                                     {% elif registration.event.category == 'local' %} #FF6347
-                                                     {% else %} gray {% endif %}
-                                                     ">
-                                            {{ registration.event.get_category_display }}
-                                        </div>
-                                    </div>
-                                {% endif %}
 
-                                <div class="p-4 flex-1 flex flex-col">
-                                    <h5 class="font-bold text-lg line-clamp-2 h-[48px] flex-shrink-0">{{ registration.event.name }}</h5>
-                                    <p class="text-gray-700 text-sm mt-2 line-clamp-3 flex-grow">{{ registration.event.description }}</p>
-                                    {% if registration.event.eventaddress_set.exists %}
-                                        <p class="text-gray-600 text-sm mt-1">
-                                            Adresa: {{ registration.event.eventaddress_set.first }}
-                                        </p>
+                <!-- Karty eventů -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {% if registered_events %}
+                        {% for registered_event in registered_events %}
+                            <div class="bg-white rounded-xl shadow-lg hover:shadow-2xl overflow-hidden flex flex-col transition duration-300 transform hover:scale-105">
+                                <!-- Obrázek eventu -->
+                                <div class="relative w-full h-56">
+                                    {% if registered_event.image %}
+                                        <img src="{{ registered_event.image.url }}"
+                                             class="w-full h-full object-cover rounded-t-xl"
+                                             alt="{{ registered_event.name }}">
                                     {% else %}
-                                        <p class="text-gray-600 text-sm mt-1">Adresa není k dispozici.</p>
+                                        <div class="w-full h-full bg-gray-200 flex items-center justify-center">
+                                            <span class="text-gray-500 text-xl font-semibold">Obrázek není dostupný</span>
+                                        </div>
                                     {% endif %}
-                                    <p class="text-gray-700 text-sm mt-2 line-clamp-4">{{ registration.event.day }} {{ registration.event.time }}</p>
+                                    <div class="absolute top-2 left-2 text-white text-xs font-medium py-1 px-2 rounded-md"
+                                         style="background-color:
+                                                 {% if registered_event.category == 'conference' %} #6B7280
+                                                 {% elif registered_event.category == 'festival' %} #EF4444
+                                                 {% elif registered_event.category == 'workshop' %} #F59E0B
+                                                 {% elif registered_event.category == 'sport' %} #3B82F6
+                                                 {% elif registered_event.category == 'social' %} #10B981
+                                                 {% elif registered_event.category == 'exhibition' %} #8B5CF6
+                                                 {% elif registered_event.category == 'concert' %} #EC4899
+                                                 {% elif registered_event.category == 'online' %} #22D3EE
+                                                 {% elif registered_event.category == 'local' %} #D97706
+                                                 {% else %} #4B5563 {% endif %}">
+                                        {{ registered_event.get_category_display }}
+                                    </div>
                                 </div>
 
-                                <div class="p-4 bg-gray-100 mt-auto w-full">
-                                    <a href="{% url 'event_detail' registration.event.id %}"
-                                       class="text-indigo-500 font-medium block text-center">Detail události</a>
+                                <!-- Obsah karty -->
+                                <div class="p-6 flex-1 flex flex-col">
+                                    <h3 class="text-lg font-semibold text-gray-800 mb-2 line-clamp-2">{{ registered_event.name }}</h3>
+                                    <p class="text-sm text-gray-600 mb-4 line-clamp-3">{{ registered_event.description }}</p>
+                                    {% if registered_event.eventaddress_set.exists %}
+                                        <p class="text-sm text-gray-500 flex items-center">
+                                            <i class="fas fa-map-marker-alt text-purple-500 mr-2"></i>
+                                            {{ registered_event.eventaddress_set.first }}
+                                        </p>
+                                    {% else %}
+                                        <p class="text-sm text-gray-500 flex items-center">
+                                            <i class="fas fa-exclamation-circle text-gray-400 mr-2"></i>
+                                            Adresa není k dispozici.
+                                        </p>
+                                    {% endif %}
+                                    <p class="text-sm text-gray-500 mt-4 flex items-center">
+                                        <i class="fas fa-calendar-alt text-indigo-500 mr-2"></i>
+                                        {{ registered_event.day|date:"d.m.Y" }}
+                                    </p>
+                                    <p class="text-sm text-gray-500 flex items-center">
+                                        <i class="fas fa-clock text-blue-500 mr-2"></i>
+                                        {{ registered_event.time|time:"H:i" }}
+                                    </p>
+                                </div>
+
+                                <!-- Tlačítko detailu -->
+                                <div class="p-4">
+                                    <a href="{% url 'event_detail' registered_event.id %}"
+                                       class="block text-center text-white font-medium py-2 px-4 rounded transition duration-300"
+                                       style="background: linear-gradient(to right, #6D28D9, #A855F7);">
+                                        <i class="fas fa-info-circle mr-2"></i>
+                                        Zobrazit detail
+                                    </a>
                                 </div>
                             </div>
                         {% endfor %}
                     {% else %}
-                        <div class="col-span-1 lg:col-span-4 text-center">
-                            <div class="bg-white p-6 rounded-lg shadow-md">
-                                <h5 class="text-gray-700">Není registrován na žádném eventu</h5>
+                        <div class="col-span-1 lg:col-span-3 text-center">
+                            <div class="bg-white p-6 rounded-lg shadow-lg">
+                                <h5 class="text-gray-700 text-lg flex items-center justify-center">
+                                    <i class="fas fa-exclamation-circle text-red-500 mr-2"></i>
+                                    Není registrován na žádném eventu.
+                                </h5>
                             </div>
                         </div>
                     {% endif %}
@@ -249,85 +280,97 @@
         {% endif %}
     {% endif %}
 
-    <div class="container mx-auto mt-5">
-        <div class="text-center my-6">
-            <h2 class="text-2xl font-semibold">Nadcházející události</h2>
+    <div class="container mx-auto mt-10 bg-white py-10 px-6 rounded-lg shadow-lg">
+        <!-- Nadpis sekce -->
+        <div class="text-center mb-10">
+            <h2 class="text-4xl font-extrabold text-gray-800 tracking-wide relative inline-block">
+                <span class="relative z-10">Nadcházející události</span>
+            </h2>
+            <div class="mt-3 h-1 w-20 mx-auto bg-purple-600 rounded"></div>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+
+        <!-- Karty eventů -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {% if upcoming_events %}
                 {% with upcoming_events|slice:":4" as limited_events %}
                     {% for event in limited_events %}
-                        <div class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col h-auto">
-                            {% if event.image %}
-                                <div class="relative w-full h-48">
+                        <div class="bg-white rounded-xl shadow-lg hover:shadow-2xl overflow-hidden flex flex-col transition duration-300 transform hover:scale-105">
+                            <!-- Obrázek eventu -->
+                            <div class="relative w-full h-56">
+                                {% if event.image %}
                                     <img src="{{ event.image.url }}" class="w-full h-full object-cover"
                                          alt="{{ event.name }}">
-                                    <div class="absolute top-2 left-2 px-3 py-1 text-white font-semibold rounded-md"
-                                         style="background-color:
-                                                 {% if event.category == 'conference' %} #4CFFCC
-                                                 {% elif event.category == 'festival' %} #FF5733
-                                                 {% elif event.category == 'workshop' %} #FF8C00
-                                                 {% elif event.category == 'sport' %} #1E90FF
-                                                 {% elif event.category == 'social' %} #FFD700
-                                                 {% elif event.category == 'exhibition' %} #8A2BE2
-                                                 {% elif event.category == 'concert' %} #FF1493
-                                                 {% elif event.category == 'online' %} #32CD32
-                                                 {% elif event.category == 'local' %} #FF6347
-                                                 {% else %} gray {% endif %}
-                                                 ">
-                                        {{ event.get_category_display }}
+                                {% else %}
+                                    <div class="w-full h-full bg-gray-200 flex items-center justify-center">
+                                        <span class="text-gray-500 text-xl font-semibold">Obrázek není dostupný</span>
                                     </div>
+                                {% endif %}
+                                <div class="absolute top-2 left-2 text-white text-xs font-medium py-1 px-2 rounded-md"
+                                     style="background-color:
+                                             {% if event.category == 'conference' %} #6B7280
+                                             {% elif event.category == 'festival' %} #EF4444
+                                             {% elif event.category == 'workshop' %} #F59E0B
+                                             {% elif event.category == 'sport' %} #3B82F6
+                                             {% elif event.category == 'social' %} #10B981
+                                             {% elif event.category == 'exhibition' %} #8B5CF6
+                                             {% elif event.category == 'concert' %} #EC4899
+                                             {% elif event.category == 'online' %} #22D3EE
+                                             {% elif event.category == 'local' %} #D97706
+                                             {% else %} #4B5563 {% endif %}">
+                                    {{ event.get_category_display }}
                                 </div>
-                            {% else %}
-                                <div class="relative w-full h-48 bg-gray-200">
-                                    <img src="{% static 'img/static.jpg' %}" class="w-full h-full object-cover"
-                                         alt="{{ event.name }}">
-                                    <div class="absolute top-2 left-2 px-3 py-1 text-white font-semibold rounded-md"
-                                         style="background-color:
-                                                 {% if event.category == 'conference' %} #4CFFCC
-                                                 {% elif event.category == 'festival' %} #FF5733
-                                                 {% elif event.category == 'workshop' %} #FF8C00
-                                                 {% elif event.category == 'sport' %} #1E90FF
-                                                 {% elif event.category == 'social' %} #FFD700
-                                                 {% elif event.category == 'exhibition' %} #8A2BE2
-                                                 {% elif event.category == 'concert' %} #FF1493
-                                                 {% elif event.category == 'online' %} #32CD32
-                                                 {% elif event.category == 'local' %} #FF6347
-                                                 {% else %} gray {% endif %}
-                                                 ">
-                                        {{ event.get_category_display }}
-                                    </div>
-                                </div>
-                            {% endif %}
-                            <div class="p-4 flex-1 flex flex-col">
-                                <h5 class="font-bold text-lg">{{ event.name }}</h5>
-                                <p class="text-gray-700 text-sm mt-2 line-clamp-4">{{ event.description }}</p>
+                            </div>
+
+                            <!-- Obsah karty -->
+                            <div class="p-6 flex-1 flex flex-col">
+                                <h3 class="text-lg font-semibold text-gray-800 mb-2 line-clamp-2">{{ event.name }}</h3>
+                                <p class="text-sm text-gray-600 mb-4 line-clamp-3">{{ event.description }}</p>
                                 {% if event.eventaddress_set.exists %}
-                                    <p class="text-gray-600 text-sm mt-1">
-                                        Adresa: {{ event.eventaddress_set.first }}
+                                    <p class="text-sm text-gray-500 flex items-center">
+                                        <i class="fas fa-map-marker-alt text-purple-500 mr-2"></i>
+                                        {{ event.eventaddress_set.first }}
                                     </p>
                                 {% else %}
-                                    <p class="text-gray-600 text-sm mt-1">Adresa není k dispozici.</p>
+                                    <p class="text-sm text-gray-500 flex items-center">
+                                        <i class="fas fa-exclamation-circle text-gray-400 mr-2"></i>
+                                        Adresa není k dispozici.
+                                    </p>
                                 {% endif %}
-                                <p class="text-gray-700 text-sm mt-2 line-clamp-4">{{ event.day }} {{ event.time }}</p>
+                                <p class="text-sm text-gray-500 mt-4 flex items-center">
+                                    <i class="fas fa-calendar-alt text-indigo-500 mr-2"></i>
+                                    {{ event.day|date:"d.m.Y" }}
+                                </p>
+                                <p class="text-sm text-gray-500 flex items-center">
+                                    <i class="fas fa-clock text-blue-500 mr-2"></i>
+                                    {{ event.time|time:"H:i" }}
+                                </p>
                             </div>
-                            <div class="p-4 bg-gray-100 mt-auto w-full">
+
+                            <!-- Tlačítko detailu -->
+                            <div class="p-4">
                                 <a href="{% url 'event_detail' event.id %}"
-                                   class="text-indigo-500 font-medium block text-center">Detail události</a>
+                                   class="block text-center text-white font-medium py-2 px-4 rounded transition duration-300"
+                                   style="background: linear-gradient(to right, #6D28D9, #A855F7);">
+                                    <i class="fas fa-info-circle mr-2"></i>
+                                    Zobrazit detail
+                                </a>
                             </div>
                         </div>
-
                     {% endfor %}
                 {% endwith %}
             {% else %}
-                <div class="col-span-1 lg:col-span-4 text-center">
-                    <div class="bg-white p-6 rounded-lg shadow-md">
-                        <h5 class="text-gray-700">Není žádná nadcházející událost</h5>
+                <div class="col-span-1 lg:col-span-3 text-center">
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <h5 class="text-gray-700 text-lg flex items-center justify-center">
+                            <i class="fas fa-exclamation-circle text-red-500 mr-2"></i>
+                            Není žádná nadcházející událost.
+                        </h5>
                     </div>
                 </div>
             {% endif %}
         </div>
     </div>
+
 
     <div class="max-w-8xl mx-auto mt-8 mb-8 bg-white shadow-xl rounded-lg p-6 pb-20">
         <h1 class="text-3xl font-semibold text-center mb-6">Mapa Eventů</h1>
@@ -353,12 +396,6 @@
     <h3 class="font-bold text-xl text-gray-800 mb-2">${event.name}</h3>
     <p class="text-sm text-gray-600 mb-1"><b>Datum:</b> ${event.day}</p>
     <p class="text-sm text-gray-600 mb-1"><b>Čas:</b> ${event.time || 'Neuveden'}</p>
-    <div class="text-sm text-gray-600 mb-1">
-        <b>Kategorie:</b> 
-        <span class="inline-block py-1 px-3 text-white rounded-full" >
-            ${event.category.charAt(0).toUpperCase() + event.category.slice(1)}
-        </span>
-    </div>
     <p class="text-sm text-gray-700 mt-2">${event.description}</p>
     ${event.image ? `<img src="${event.image}" alt="${event.name}" class="mt-4 max-w-[200px] rounded-md">` : ''}
 </div>
@@ -462,8 +499,8 @@
 
     <!-- Obalová div pro toasty vpravo nahoře -->
     {% if messages %}
-<div 
-  x-data="{ 
+        <div
+                x-data="{ 
       toasts: [
           {% for message in messages %}
              {
@@ -472,13 +509,13 @@
              },
           {% endfor %}
       ]
-  }" 
-  class="fixed top-5 right-5 flex flex-col space-y-4 z-50"
->
-    <!-- Smyčka pro každý toast -->
-    <template x-for="(toast, index) in toasts" :key="index">
-        <div
-            x-data="{
+  }"
+                class="fixed top-5 right-5 flex flex-col space-y-4 z-50"
+        >
+            <!-- Smyčka pro každý toast -->
+            <template x-for="(toast, index) in toasts" :key="index">
+                <div
+                        x-data="{
                 show: true,
                 progress: 100,
                 intervalId: null,
@@ -499,65 +536,65 @@
                     this.show = false
                 }
             }"
-            x-show="show"
-            @click.away="hide()" 
-            
-            x-transition:enter="transition ease-out duration-300 transform"
-            x-transition:enter-start="opacity-0 translate-x-10"
-            x-transition:enter-end="opacity-100 translate-x-0"
-            x-transition:leave="transition ease-in duration-300 transform"
-            x-transition:leave-start="opacity-100 translate-x-0"
-            x-transition:leave-end="opacity-0 translate-x-10"
+                        x-show="show"
+                        @click.away="hide()"
 
-            class="w-72 bg-gray-900 p-4 text-gray-400 shadow-lg rounded relative flex flex-col justify-center"
-        >
-            <!-- Horní část: ikona a text -->
-            <div class="flex items-center">
-                <!-- Ikona (větší a tlustší) -->
-                <div class="mr-3 flex items-center justify-center bg-gray-800 rounded-lg">
-                    <!-- Success ikona -->
-                    <svg x-show="toast.tag.includes('success')" 
-                         xmlns="http://www.w3.org/2000/svg" 
-                         class="w-8 h-8 text-green-600"
-                         fill="none" viewBox="0 0 24 24" 
-                         stroke="currentColor" stroke-width="3">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                    </svg>
-                    <!-- Error ikona -->
-                    <svg x-show="toast.tag.includes('error')" 
-                         xmlns="http://www.w3.org/2000/svg" 
-                         class="w-8 h-8 text-red-600"
-                         fill="none" viewBox="0 0 24 24" 
-                         stroke="currentColor" stroke-width="3">
-                        <path stroke-linecap="round" stroke-linejoin="round" 
-                              d="M18.364 5.636L5.636 18.364m12.728 0L5.636 5.636" />
-                    </svg>
-                    <!-- Můžeš doplnit variantu pro info/warning apod. -->
+                        x-transition:enter="transition ease-out duration-300 transform"
+                        x-transition:enter-start="opacity-0 translate-x-10"
+                        x-transition:enter-end="opacity-100 translate-x-0"
+                        x-transition:leave="transition ease-in duration-300 transform"
+                        x-transition:leave-start="opacity-100 translate-x-0"
+                        x-transition:leave-end="opacity-0 translate-x-10"
+
+                        class="w-72 bg-gray-900 p-4 text-gray-400 shadow-lg rounded relative flex flex-col justify-center"
+                >
+                    <!-- Horní část: ikona a text -->
+                    <div class="flex items-center">
+                        <!-- Ikona (větší a tlustší) -->
+                        <div class="mr-3 flex items-center justify-center bg-gray-800 rounded-lg">
+                            <!-- Success ikona -->
+                            <svg x-show="toast.tag.includes('success')"
+                                 xmlns="http://www.w3.org/2000/svg"
+                                 class="w-8 h-8 text-green-600"
+                                 fill="none" viewBox="0 0 24 24"
+                                 stroke="currentColor" stroke-width="3">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            <!-- Error ikona -->
+                            <svg x-show="toast.tag.includes('error')"
+                                 xmlns="http://www.w3.org/2000/svg"
+                                 class="w-8 h-8 text-red-600"
+                                 fill="none" viewBox="0 0 24 24"
+                                 stroke="currentColor" stroke-width="3">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                      d="M18.364 5.636L5.636 18.364m12.728 0L5.636 5.636"/>
+                            </svg>
+                            <!-- Můžeš doplnit variantu pro info/warning apod. -->
+                        </div>
+
+                        <!-- Text zprávy -->
+                        <div class="flex-1" x-text="toast.text"></div>
+
+                        <!-- Tlačítko zavřít -->
+                        <button @click="hide()" class="text-gray-500 hover:text-gray-700 ml-3">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
+                                 viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                      d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Fialový progress bar dole -->
+                    <div class="bg-gray-800 h-2 w-full rounded mt-3 overflow-hidden">
+                        <div class="h-2 bg-purple-900 transition-all duration-50"
+                             :style="`width: ${progress}%;`">
+                        </div>
+                    </div>
                 </div>
-
-                <!-- Text zprávy -->
-                <div class="flex-1" x-text="toast.text"></div>
-
-                <!-- Tlačítko zavřít -->
-                <button @click="hide()" class="text-gray-500 hover:text-gray-700 ml-3">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" 
-                         viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" 
-                              d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            </div>
-
-            <!-- Fialový progress bar dole -->
-            <div class="bg-gray-800 h-2 w-full rounded mt-3 overflow-hidden">
-                <div class="h-2 bg-purple-900 transition-all duration-50"
-                     :style="`width: ${progress}%;`">
-                </div>
-            </div>
+            </template>
         </div>
-    </template>
-</div>
-{% endif %}
+    {% endif %}
 
 {% endblock %}
 
