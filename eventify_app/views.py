@@ -1010,7 +1010,7 @@ class EventsListView(ListView):
 
     # context_object_name nepoužijeme,
     # aby Django použilo výchozí jméno: "object_list" + "page_obj", "paginator", "is_paginated".
-    paginate_by = 10  # Tady nastavíš, kolik eventů na stránku
+    paginate_by = 3  # Tady nastavíš, kolik eventů na stránku
 
     def get_queryset(self):
         events = super().get_queryset()
