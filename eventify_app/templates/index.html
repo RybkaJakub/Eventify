@@ -112,10 +112,10 @@
                                 <div class="bg-white rounded-xl shadow-lg hover:shadow-2xl overflow-hidden flex flex-col transition duration-300 transform hover:scale-105">
                                     <!-- Obrázek eventu -->
                                     <div class="relative w-full h-56">
-                                        {% if registered_event.image %}
-                                            <img src="{{ registered_event.image.url }}"
+                                        {% if registered_event.event.image %}
+                                            <img src="{{ registered_event.event.image.url }}"
                                                  class="w-full h-full object-cover rounded-t-xl"
-                                                 alt="{{ registered_event.name }}">
+                                                 alt="{{ registered_event.event.name }}">
                                         {% else %}
                                             <div class="w-full h-full bg-gray-200 flex items-center justify-center">
                                                 <span class="text-gray-500 text-xl font-semibold">Obrázek není dostupný</span>
@@ -123,28 +123,28 @@
                                         {% endif %}
                                         <div class="absolute top-2 left-2 text-white text-xs font-medium py-1 px-2 rounded-md"
                                              style="background-color:
-                                                     {% if registered_event.category == 'conference' %} #6B7280
-                                                     {% elif registered_event.category == 'festival' %} #EF4444
-                                                     {% elif registered_event.category == 'workshop' %} #F59E0B
-                                                     {% elif registered_event.category == 'sport' %} #3B82F6
-                                                     {% elif registered_event.category == 'social' %} #10B981
-                                                     {% elif registered_event.category == 'exhibition' %} #8B5CF6
-                                                     {% elif registered_event.category == 'concert' %} #EC4899
-                                                     {% elif registered_event.category == 'online' %} #22D3EE
-                                                     {% elif registered_event.category == 'local' %} #D97706
+                                                     {% if registered_event.event.category == 'conference' %} #6B7280
+                                                     {% elif registered_event.event.category == 'festival' %} #EF4444
+                                                     {% elif registered_event.event.category == 'workshop' %} #F59E0B
+                                                     {% elif registered_event.event.category == 'sport' %} #3B82F6
+                                                     {% elif registered_event.event.category == 'social' %} #10B981
+                                                     {% elif registered_event.event.category == 'exhibition' %} #8B5CF6
+                                                     {% elif registered_event.event.category == 'concert' %} #EC4899
+                                                     {% elif registered_event.event.category == 'online' %} #22D3EE
+                                                     {% elif registered_event.event.category == 'local' %} #D97706
                                                      {% else %} #4B5563 {% endif %}">
-                                            {{ registered_event.get_category_display }}
+                                            {{ registered_event.event.get_category_display }}
                                         </div>
                                     </div>
 
                                     <!-- Obsah karty -->
                                     <div class="p-6 flex-1 flex flex-col">
-                                        <h3 class="text-lg font-semibold text-gray-800 mb-2 line-clamp-2">{{ registered_event.name }}</h3>
-                                        <p class="text-sm text-gray-600 mb-4 line-clamp-3">{{ registered_event.description }}</p>
-                                        {% if registered_event.eventaddress_set.exists %}
+                                        <h3 class="text-lg font-semibold text-gray-800 mb-2 line-clamp-2">{{ registered_event.event.name }}</h3>
+                                        <p class="text-sm text-gray-600 mb-4 line-clamp-3">{{ registered_event.event.description }}</p>
+                                        {% if registered_event.event.eventaddress_set.exists %}
                                             <p class="text-sm text-gray-500 flex items-center">
                                                 <i class="fas fa-map-marker-alt text-purple-500 mr-2"></i>
-                                                {{ registered_event.eventaddress_set.first }}
+                                                {{ registered_event.event.eventaddress_set.first }}
                                             </p>
                                         {% else %}
                                             <p class="text-sm text-gray-500 flex items-center">
@@ -154,17 +154,17 @@
                                         {% endif %}
                                         <p class="text-sm text-gray-500 mt-4 flex items-center">
                                             <i class="fas fa-calendar-alt text-indigo-500 mr-2"></i>
-                                            {{ registered_event.day|date:"d.m.Y" }}
+                                            {{ registered_event.event.day|date:"d.m.Y" }}
                                         </p>
                                         <p class="text-sm text-gray-500 flex items-center">
                                             <i class="fas fa-clock text-blue-500 mr-2"></i>
-                                            {{ registered_event.time|time:"H:i" }}
+                                            {{ registered_event.event.time|time:"H:i" }}
                                         </p>
                                     </div>
 
                                     <!-- Tlačítko detailu -->
                                     <div class="p-4">
-                                        <a href="{% url 'event_detail' registered_event.id %}"
+                                        <a href="{% url 'event_detail' registered_event.event.id %}"
                                            class="block text-center text-white font-medium py-2 px-4 rounded transition duration-300"
                                            style="background: linear-gradient(to right, #6D28D9, #A855F7);">
                                             <i class="fas fa-info-circle mr-2"></i>
@@ -204,10 +204,10 @@
                             <div class="bg-white rounded-xl shadow-lg hover:shadow-2xl overflow-hidden flex flex-col transition duration-300 transform hover:scale-105">
                                 <!-- Obrázek eventu -->
                                 <div class="relative w-full h-56">
-                                    {% if registered_event.image %}
-                                        <img src="{{ registered_event.image.url }}"
+                                    {% if registered_event.event.image %}
+                                        <img src="{{ registered_event.event.image.url }}"
                                              class="w-full h-full object-cover rounded-t-xl"
-                                             alt="{{ registered_event.name }}">
+                                             alt="{{ registered_event.event.name }}">
                                     {% else %}
                                         <div class="w-full h-full bg-gray-200 flex items-center justify-center">
                                             <span class="text-gray-500 text-xl font-semibold">Obrázek není dostupný</span>
@@ -215,28 +215,28 @@
                                     {% endif %}
                                     <div class="absolute top-2 left-2 text-white text-xs font-medium py-1 px-2 rounded-md"
                                          style="background-color:
-                                                 {% if registered_event.category == 'conference' %} #6B7280
-                                                 {% elif registered_event.category == 'festival' %} #EF4444
-                                                 {% elif registered_event.category == 'workshop' %} #F59E0B
-                                                 {% elif registered_event.category == 'sport' %} #3B82F6
-                                                 {% elif registered_event.category == 'social' %} #10B981
-                                                 {% elif registered_event.category == 'exhibition' %} #8B5CF6
-                                                 {% elif registered_event.category == 'concert' %} #EC4899
-                                                 {% elif registered_event.category == 'online' %} #22D3EE
-                                                 {% elif registered_event.category == 'local' %} #D97706
+                                                 {% if registered_event.event.category == 'conference' %} #6B7280
+                                                 {% elif registered_event.event.category == 'festival' %} #EF4444
+                                                 {% elif registered_event.event.category == 'workshop' %} #F59E0B
+                                                 {% elif registered_event.event.category == 'sport' %} #3B82F6
+                                                 {% elif registered_event.event.category == 'social' %} #10B981
+                                                 {% elif registered_event.event.category == 'exhibition' %} #8B5CF6
+                                                 {% elif registered_event.event.category == 'concert' %} #EC4899
+                                                 {% elif registered_event.event.category == 'online' %} #22D3EE
+                                                 {% elif registered_event.event.category == 'local' %} #D97706
                                                  {% else %} #4B5563 {% endif %}">
-                                        {{ registered_event.get_category_display }}
+                                        {{ registered_event.event.get_category_display }}
                                     </div>
                                 </div>
 
                                 <!-- Obsah karty -->
                                 <div class="p-6 flex-1 flex flex-col">
-                                    <h3 class="text-lg font-semibold text-gray-800 mb-2 line-clamp-2">{{ registered_event.name }}</h3>
-                                    <p class="text-sm text-gray-600 mb-4 line-clamp-3">{{ registered_event.description }}</p>
-                                    {% if registered_event.eventaddress_set.exists %}
+                                    <h3 class="text-lg font-semibold text-gray-800 mb-2 line-clamp-2">{{ registered_event.event.name }}</h3>
+                                    <p class="text-sm text-gray-600 mb-4 line-clamp-3">{{ registered_event.event.description }}</p>
+                                    {% if registered_event.event.eventaddress_set.exists %}
                                         <p class="text-sm text-gray-500 flex items-center">
                                             <i class="fas fa-map-marker-alt text-purple-500 mr-2"></i>
-                                            {{ registered_event.eventaddress_set.first }}
+                                            {{ registered_event.event.eventaddress_set.first }}
                                         </p>
                                     {% else %}
                                         <p class="text-sm text-gray-500 flex items-center">
@@ -246,17 +246,17 @@
                                     {% endif %}
                                     <p class="text-sm text-gray-500 mt-4 flex items-center">
                                         <i class="fas fa-calendar-alt text-indigo-500 mr-2"></i>
-                                        {{ registered_event.day|date:"d.m.Y" }}
+                                        {{ registered_event.event.day|date:"d.m.Y" }}
                                     </p>
                                     <p class="text-sm text-gray-500 flex items-center">
                                         <i class="fas fa-clock text-blue-500 mr-2"></i>
-                                        {{ registered_event.time|time:"H:i" }}
+                                        {{ registered_event.event.time|time:"H:i" }}
                                     </p>
                                 </div>
 
                                 <!-- Tlačítko detailu -->
                                 <div class="p-4">
-                                    <a href="{% url 'event_detail' registered_event.id %}"
+                                    <a href="{% url 'event_detail' registered_event.event.id %}"
                                        class="block text-center text-white font-medium py-2 px-4 rounded transition duration-300"
                                        style="background: linear-gradient(to right, #6D28D9, #A855F7);">
                                         <i class="fas fa-info-circle mr-2"></i>
