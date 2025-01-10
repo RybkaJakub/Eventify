@@ -4,66 +4,80 @@
 {% block title %}Kontaktujte nás | Eventify{% endblock %}
 
 {% block content %}
-<div class="container mx-auto py-12 px-6">
-    <!-- Úvodní sekce -->
-    <div class="text-center mb-12">
-        <h1 class="text-5xl font-extrabold text-gray-800 tracking-wide">Kontaktujte nás</h1>
-        <p class="text-lg text-gray-600 mt-4 max-w-2xl mx-auto leading-relaxed">
-            Jsme tady, abychom vám pomohli. Máte dotazy nebo potřebujete podporu? Kontaktujte nás pomocí formuláře nebo pomocí níže uvedených údajů. 
-        </p>
-    </div>
+    <div class="container mx-auto py-12 px-6">
+        <!-- Úvodní sekce -->
+        <div class="text-center mb-12">
+            <h1 class="text-5xl font-extrabold text-gray-800 tracking-wide">Kontaktujte nás</h1>
+            <p class="text-lg text-gray-600 mt-4 max-w-2xl mx-auto leading-relaxed">
+                Jsme tady, abychom vám pomohli. Máte dotazy nebo potřebujete podporu? Kontaktujte nás pomocí formuláře
+                nebo pomocí níže uvedených údajů.
+            </p>
+        </div>
 
-    <!-- Kontaktní formulář -->
-    <div class="bg-white shadow-lg rounded-xl p-10 mb-16">
-        <h2 class="text-3xl font-semibold text-gray-800 mb-6">Napište nám</h2>
-        <form method="POST" action="{% url 'contact' %}" class="space-y-8">
-            {% csrf_token %}
-            <div>
-                <label for="id_name" class="block text-sm font-medium text-gray-700">Vaše jméno</label>
-                <input type="text" name="name" id="id_name" 
-                       class="mt-2 block w-full px-4 py-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-purple-600 focus:outline-none" placeholder="Jméno">
-            </div>
-            <div>
-                <label for="id_email" class="block text-sm font-medium text-gray-700">Váš e-mail</label>
-                <input type="email" name="email" id="id_email" 
-                       class="mt-2 block w-full px-4 py-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-purple-600 focus:outline-none" placeholder="E-mail">
-            </div>
-            <div>
-                <label for="id_message" class="block text-sm font-medium text-gray-700">Vaše zpráva</label>
-                <textarea name="message" id="id_message" 
-                          class="mt-2 block w-full px-4 py-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-purple-600 focus:outline-none" placeholder="Napište svou zprávu"></textarea>
-            </div>
-            <button type="submit" 
+        <!-- Kontaktní formulář -->
+        <div class="bg-white shadow-lg rounded-xl p-10 mb-16">
+            <h2 class="text-3xl font-semibold text-gray-800 mb-6">Napište nám</h2>
+            <form method="POST" action="{% url 'contact' %}" class="space-y-8">
+                {% if messages and new_message %}
+                {% include 'snippets/message.html' %}
+                {% endif %}
+                {% csrf_token %}
+                <div>
+                    <label for="id_name" class="block text-sm font-medium text-gray-700">Vaše jméno</label>
+                    <input type="text" name="name" id="id_name"
+                           class="mt-2 block w-full px-4 py-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-purple-600 focus:outline-none"
+                           placeholder="Jméno">
+                </div>
+                <div>
+                    <label for="id_email" class="block text-sm font-medium text-gray-700">Váš e-mail</label>
+                    <input type="email" name="email" id="id_email"
+                           class="mt-2 block w-full px-4 py-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-purple-600 focus:outline-none"
+                           placeholder="E-mail">
+                </div>
+                <div>
+                    <label for="id_message" class="block text-sm font-medium text-gray-700">Vaše zpráva</label>
+                    <textarea name="message" id="id_message"
+                              class="mt-2 block w-full px-4 py-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-purple-600 focus:outline-none"
+                              placeholder="Napište svou zprávu"></textarea>
+                </div>
+                <div>
+                    <img src="{% url 'captcha-image' captcha.key %}" alt="captcha" class="border rounded-md shadow-md mb-4">
+<input type="hidden" name="captcha_0" value="{{ captcha.key }}">
+<input type="text" name="captcha_1" placeholder="Zadejte Captchu" class="w-full px-4 py-3 border rounded-md shadow-md">
+
+                </div>
+                <button type="submit" 
                     class="w-full py-3 bg-purple-600 text-white rounded-lg shadow-lg hover:bg-purple-700 transition duration-300">
                 Odeslat zprávu
             </button>
-        </form>
-    </div>
 
-    <!-- Sekce s informacemi a mapou vedle sebe -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <!-- Kontaktní informace -->
-        <div class="bg-white shadow-lg rounded-lg p-8 w-full">
-            <h2 class="text-2xl font-bold text-gray-800 mb-4">Kontaktní údaje</h2>
-            <ul class="space-y-4 text-lg text-gray-600">
-                <li><span class="font-semibold text-purple-600">Adresa:</span> Olomoucká 32, 74601 Opava</li>
-                <li><span class="font-semibold text-purple-600">Telefon:</span> +420 123 456 789</li>
-                <li><span class="font-semibold text-purple-600">E-mail:</span> kontakt@eventify.cz</li>
-                <li><span class="font-semibold text-purple-600">Pracovní doba:</span> Po - Pá: 9:00 - 17:00</li>
-            </ul>
+            </form>
         </div>
 
-        <!-- Mapa -->
-        <div class="bg-white shadow-lg rounded-lg p-8 w-full">
-            <h2 class="text-2xl font-bold text-gray-800 mb-4">Kde nás najdete</h2>
-            <iframe 
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2598.2261291823065!2d14.380682976750526!3d49.366794071405565!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x470b5f2cc9dee8bb%3A0x22639489ab84c910!2sZa%20Humny%20268%2F23%2C%20398%2043%20Bernartice%20u%20Milevska!5e0!3m2!1scs!2scz!4v1731669279971!5m2!1scs!2scz"
-                title="Eventify lokalita"
-                class="w-full h-96 rounded-lg border-0">
-            </iframe>
+        <!-- Sekce s informacemi a mapou vedle sebe -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Kontaktní informace -->
+            <div class="bg-white shadow-lg rounded-lg p-8 w-full">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Kontaktní údaje</h2>
+                <ul class="space-y-4 text-lg text-gray-600">
+                    <li><span class="font-semibold text-purple-600">Adresa:</span> Olomoucká 32, 74601 Opava</li>
+                    <li><span class="font-semibold text-purple-600">Telefon:</span> +420 123 456 789</li>
+                    <li><span class="font-semibold text-purple-600">E-mail:</span> kontakt@eventify.cz</li>
+                    <li><span class="font-semibold text-purple-600">Pracovní doba:</span> Po - Pá: 9:00 - 17:00</li>
+                </ul>
+            </div>
+
+            <!-- Mapa -->
+            <div class="bg-white shadow-lg rounded-lg p-8 w-full">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Kde nás najdete</h2>
+                <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2598.2261291823065!2d14.380682976750526!3d49.366794071405565!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x470b5f2cc9dee8bb%3A0x22639489ab84c910!2sZa%20Humny%20268%2F23%2C%20398%2043%20Bernartice%20u%20Milevska!5e0!3m2!1scs!2scz!4v1731669279971!5m2!1scs!2scz"
+                        title="Eventify lokalita"
+                        class="w-full h-96 rounded-lg border-0">
+                </iframe>
+            </div>
         </div>
     </div>
-</div>
     <style>
         input, textarea {
             background-color: #f7f8fa;
@@ -80,101 +94,4 @@
             outline: none;
         }
     </style>
-    {% if messages %}
-        <div
-                x-data="{ 
-      toasts: [
-          {% for message in messages %}
-             {
-               text: '{{ message|escapejs }}',  /* Obsah zprávy */
-               tag: '{{ message.tags }}'        /* Např. 'success', 'error' */
-             },
-          {% endfor %}
-      ]
-  }"
-                class="fixed top-5 right-5 flex flex-col space-y-4 z-50"
-        >
-            <!-- Smyčka pro každý toast -->
-            <template x-for="(toast, index) in toasts" :key="index">
-                <div
-                        x-data="{
-                show: true,
-                progress: 100,
-                intervalId: null,
-                init() {
-                    // Spustíme 5vteřinový odpočet
-                    this.intervalId = setInterval(() => {
-                        this.progress -= 1
-                        if (this.progress <= 0) {
-                            this.hide()
-                        }
-                    }, 50)
-                    // Přehrání zvuku
-                    new Audio('{% static 'sounds/notification.mp3' %}').play()
-                      .catch(e => console.log('Audio play blocked:', e))
-                },
-                hide() {
-                    clearInterval(this.intervalId)
-                    this.show = false
-                }
-            }"
-                        x-show="show"
-                        @click.away="hide()"
-
-                        x-transition:enter="transition ease-out duration-300 transform"
-                        x-transition:enter-start="opacity-0 translate-x-10"
-                        x-transition:enter-end="opacity-100 translate-x-0"
-                        x-transition:leave="transition ease-in duration-300 transform"
-                        x-transition:leave-start="opacity-100 translate-x-0"
-                        x-transition:leave-end="opacity-0 translate-x-10"
-
-                        class="w-72 bg-gray-900 p-4 text-gray-400 shadow-lg rounded relative flex flex-col justify-center"
-                >
-                    <!-- Horní část: ikona a text -->
-                    <div class="flex items-center">
-                        <!-- Ikona (větší a tlustší) -->
-                        <div class="mr-3 flex items-center justify-center bg-gray-800 rounded-lg">
-                            <!-- Success ikona -->
-                            <svg x-show="toast.tag.includes('success')"
-                                 xmlns="http://www.w3.org/2000/svg"
-                                 class="w-8 h-8 text-green-600"
-                                 fill="none" viewBox="0 0 24 24"
-                                 stroke="currentColor" stroke-width="3">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
-                            </svg>
-                            <!-- Error ikona -->
-                            <svg x-show="toast.tag.includes('error')"
-                                 xmlns="http://www.w3.org/2000/svg"
-                                 class="w-8 h-8 text-red-600"
-                                 fill="none" viewBox="0 0 24 24"
-                                 stroke="currentColor" stroke-width="3">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                      d="M18.364 5.636L5.636 18.364m12.728 0L5.636 5.636"/>
-                            </svg>
-                            <!-- Můžeš doplnit variantu pro info/warning apod. -->
-                        </div>
-
-                        <!-- Text zprávy -->
-                        <div class="flex-1" x-text="toast.text"></div>
-
-                        <!-- Tlačítko zavřít -->
-                        <button @click="hide()" class="text-gray-500 hover:text-gray-700 ml-3">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
-                                 viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                      d="M6 18L18 6M6 6l12 12"/>
-                            </svg>
-                        </button>
-                    </div>
-
-                    <!-- Fialový progress bar dole -->
-                    <div class="bg-gray-800 h-2 w-full rounded mt-3 overflow-hidden">
-                        <div class="h-2 bg-purple-900 transition-all duration-50"
-                             :style="`width: ${progress}%;`">
-                        </div>
-                    </div>
-                </div>
-            </template>
-        </div>
-    {% endif %}
 {% endblock %}

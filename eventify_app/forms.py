@@ -1,9 +1,11 @@
 from typing import re
 
+from captcha.fields import CaptchaField
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit, Button
 from django import forms
+
 from .models import Event, Organization, DeliveryAddress, PaymentMethod, EventAddress
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import get_user_model, login
@@ -238,3 +240,4 @@ class ContactForm(forms.Form):
     name = forms.CharField(max_length=100)
     email = forms.EmailField()
     message = forms.CharField(widget=forms.Textarea)
+    captcha = CaptchaField(label="Opište kód z obrázku")

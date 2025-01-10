@@ -43,4 +43,5 @@ urlpatterns = [
     path('support/', SupportView.as_view(), name='support'),
     path('calendar/', CalendarView.as_view(), name='calendar'),
     path('order/<int:order_id>/pdf/', generate_ticket_pdf, name='generate_ticket_pdf'),
+    path('captcha/', include('captcha.urls')),
 ]

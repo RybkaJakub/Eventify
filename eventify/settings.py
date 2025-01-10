@@ -57,7 +57,12 @@ INSTALLED_APPS = [
     'django_filters',
     'geopy',
     'weasyprint',
+    'captcha'
 ]
+
+CAPTCHA_FONT_SIZE = 42
+CAPTCHA_IMAGE_SIZE = (200, 100)
+CAPTCHA_TIMEOUT = 5
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

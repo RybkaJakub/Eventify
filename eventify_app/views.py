@@ -5,6 +5,8 @@ from lib2to3.fixes.fix_input import context
 from random import random
 
 from allauth.account.views import SignupView
+from captcha.helpers import captcha_image_url
+from captcha.models import CaptchaStore
 from django.conf import settings
 from django.contrib.auth import logout
 import json
@@ -719,7 +721,6 @@ from .forms import CustomUserForm, DeliveryAddressForm
 
 
 class CartInformationsView(LoginRequiredMixin, TemplateView):
-    """Opravit chyby s tím že když uživatel zadá neplatnou hodnotu tak se neuloží např číslo popisné 632/7"""
     template_name = "account/cart_informations.html"
 
     def get_context_data(self, **kwargs):
@@ -1245,7 +1246,12 @@ class AboutUs(TemplateView):
 class ContactView(View):
     def get(self, request):
         form = ContactForm()
-        return render(request, 'informations/contact.html', {'form': form})
+        captcha_key = CaptchaStore.generate_key()
+        captcha_image = captcha_image_url(captcha_key)
+        return render(request, 'informations/contact.html', {'form': form, "captcha": {
+            "key": captcha_key,
+            "image": captcha_image,
+        }})
 
     def post(self, request):
         form = ContactForm(request.POST)  # Načtení odeslaných dat z formuláře
@@ -1257,8 +1263,28 @@ class ContactView(View):
             time_diff = timezone.now() - last_submitted_time
             if time_diff < timedelta(minutes=10):
                 minutes_left = 10 - time_diff.seconds // 60
+                new_captcha_key = CaptchaStore.generate_key()
+                new_captcha_image = captcha_image_url(new_captcha_key)
                 messages.error(request, f"Formulář už byl odeslán. Počkejte ještě {minutes_left} minut(y).")
-                return render(request, 'informations/contact.html', {'form': form})
+                return render(request, 'informations/contact.html', {'form': form, "captcha": {
+            "key": new_captcha_key,
+            "image": new_captcha_image,
+        }})
+
+        captcha_key = request.POST.get('captcha_0')
+        captcha_value = request.POST.get('captcha_1')
+
+        new_captcha_key = CaptchaStore.generate_key()
+        new_captcha_image = captcha_image_url(new_captcha_key)
+
+        # Ověření Captchy
+        if not CaptchaStore.objects.filter(response__iexact=captcha_value, hashkey=captcha_key).exists():
+            messages.error(request, "Špatně zadaná Captcha. Zkuste to prosím znovu.")
+            return render(request, 'informations/contact.html',
+                          {'new_message': True, 'form': form, "captcha": {
+            "key": new_captcha_key,
+            "image": new_captcha_image,
+        }})
 
         if form.is_valid():
             # Odeslání e-mailu adminovi
@@ -1277,10 +1303,13 @@ class ContactView(View):
             request.session['last_submission_time'] = timezone.now().isoformat()
 
             messages.success(request, "Váš tiket byl úspěšně odeslán.")  # Zobrazení úspěšné zprávy
-            return redirect('support')  # Přesměrování zpět na stránku support
+            return redirect('index')  # Přesměrování zpět na stránku support
         else:
             messages.error(request, "Formulář obsahuje chyby. Zkuste to prosím znovu.")  # Zobrazení chybové zprávy
-            return render(request, 'informations/support.html', {'form': form})
+            return render(request, 'informations/contact.html', {'form': form, "captcha": {
+            "key": new_captcha_key,
+            "image": new_captcha_image,
+        }})
 
 
 class SupportView(View):
