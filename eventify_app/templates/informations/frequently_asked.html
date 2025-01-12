@@ -3,62 +3,97 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-10">
-    <h1 class="text-4xl font-semibold text-gray-800 text-center mb-8">Často kladené dotazy (FAQ)</h1>
-    
-    <div class="max-w-4xl mx-auto">
-        <div x-data="{ open: null }">
-            <!-- FAQ 1 -->
-            <div class="mb-4">
-                <button @click="open = open === 1 ? null : 1" class="w-full text-left text-xl font-semibold text-gray-800 py-3 px-4 border-b-2 border-gray-200 hover:bg-gray-100 focus:outline-none transition duration-300">
-                    Jak mohu změnit své heslo?
-                </button>
-                <div x-show="open === 1" x-transition.duration.500ms class="px-4 py-2 text-gray-600">
-                    <p>Pro změnu hesla přejděte do sekce "Můj profil", klikněte na "Změnit heslo" a postupujte podle pokynů. Ujistěte se, že nové heslo je silné a unikátní.</p>
-                </div>
-            </div>
+<div class="container mx-auto mt-10 bg-white py-10 px-6 rounded-lg shadow-lg">
+    <!-- Nadpis sekce -->
+    <div class="text-center mb-10">
+        <h2 class="text-4xl font-extrabold text-gray-800 tracking-wide">
+            Často kladené otázky
+        </h2>
+        <div class="mt-3 h-1 w-20 mx-auto bg-purple-600 rounded"></div>
+    </div>
 
-            <!-- FAQ 2 -->
-            <div class="mb-4">
-                <button @click="open = open === 2 ? null : 2" class="w-full text-left text-xl font-semibold text-gray-800 py-3 px-4 border-b-2 border-gray-200 hover:bg-gray-100 focus:outline-none transition duration-300">
-                    Jak mohu zrušit svou objednávku?
-                </button>
-                <div x-show="open === 2" x-transition.duration.500ms class="px-4 py-2 text-gray-600">
-                    <p>Pokud chcete zrušit svou objednávku, kontaktujte nás co nejdříve prostřednictvím našeho zákaznického servisu. Objednávky, které byly již odeslány, nelze zrušit.</p>
-                </div>
+    <!-- FAQ sekce -->
+    <div class="divide-y divide-gray-200" x-data="{ open: null }">
+        <div class="py-6" x-data="{ open: false }">
+            <div class="flex items-center cursor-pointer" @click="open = !open">
+                <h3 class="text-xl font-semibold text-gray-800 flex-grow">
+                    Jaké jsou hlavní výhody platformy Eventify?
+                </h3>
+                <span class="text-purple-600 transition transform ml-4" :class="{ 'rotate-90': open }">
+                    <i class="fas fa-chevron-down"></i>
+                </span>
             </div>
-
-            <!-- FAQ 3 -->
-            <div class="mb-4">
-                <button @click="open = open === 3 ? null : 3" class="w-full text-left text-xl font-semibold text-gray-800 py-3 px-4 border-b-2 border-gray-200 hover:bg-gray-100 focus:outline-none transition duration-300">
-                    Kde najdu fakturu za svou objednávku?
-                </button>
-                <div x-show="open === 3" x-transition.duration.500ms class="px-4 py-2 text-gray-600">
-                    <p>Fakturu za svou objednávku naleznete v sekci "Moje objednávky", kde si můžete stáhnout PDF verzi faktury pro účely účetnictví.</p>
-                </div>
+            <div class="mt-4 text-gray-600" x-show="open" x-transition>
+                Eventify umožňuje jednoduchou správu událostí, přizpůsobitelné šablony a efektivní komunikaci s účastníky.
             </div>
-
-            <!-- FAQ 4 -->
-            <div class="mb-4">
-                <button @click="open = open === 4 ? null : 4" class="w-full text-left text-xl font-semibold text-gray-800 py-3 px-4 border-b-2 border-gray-200 hover:bg-gray-100 focus:outline-none transition duration-300">
-                    Jak mohu kontaktovat zákaznickou podporu?
-                </button>
-                <div x-show="open === 4" x-transition.duration.500ms class="px-4 py-2 text-gray-600">
-                    <p>Zákaznickou podporu můžete kontaktovat prostřednictvím našeho kontaktního formuláře na stránce "Kontaktujte nás", nebo na e-mailové adrese support@nasastranka.cz.</p>
-                </div>
+        </div>
+        <div class="py-6" x-data="{ open: false }">
+            <div class="flex items-center cursor-pointer" @click="open = !open">
+                <h3 class="text-xl font-semibold text-gray-800 flex-grow">
+                    Jak probíhá nákup vstupenek na události?
+                </h3>
+                <span class="text-purple-600 transition transform ml-4" :class="{ 'rotate-90': open }">
+                    <i class="fas fa-chevron-down"></i>
+                </span>
             </div>
-
-            <!-- FAQ 5 -->
-            <div class="mb-4">
-                <button @click="open = open === 5 ? null : 5" class="w-full text-left text-xl font-semibold text-gray-800 py-3 px-4 border-b-2 border-gray-200 hover:bg-gray-100 focus:outline-none transition duration-300">
-                    Jak mohu sledovat stav své objednávky?
-                </button>
-                <div x-show="open === 5" x-transition.duration.500ms class="px-4 py-2 text-gray-600">
-                    <p>Stav své objednávky můžete sledovat v sekci "Moje objednávky", kde uvidíte aktuální stav doručení a podrobnosti o vaší objednávce.</p>
-                </div>
+            <div class="mt-4 text-gray-600" x-show="open" x-transition>
+                Účastníci si mohou zakoupit vstupenky přímo na stránce události výběrem z dostupných možností a dokončením nákupu.
             </div>
-
+        </div>
+        <div class="py-6" x-data="{ open: false }">
+            <div class="flex items-center cursor-pointer" @click="open = !open">
+                <h3 class="text-xl font-semibold text-gray-800 flex-grow">
+                    Jaké analytické nástroje jsou dostupné?
+                </h3>
+                <span class="text-purple-600 transition transform ml-4" :class="{ 'rotate-90': open }">
+                    <i class="fas fa-chevron-down"></i>
+                </span>
+            </div>
+            <div class="mt-4 text-gray-600" x-show="open" x-transition>
+                Analytické nástroje zatím nejsou dostupné, ale aktivně pracujeme na jejich vývoji.
+            </div>
+        </div>
+        <div class="py-6" x-data="{ open: false }">
+            <div class="flex items-center cursor-pointer" @click="open = !open">
+                <h3 class="text-xl font-semibold text-gray-800 flex-grow">
+                    Je možné události upravovat po jejich vytvoření?
+                </h3>
+                <span class="text-purple-600 transition transform ml-4" :class="{ 'rotate-90': open }">
+                    <i class="fas fa-chevron-down"></i>
+                </span>
+            </div>
+            <div class="mt-4 text-gray-600" x-show="open" x-transition>
+                Ano, můžete měnit detaily jako název, popis, místo a čas události kdykoliv před jejím začátkem.
+            </div>
+        </div>
+        <div class="py-6" x-data="{ open: false }">
+            <div class="flex items-center cursor-pointer" @click="open = !open">
+                <h3 class="text-xl font-semibold text-gray-800 flex-grow">
+                    Podporuje Eventify více jazyků?
+                </h3>
+                <span class="text-purple-600 transition transform ml-4" :class="{ 'rotate-90': open }">
+                    <i class="fas fa-chevron-down"></i>
+                </span>
+            </div>
+            <div class="mt-4 text-gray-600" x-show="open" x-transition>
+                Platforma zatím nepodporuje více jazyků, ale plánujeme tuto funkci v budoucnu přidat.
+            </div>
+        </div>
+        <div class="py-6" x-data="{ open: false }">
+            <div class="flex items-center cursor-pointer" @click="open = !open">
+                <h3 class="text-xl font-semibold text-gray-800 flex-grow">
+                    Je možné importovat seznam účastníků?
+                </h3>
+                <span class="text-purple-600 transition transform ml-4" :class="{ 'rotate-90': open }">
+                    <i class="fas fa-chevron-down"></i>
+                </span>
+            </div>
+            <div class="mt-4 text-gray-600" x-show="open" x-transition>
+                Momentálně není možné importovat seznam účastníků, ale pracujeme na této funkci.
+            </div>
         </div>
     </div>
 </div>
+
+
 {% endblock %}

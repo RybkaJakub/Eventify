@@ -334,8 +334,10 @@ class EventUpdateView(LoginRequiredMixin, UpdateView):
             event_address.event = self.object  # Přiřazení Eventu k adrese
             event_address.save()
 
+            messages.success(request, "Událost byla úspěšně upravena.")
+
             # Přesměrování na seznam eventů po úspěšném uložení
-            return redirect('events_list')
+            return redirect('edit_event' , pk=self.object.pk)
 
         # Pokud nějaký formulář není validní, vykreslíme stránku s chybami
         context = self.get_context_data(form=form, event_address_form=event_address_form)

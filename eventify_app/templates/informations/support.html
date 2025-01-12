@@ -1,70 +1,110 @@
 {% extends "base.html" %}
 {% load widget_tweaks %}
 
-{% block title %}Podpora{% endblock %}
+{% block title %}Podpora | Eventify{% endblock %}
+
 {% block content %}
-<div class="container mx-auto my-10 px-4">
-    <h1 class="text-4xl font-semibold text-gray-800 mb-6">Podpora</h1>
+<div class="container mx-auto py-12 px-6">
+    <!-- Úvodní sekce -->
+    <div class="text-center mb-12">
+        <div class="text-center mb-10">
+            <h2 class="text-4xl font-extrabold text-gray-800 tracking-wide">
+                Podpora
+            </h2>
+            <div class="mt-3 h-1 w-20 mx-auto bg-purple-600 rounded"></div>
+        </div>
+        <p class="text-lg text-gray-600 mt-4 max-w-2xl mx-auto leading-relaxed">
+            Máte problém nebo otázku? Vyplňte tento formulář a náš tým se vám co nejdříve ozve.
+        </p>
+    </div>
 
-    <div class="bg-white shadow-md rounded-lg p-8">
-        <p class="text-lg text-gray-700 mb-6">Máte-li problém, neváhejte nás kontaktovat vyplněním tohoto formuláře.</p>
-
-        <!-- Formulář -->
-        <form method="POST" action="{% url 'support' %}" class="space-y-6">
+    <!-- Kontaktní formulář -->
+    <div class="bg-white shadow-lg rounded-xl p-10 mb-16">
+        <h2 class="text-3xl font-semibold text-gray-800 mb-6">Napište nám</h2>
+        <form method="POST" action="{% url 'support' %}" class="space-y-8">
+            {% include 'snippets/message.html' %}
             {% csrf_token %}
 
             <!-- Jméno -->
             <div class="form-group">
                 <label for="id_name" class="block text-sm font-medium text-gray-700">Vaše jméno</label>
-                <input type="text" name="name" id="id_name" 
-                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 {% if form.name.errors %}border-red-500{% endif %}" placeholder="Jméno">
+                <input type="text" name="name" id="id_name"
+                       class="mt-2 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-purple-600 focus:outline-none {% if form.name.errors %}border-red-500{% endif %}"
+                       placeholder="Zadejte své jméno">
                 {% if form.name.errors %}
-                    <p class="mt-2 text-xs text-red-500">{{ form.name.errors }}</p>
+                    <p class="mt-2 text-sm text-red-500">{{ form.name.errors }}</p>
                 {% endif %}
             </div>
 
             <!-- E-mail -->
             <div class="form-group">
                 <label for="id_email" class="block text-sm font-medium text-gray-700">Váš e-mail</label>
-                <input type="email" name="email" id="id_email" 
-                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 {% if form.email.errors %}border-red-500{% endif %}" placeholder="E-mail">
+                <input type="email" name="email" id="id_email"
+                       class="mt-2 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-purple-600 focus:outline-none {% if form.email.errors %}border-red-500{% endif %}"
+                       placeholder="Zadejte svůj e-mail">
                 {% if form.email.errors %}
-                    <p class="mt-2 text-xs text-red-500">{{ form.email.errors }}</p>
+                    <p class="mt-2 text-sm text-red-500">{{ form.email.errors }}</p>
                 {% endif %}
             </div>
 
             <!-- Zpráva -->
             <div class="form-group">
                 <label for="id_message" class="block text-sm font-medium text-gray-700">Vaše zpráva</label>
-                <textarea name="message" id="id_message" 
-                          class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 {% if form.message.errors %}border-red-500{% endif %}" placeholder="Popište svůj problém"></textarea>
+                <textarea name="message" id="id_message"
+                          class="mt-2 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-purple-600 focus:outline-none {% if form.message.errors %}border-red-500{% endif %}"
+                          placeholder="Popište svůj problém nebo otázku"></textarea>
                 {% if form.message.errors %}
-                    <p class="mt-2 text-xs text-red-500">{{ form.message.errors }}</p>
+                    <p class="mt-2 text-sm text-red-500">{{ form.message.errors }}</p>
                 {% endif %}
             </div>
 
             <!-- Odeslání -->
-            <button type="submit" class="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                Odeslat tiket
+            <button type="submit"
+                    class="w-full py-3 bg-purple-600 text-white font-semibold rounded-lg shadow-lg hover:bg-purple-700 transition duration-300 focus:ring-2 focus:ring-purple-600 focus:outline-none">
+                Odeslat zprávu
             </button>
-
-            <!-- Zobrazí úspěšné nebo chybové zprávy -->
-            {% if messages %}
-                <div class="mt-4">
-                    {% for message in messages %}
-                        {% if message.tags == 'success' %}
-                            <div class="p-4 rounded-md bg-green-100 text-green-700">
-                                {{ message }}
-                            </div>
-                        {% else %}
-                            <div class="p-4 rounded-md bg-red-100 text-red-700">
-                                {{ message }}
-                            </div>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-            {% endif %}
         </form>
     </div>
+
+    <!-- Sekce s informacemi a mapou vedle sebe -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Kontaktní informace -->
+        <div class="bg-white shadow-lg rounded-lg p-8 w-full">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Kontaktní údaje</h2>
+            <ul class="space-y-4 text-lg text-gray-600">
+                <li><span class="font-semibold text-purple-600">Adresa:</span> Olomoucká 32, 74601 Opava</li>
+                <li><span class="font-semibold text-purple-600">Telefon:</span> +420 123 456 789</li>
+                <li><span class="font-semibold text-purple-600">E-mail:</span> podpora@eventify.cz</li>
+                <li><span class="font-semibold text-purple-600">Pracovní doba:</span> Po - Pá: 9:00 - 17:00</li>
+            </ul>
+        </div>
+
+        <!-- Mapa -->
+        <div class="bg-white shadow-lg rounded-lg p-8 w-full">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Kde nás najdete</h2>
+            <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2598.2261291823065!2d14.380682976750526!3d49.366794071405565!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x470b5f2cc9dee8bb%3A0x22639489ab84c910!2sZa%20Humny%20268%2F23%2C%20398%2043%20Bernartice%20u%20Milevska!5e0!3m2!1scs!2scz!4v1731669279971!5m2!1scs!2scz"
+                    title="Eventify lokalita"
+                    class="w-full h-96 rounded-lg border-0">
+            </iframe>
+        </div>
+    </div>
 </div>
+
+<style>
+    input, textarea {
+        background-color: #f7f8fa;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        padding: 12px;
+        color: #4a5568;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        transition: border-color 0.2s ease-in-out;
+    }
+
+    input:focus, textarea:focus {
+        border-color: #5a67d8;
+        outline: none;
+    }
+</style>
 {% endblock content %}

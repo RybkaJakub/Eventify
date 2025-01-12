@@ -4,14 +4,16 @@
 {% block title %}O nás | Eventify{% endblock %}
 
 {% block content %}
-    <!-- Pokud Alpine.js nenačítáš globálně, odkomentuj:
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-    -->
 
     <div class="container mx-auto py-12 px-6" x-data>
         <!-- Úvodní sekce -->
         <div class="text-center mb-12">
-            <h1 class="text-5xl font-extrabold text-gray-800 tracking-wide">O nás | Eventify</h1>
+            <div class="text-center mb-10">
+                <h2 class="text-4xl font-extrabold text-gray-800 tracking-wide">
+                    O nás | Eventify
+                </h2>
+                <div class="mt-3 h-1 w-20 mx-auto bg-purple-600 rounded"></div>
+            </div>
             <p class="text-lg text-gray-600 mt-4 max-w-2xl mx-auto leading-relaxed">
                 Vítejte v <span class="font-semibold">Eventify</span> – platformě,
                 která vám pomůže organizovat nezapomenutelné akce a setkání,
@@ -61,22 +63,52 @@
                     <!-- Eventy -->
                     <div class="p-6">
                         <h2 class="text-4xl font-extrabold text-purple-600 mb-2" x-text="stats.events"></h2>
-                        <p class="text-lg text-gray-700 font-medium">Eventů</p>
+                        <p class="text-lg text-gray-700 font-medium">
+                            {% if total_events < 2 %}
+                                Event
+                            {% elif total_events > 1 and total_events < 5 %}
+                                Eventy
+                            {% else %}
+                                Eventů
+                            {% endif %}
+                        </p>
                     </div>
                     <!-- Organizace -->
                     <div class="p-6">
                         <h2 class="text-4xl font-extrabold text-purple-600 mb-2" x-text="stats.orgs"></h2>
-                        <p class="text-lg text-gray-700 font-medium">Organizací</p>
+                        <p class="text-lg text-gray-700 font-medium">
+                            {% if total_organizations < 5 %}
+                                Organizace
+                            {% else %}
+                                Organizací
+                            {% endif %}
+                        </p>
                     </div>
                     <!-- Zákazníci -->
                     <div class="p-6">
                         <h2 class="text-4xl font-extrabold text-purple-600 mb-2" x-text="stats.customers"></h2>
-                        <p class="text-lg text-gray-700 font-medium">Zákazníků</p>
+                        <p class="text-lg text-gray-700 font-medium">
+                            {% if total_customers < 2 %}
+                                Zákazaník
+                            {% elif total_customers > 1 and total_customers < 5 %}
+                                Zákazníci
+                            {% else %}
+                                Zákazníků
+                            {% endif %}
+                        </p>
                     </div>
                     <!-- Objednávky -->
                     <div class="p-6">
                         <h2 class="text-4xl font-extrabold text-purple-600 mb-2" x-text="stats.orders"></h2>
-                        <p class="text-lg text-gray-700 font-medium">Objednávek</p>
+                        <p class="text-lg text-gray-700 font-medium">
+                            {% if total_orders < 2 %}
+                                Objednávka
+                            {% elif total_orders > 1 and total_orders < 5 %}
+                                Objednávky
+                            {% else %}
+                                Objednávek
+                            {% endif %}
+                        </p>
                     </div>
                 </div>
             </div>
@@ -108,8 +140,8 @@
         <div class="bg-white shadow rounded-xl p-8 mb-12 hover:shadow-lg transition-shadow duration-300">
             <h2 class="text-3xl font-semibold text-gray-800 mb-6">Koho obsluhujeme</h2>
             <p class="text-lg text-gray-600 leading-relaxed mb-4">
-                Představte si **(nyní: "představte si" bez bold, ale můžeme s "font-semibold")**
-                <span class="font-semibold">freelancer</span>, který chce uspořádat malý workshop
+                Představte si <span class="font-semibold">organizátora</span> kulturních akcí,
+                který chce uspořádat malý workshop
                 pro svých pár stálých klientů, nebo <span class="font-semibold">firma</span>,
                 která plánuje výroční konferenci pro stovky účastníků.
                 <span class="font-semibold">Eventify</span> jim oběma dokáže nabídnout jednoduchý
@@ -118,7 +150,7 @@
             </p>
             <p class="text-lg text-gray-600 leading-relaxed mb-4">
                 Naše jedinečná hodnota spočívá v ochotě jít s vámi do hloubky.
-                Sami jsme v minulosti pořádali různorodé akce – od lokálních hackathonů
+                Sami jsme v minulosti pořádali různorodé akce – od lokálních posezení
                 přes letní festivaly, až po netradiční formáty firemních školení.
                 <span class="font-semibold">Díky této zkušenosti</span> rozumíme,
                 že každá akce má svá specifika a neexistuje jediné univerzální řešení.
@@ -138,7 +170,7 @@
         <div class="bg-gray-100 text-gray-800 rounded-xl p-8 shadow mb-12 hover:shadow-lg transition-shadow duration-300">
             <h2 class="text-3xl font-semibold mb-4">Jak to děláme</h2>
             <p class="text-lg text-gray-700 leading-relaxed mb-4">
-                V základu stojí <span class="font-bold">technologie</span> – Django, Docker, Tailwind,
+                V základu stojí <span class="font-bold">technologie</span> – Django a Tailwind,
                 to vše nám umožňuje rychle nasazovat nové funkce a udržovat vysokou stabilitu.
                 Avšak jen o kódu to není. Klademe důraz i na <span class="font-semibold">lidský přístup</span>
                 a dlouhodobé partnerství s organizátory. Nemyslíme si, že nasadíme hotovou šablonu a tím
