@@ -48,25 +48,29 @@
                                     </div>
 
                                     <!-- Obsah karty -->
-                                    <div class="p-6 flex-1 flex flex-col">
-                                        <h3 class="text-lg font-semibold text-gray-800 mb-2 line-clamp-2">{{ organization_event.name }}</h3>
-                                        <p class="text-sm text-gray-600 mb-4 line-clamp-3">{{ organization_event.description }}</p>
+                                    <div class="w-full p-6 flex-1">
+                                        <h3 class="text-lg font-semibold text-gray-800 mb-2">{{ organization_event.name }}</h3>
+                                        <p class="text-sm text-gray-600 mb-4">{{ organization_event.description }}</p>
+                                    </div>
+
+                                    <!-- Adresa, den a čas -->
+                                    <div class="w-full p-6 text-sm text-gray-500 mt-auto">
                                         {% if organization_event.eventaddress_set.exists %}
-                                            <p class="text-sm text-gray-500 flex items-center">
+                                            <p class="flex items-center">
                                                 <i class="fas fa-map-marker-alt text-purple-500 mr-2"></i>
                                                 {{ organization_event.eventaddress_set.first }}
                                             </p>
                                         {% else %}
-                                            <p class="text-sm text-gray-500 flex items-center">
+                                            <p class="flex items-center">
                                                 <i class="fas fa-exclamation-circle text-gray-400 mr-2"></i>
                                                 Adresa není k dispozici.
                                             </p>
                                         {% endif %}
-                                        <p class="text-sm text-gray-500 mt-4 flex items-center">
+                                        <p class="flex items-center mt-2">
                                             <i class="fas fa-calendar-alt text-indigo-500 mr-2"></i>
                                             {{ organization_event.day|date:"d.m.Y" }}
                                         </p>
-                                        <p class="text-sm text-gray-500 flex items-center">
+                                        <p class="flex items-center mt-2">
                                             <i class="fas fa-clock text-blue-500 mr-2"></i>
                                             {{ organization_event.time|time:"H:i" }}
                                         </p>
@@ -138,25 +142,29 @@
                                     </div>
 
                                     <!-- Obsah karty -->
-                                    <div class="p-6 flex-1 flex flex-col">
-                                        <h3 class="text-lg font-semibold text-gray-800 mb-2 line-clamp-2">{{ registered_event.event.name }}</h3>
-                                        <p class="text-sm text-gray-600 mb-4 line-clamp-3">{{ registered_event.event.description }}</p>
+                                    <div class="p-6 flex-1 w-full">
+                                        <h3 class="text-lg font-semibold text-gray-800 mb-2">{{ registered_event.event.name }}</h3>
+                                        <p class="text-sm text-gray-600 mb-4">{{ registered_event.event.description }}</p>
+                                    </div>
+
+                                    <!-- Adresa, den a čas -->
+                                    <div class="p-6 text-sm text-gray-500 mt-auto w-full">
                                         {% if registered_event.event.eventaddress_set.exists %}
-                                            <p class="text-sm text-gray-500 flex items-center">
+                                            <p class="flex items-center">
                                                 <i class="fas fa-map-marker-alt text-purple-500 mr-2"></i>
                                                 {{ registered_event.event.eventaddress_set.first }}
                                             </p>
                                         {% else %}
-                                            <p class="text-sm text-gray-500 flex items-center">
+                                            <p class="flex items-center">
                                                 <i class="fas fa-exclamation-circle text-gray-400 mr-2"></i>
                                                 Adresa není k dispozici.
                                             </p>
                                         {% endif %}
-                                        <p class="text-sm text-gray-500 mt-4 flex items-center">
+                                        <p class="flex items-center mt-2">
                                             <i class="fas fa-calendar-alt text-indigo-500 mr-2"></i>
                                             {{ registered_event.event.day|date:"d.m.Y" }}
                                         </p>
-                                        <p class="text-sm text-gray-500 flex items-center">
+                                        <p class="flex items-center mt-2">
                                             <i class="fas fa-clock text-blue-500 mr-2"></i>
                                             {{ registered_event.event.time|time:"H:i" }}
                                         </p>
@@ -230,25 +238,29 @@
                                 </div>
 
                                 <!-- Obsah karty -->
-                                <div class="p-6 flex-1 flex flex-col">
-                                    <h3 class="text-lg font-semibold text-gray-800 mb-2 line-clamp-2">{{ registered_event.event.name }}</h3>
-                                    <p class="text-sm text-gray-600 mb-4 line-clamp-3">{{ registered_event.event.description }}</p>
+                                <div class="p-6 flex-1 w-full">
+                                    <h3 class="text-lg font-semibold text-gray-800 mb-2">{{ registered_event.event.name }}</h3>
+                                    <p class="text-sm text-gray-600 mb-4">{{ registered_event.event.description }}</p>
+                                </div>
+
+                                <!-- Adresa, den a čas -->
+                                <div class="p-6 text-sm text-gray-500 mt-auto w-full">
                                     {% if registered_event.event.eventaddress_set.exists %}
-                                        <p class="text-sm text-gray-500 flex items-center">
+                                        <p class="flex items-center">
                                             <i class="fas fa-map-marker-alt text-purple-500 mr-2"></i>
                                             {{ registered_event.event.eventaddress_set.first }}
                                         </p>
                                     {% else %}
-                                        <p class="text-sm text-gray-500 flex items-center">
+                                        <p class="flex items-center">
                                             <i class="fas fa-exclamation-circle text-gray-400 mr-2"></i>
                                             Adresa není k dispozici.
                                         </p>
                                     {% endif %}
-                                    <p class="text-sm text-gray-500 mt-4 flex items-center">
+                                    <p class="flex items-center mt-2">
                                         <i class="fas fa-calendar-alt text-indigo-500 mr-2"></i>
                                         {{ registered_event.event.day|date:"d.m.Y" }}
                                     </p>
-                                    <p class="text-sm text-gray-500 flex items-center">
+                                    <p class="flex items-center mt-2">
                                         <i class="fas fa-clock text-blue-500 mr-2"></i>
                                         {{ registered_event.event.time|time:"H:i" }}
                                     </p>
@@ -290,11 +302,11 @@
         </div>
 
         <!-- Karty eventů -->
-        <div class="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {% if upcoming_events %}
-                {% with upcoming_events|slice:":4" as limited_events %}
+                {% with upcoming_events|slice:":3" as limited_events %}
                     {% for event in limited_events %}
-                        <div class="bg-white rounded-xl shadow-lg hover:shadow-2xl overflow-hidden flex flex-col transition duration-300 transform hover:scale-105">
+                        <div class="w-full bg-white rounded-xl shadow-lg hover:shadow-2xl overflow-hidden flex flex-col transition duration-300 transform hover:scale-105">
                             <!-- Obrázek eventu -->
                             <div class="relative w-full h-56">
                                 {% if event.image %}
@@ -322,25 +334,29 @@
                             </div>
 
                             <!-- Obsah karty -->
-                            <div class="p-6 flex-1 flex flex-col">
-                                <h3 class="text-lg font-semibold text-gray-800 mb-2 line-clamp-2">{{ event.name }}</h3>
-                                <p class="text-sm text-gray-600 mb-4 line-clamp-3">{{ event.description }}</p>
+                            <div class="w-full p-6 flex-1">
+                                <h3 class="text-lg font-semibold text-gray-800 mb-2">{{ event.name }}</h3>
+                                <p class="text-sm text-gray-600 mb-4">{{ event.description }}</p>
+                            </div>
+
+                            <!-- Adresa, den a čas -->
+                            <div class="w-full p-6 text-sm text-gray-500 mt-auto">
                                 {% if event.eventaddress_set.exists %}
-                                    <p class="text-sm text-gray-500 flex items-center">
+                                    <p class="flex items-center">
                                         <i class="fas fa-map-marker-alt text-purple-500 mr-2"></i>
                                         {{ event.eventaddress_set.first }}
                                     </p>
                                 {% else %}
-                                    <p class="text-sm text-gray-500 flex items-center">
+                                    <p class="flex items-center">
                                         <i class="fas fa-exclamation-circle text-gray-400 mr-2"></i>
                                         Adresa není k dispozici.
                                     </p>
                                 {% endif %}
-                                <p class="text-sm text-gray-500 mt-4 flex items-center">
+                                <p class="flex items-center mt-2">
                                     <i class="fas fa-calendar-alt text-indigo-500 mr-2"></i>
                                     {{ event.day|date:"d.m.Y" }}
                                 </p>
-                                <p class="text-sm text-gray-500 flex items-center">
+                                <p class="flex items-center mt-2">
                                     <i class="fas fa-clock text-blue-500 mr-2"></i>
                                     {{ event.time|time:"H:i" }}
                                 </p>
@@ -370,7 +386,6 @@
             {% endif %}
         </div>
     </div>
-
 
     <div class="max-w-8xl mx-auto mt-8 mb-8 bg-white shadow-xl rounded-lg p-6 pb-20">
         <h1 class="text-3xl font-semibold text-center mb-6">Mapa Eventů</h1>

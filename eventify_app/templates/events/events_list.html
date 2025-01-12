@@ -74,37 +74,33 @@
             <div class="grid grid-cols-1 gap-6">
                 {% if object_list %}
                     {% for event in object_list %}
-                        <div class="flex items-stretch bg-white rounded-lg shadow-md overflow-hidden w-full">
-                            <div class="w-1/4 h-full">
-                                {% if event.image %}
-                                    <img src="{{ event.image.url }}"
-                                         class="w-full h-full object-cover object-center rounded-l-lg"
-                                         alt="{{ event.name }}">
-                                {% else %}
-                                    <img src="{% static 'img/static.jpg' %}"
-                                         class="w-full h-full object-cover object-center rounded-l-lg"
-                                         alt="{{ event.name }}">
-                                {% endif %}
-                            </div>
-                            <div class="w-3/4 p-6 flex flex-col justify-between item-start ">
-                                <div>
-                                    <h5 class="font-bold text-lg mb-2">{{ event.name }}</h5>
-                                    <p class="text-gray-700 text-sm mb-4 line-clamp-3">{{ event.description }}</p>
-                                    {% for address in event.eventaddress_set.all %}
-                                        <p class="text-gray-600 text-sm">
-                                            Adresa: {{ address.street }} {{ address.number }}, {{ address.city }} {{ address.postal_code }}, {{ address.country }}
-                                        </p>
-                                    {% endfor %}
-                                    <p class="text-gray-600 text-sm">Datum: {{ event.day }}</p>
-                                    <p class="text-gray-600 text-sm">Čas: {{ event.time }}</p>
-                                    <p class="text-gray-600 text-sm">Kategorie: {{ event.get_category_display }}</p>
-                                </div>
-                                <div class="mt-4">
-                                    <a href="{% url 'event_detail' event.id %}"
-                                       class="inline-block bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600">Zobrazit</a>
-                                </div>
-                            </div>
-                        </div>
+                        <div class="w-full flex items-stretch bg-white rounded-lg shadow-md overflow-hidden">
+    <div class="w-1/4 h-full">
+        {% if event.image %}
+            <img src="{{ event.image.url }}" class="w-full h-full object-cover object-center rounded-l-lg" alt="{{ event.name }}">
+        {% else %}
+            <img src="{% static 'img/static.jpg' %}" class="w-full h-full object-cover object-center rounded-l-lg" alt="{{ event.name }}">
+        {% endif %}
+    </div>
+    <div class="w-3/4 p-6 flex flex-col justify-between items-start text-left">
+        <div class="w-full">
+            <h5 class="font-bold text-lg mb-2">{{ event.name }}</h5>
+            <p class="text-gray-700 text-sm mb-4 line-clamp-3">{{ event.description }}</p>
+            {% for address in event.eventaddress_set.all %}
+                <p class="text-gray-600 text-sm">
+                    Adresa: {{ address.street }} {{ address.number }}, {{ address.city }} {{ address.postal_code }}, {{ address.country }}
+                </p>
+            {% endfor %}
+            <p class="text-gray-600 text-sm">Datum: {{ event.day }}</p>
+            <p class="text-gray-600 text-sm">Čas: {{ event.time }}</p>
+            <p class="text-gray-600 text-sm">Kategorie: {{ event.get_category_display }}</p>
+        </div>
+        <div class="mt-4">
+            <a href="{% url 'event_detail' event.id %}" class="inline-block bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600">Zobrazit</a>
+        </div>
+    </div>
+</div>
+
                     {% endfor %}
                 {% else %}
                     <p class="text-center text-gray-500">Žádné eventy nenalezeny.</p>
