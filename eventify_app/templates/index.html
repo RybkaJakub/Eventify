@@ -19,7 +19,7 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                         {% if organization_events %}
                             {% for organization_event in organization_events %}
-                                <div class="bg-white rounded-xl shadow-lg hover:shadow-2xl overflow-hidden flex flex-col transition duration-300 transform hover:scale-105">
+                                <div class="w-full bg-white rounded-xl shadow-lg hover:shadow-2xl overflow-hidden flex flex-col transition duration-300 transform hover:scale-105">
                                     <!-- Obrázek eventu -->
                                     <div class="relative w-full h-56">
                                         {% if organization_event.image %}
@@ -109,7 +109,7 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                         {% if registered_events %}
                             {% for registered_event in registered_events %}
-                                <div class="bg-white rounded-xl shadow-lg hover:shadow-2xl overflow-hidden flex flex-col transition duration-300 transform hover:scale-105">
+                                <div class="w-full bg-white rounded-xl shadow-lg hover:shadow-2xl overflow-hidden flex flex-col transition duration-300 transform hover:scale-105">
                                     <!-- Obrázek eventu -->
                                     <div class="relative w-full h-56">
                                         {% if registered_event.event.image %}
@@ -201,7 +201,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                     {% if registered_events %}
                         {% for registered_event in registered_events %}
-                            <div class="bg-white rounded-xl shadow-lg hover:shadow-2xl overflow-hidden flex flex-col transition duration-300 transform hover:scale-105">
+                            <div class="w-full bg-white rounded-xl shadow-lg hover:shadow-2xl overflow-hidden flex flex-col transition duration-300 transform hover:scale-105">
                                 <!-- Obrázek eventu -->
                                 <div class="relative w-full h-56">
                                     {% if registered_event.event.image %}
@@ -290,7 +290,7 @@
         </div>
 
         <!-- Karty eventů -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {% if upcoming_events %}
                 {% with upcoming_events|slice:":4" as limited_events %}
                     {% for event in limited_events %}
