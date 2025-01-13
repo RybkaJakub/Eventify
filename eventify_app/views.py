@@ -3,7 +3,6 @@ import json
 import logging
 import qrcode
 from io import BytesIO
-from random import random
 from datetime import datetime, timedelta
 from calendar import monthrange, Calendar
 
@@ -787,6 +786,8 @@ class CartPaymentView(LoginRequiredMixin, TemplateView):
         context['payment_form'] = payment_form
         context['new_message'] = True
         return self.render_to_response(context)
+
+from random import random
 
 class CartConfirmationView(LoginRequiredMixin, TemplateView):
     template_name = "account/cart_confirmation.html"
