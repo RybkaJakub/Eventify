@@ -30,7 +30,6 @@
                             </svg>
                             <div x-data="{ open: false }"
                                  class="relative inline-block text-left text-sm font-medium text-gray-400 hover:text-gray-600">
-                                <!-- Tlačítko -->
                                 <button @click="open = !open"
                                         class="text-sm font-medium text-gray-400 flex items-center">
                                     Správa e-mailových adres
@@ -40,8 +39,6 @@
                                               d="M19 9l-7 7-7-7"/>
                                     </svg>
                                 </button>
-
-                                <!-- Dropdown menu -->
                                 <div x-show="open"
                                      @click.away="open = false"
                                      x-transition:enter="transition ease-out duration-100"
@@ -99,27 +96,28 @@
                             {% for radio in emailaddress_radios %}
                                 {% with emailaddress=radio.emailaddress %}
                                     <div class="flex items-center justify-between bg-gray-50 p-4 rounded-lg shadow hover:bg-gray-100 transition-colors">
-                                        <!-- Levá část -->
                                         <div class="flex items-center space-x-4">
-        <span class="font-medium text-lg text-gray-800">
-            {{ emailaddress.email }}
-        </span>
+                                            <span class="font-medium text-lg text-gray-800">
+                                                {{ emailaddress.email }}
+                                            </span>
                                             <span class="ml-2 text-sm px-2 py-1 rounded-full
-            {% if emailaddress.verified %}bg-green-100 text-green-600{% else %}bg-red-100 text-red-600{% endif %}">
-            {% if emailaddress.verified %}
-                Ověřeno
-            {% else %}
-                Neověřeno
-            {% endif %}
-        </span>
+                                                {% if emailaddress.verified %}
+                                                    bg-green-100 text-green-600
+                                                {% else %}
+                                                    bg-red-100 text-red-600
+                                                {% endif %}">
+                                                {% if emailaddress.verified %}
+                                                    Ověřeno
+                                                {% else %}
+                                                    Neověřeno
+                                                {% endif %}
+                                            </span>
                                             {% if emailaddress.primary %}
                                                 <span class="ml-2 text-sm px-2 py-1 rounded-full bg-blue-100 text-blue-600">
-                Primární
-             </span>
+                                                    Primární
+                                                </span>
                                             {% endif %}
                                         </div>
-
-                                        <!-- Pravá část -->
                                         <div class="flex space-x-4">
                                             <form action="{{ email_url }}" method="post" class="inline">
                                                 {% csrf_token %}
@@ -153,7 +151,6 @@
                                             </form>
                                         </div>
                                     </div>
-
                                 {% endwith %}
                             {% endfor %}
                         </div>
@@ -195,28 +192,24 @@
             form.method = "POST";
             form.action = "{% url 'account_email' %}";
 
-            // Přidání CSRF tokenu
             const csrfInput = document.createElement("input");
             csrfInput.name = "csrfmiddlewaretoken";
             csrfInput.type = "hidden";
             csrfInput.value = "{{ csrf_token }}";
             form.appendChild(csrfInput);
 
-            // Přidání e-mailu k odstranění
             const emailInput = document.createElement("input");
             emailInput.name = "email";
             emailInput.type = "hidden";
             emailInput.value = email;
             form.appendChild(emailInput);
 
-            // Nastavení akce pro odstranění
             const actionInput = document.createElement("input");
             actionInput.name = "action_resend";
             actionInput.type = "hidden";
             actionInput.value = "1";
             form.appendChild(actionInput);
 
-            // Přidání do DOM a odeslání
             document.body.appendChild(form);
             form.submit();
             console.log(form)
@@ -228,28 +221,24 @@
             form.method = "POST";
             form.action = "{% url 'account_email' %}";
 
-            // Přidání CSRF tokenu
             const csrfInput = document.createElement("input");
             csrfInput.name = "csrfmiddlewaretoken";
             csrfInput.type = "hidden";
             csrfInput.value = "{{ csrf_token }}";
             form.appendChild(csrfInput);
 
-            // Přidání e-mailu k odstranění
             const emailInput = document.createElement("input");
             emailInput.name = "email";
             emailInput.type = "hidden";
             emailInput.value = email;
             form.appendChild(emailInput);
 
-            // Nastavení akce pro odstranění
             const actionInput = document.createElement("input");
             actionInput.name = "action_primary";
             actionInput.type = "hidden";
             actionInput.value = "1";
             form.appendChild(actionInput);
 
-            // Přidání do DOM a odeslání
             document.body.appendChild(form);
             form.submit();
             console.log(form)
@@ -263,28 +252,24 @@
                 form.method = "POST";
                 form.action = "{% url 'account_email' %}";
 
-                // Přidání CSRF tokenu
                 const csrfInput = document.createElement("input");
                 csrfInput.name = "csrfmiddlewaretoken";
                 csrfInput.type = "hidden";
                 csrfInput.value = "{{ csrf_token }}";
                 form.appendChild(csrfInput);
 
-                // Přidání e-mailu k odstranění
                 const emailInput = document.createElement("input");
                 emailInput.name = "email";
                 emailInput.type = "hidden";
                 emailInput.value = email;
                 form.appendChild(emailInput);
 
-                // Nastavení akce pro odstranění
                 const actionInput = document.createElement("input");
                 actionInput.name = "action_remove";
                 actionInput.type = "hidden";
                 actionInput.value = "1";
                 form.appendChild(actionInput);
 
-                // Přidání do DOM a odeslání
                 document.body.appendChild(form);
                 form.submit();
             }

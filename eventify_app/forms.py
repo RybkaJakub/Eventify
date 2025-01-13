@@ -1,24 +1,17 @@
 from typing import re
 
 from captcha.fields import CaptchaField
-from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit, Button
-from django import forms
 
-from .models import Event, Organization, DeliveryAddress, PaymentMethod, EventAddress
+from .models import DeliveryAddress, PaymentMethod, EventAddress
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import get_user_model, login
-from django.utils.dateformat import format
-
-from django.shortcuts import redirect
+from django.contrib.auth import get_user_model
 CustomUser = get_user_model()
 
 from django import forms
 from .models import Event, Organization, TicketType, CustomUser
-from django.contrib.auth import get_user_model
 from django.forms import inlineformset_factory
-from allauth.account.forms import SignupForm
 
 
 class EventForm(forms.ModelForm):
@@ -164,7 +157,7 @@ class DeliveryAddressForm(forms.ModelForm):
         street_number = self.cleaned_data.get('street_number')
         if not street_number:
             raise forms.ValidationError('Číslo popisné je povinné.')
-        if not re.match(r'^\d+(\s?\/\s?\d+)?$', street_number):  # Povolit čísla a formát "632/7" s volitelnými mezerami
+        if not re.match(r'^\d+(\s?\/\s?\d+)?$', street_number):
             raise forms.ValidationError('Zadejte platné číslo popisné, například "742" nebo "421/21".')
         return street_number
 
@@ -213,7 +206,6 @@ class CustomSignupForm(SignupForm):
         user.image = self.cleaned_data['image']
         user.save()
 
-        # Automaticky přihlásit uživatele
         return user
 
 

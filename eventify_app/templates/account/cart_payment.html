@@ -6,7 +6,6 @@
 {% block content %}
     <div class="container mx-auto px-4 py-8">
         <div class="bg-white shadow-xl rounded-lg p-8 mt-5">
-            <!-- Title -->
             <h1 class="text-3xl font-bold text-center mb-10">Tvůj košík</h1>
 
             <div id="progress" class="flex justify-center items-center">
@@ -64,16 +63,13 @@
             </div>
         </div>
 
-        <!-- Main Content Section -->
         <div class="bg-white shadow-xl rounded-lg p-8 mt-5">
             {% if messages and new_message %}
                 {% include 'snippets/message.html' %}
             {% endif %}
             {% if payment_method %}
-                <!-- Display Payment Card -->
                 <div id="payment-card"
                      class="w-full bg-white border border-gray-200 rounded-lg shadow-lg p-8 flex flex-col md:flex-row items-center">
-                    <!-- Levá část: Fotka uživatele -->
                     <div class="w-full md:w-1/3 flex flex-col items-center">
                         {% if has_picture %}
                             <img class="w-full h-auto object-cover rounded-lg shadow-md" src="{{ profile_picture }}"
@@ -87,14 +83,10 @@
                         {% endif %}
                     </div>
 
-                    <!-- Vertikální divider s automatickou výškou -->
                     <div class="w-px bg-gray-300 mx-8 h-auto self-stretch"></div>
 
-
-                    <!-- Pravá část: Údaje uživatele -->
                     <div class="w-full relative h-auto flex-grow">
                         <div class="flex justify-between items-center p-4">
-                            <!-- Údaje uživatele -->
                             <div>
                                 <h5 class="text-2xl font-semibold text-gray-900">{{ payment_method.name_on_card }}</h5>
                                 <p class="text-gray-500 mt-2">Číslo karty: {{ payment_method.card_number }}</p>
@@ -111,8 +103,6 @@
                             </svg>
                         </button>
 
-
-                        <!-- Akční tlačítka -->
                         <div class="flex justify-between mt-6">
                             <a href="{% url 'cart_informations' %}"
                                class="inline-flex items-center justify-center bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-6 border border-gray-300 rounded-lg shadow-sm transition-all duration-200">
@@ -137,7 +127,6 @@
                     </div>
                 </div>
 
-                <!-- Edit Address Form (Initially Hidden) -->
                 <div id="edit-payment-form" class="hidden w-full p-8">
                     {% include 'snippets/cart/edit_payment_form.html' %}
                 </div>
@@ -150,7 +139,6 @@
     </div>
 
     <script>
-        // Toggle the form visibility
         function toggleForm() {
             var form = document.getElementById('edit-payment-form');
             var card = document.getElementById('payment-card');
@@ -159,32 +147,33 @@
         }
     </script>
     <style>
-    input, .expiration_date div {
-        background-color: #f7f8fa;
-        border: 1px solid #d1d5db;
-        border-radius: 8px;
-        padding: 12px;
-        color: #4a5568;
-        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-        transition: border-color 0.2s ease-in-out;
-    }
+        input, .expiration_date div {
+            background-color: #f7f8fa;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 12px;
+            color: #4a5568;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.2s ease-in-out;
+        }
 
-    input:focus, .expiration_date:focus div {
-        border-color: #5a67d8;
-        outline: none;
-    }
-    .expiration_date input {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-        border: none;
-        text-align: center;
-        color: #000;
-        box-shadow: none;
-    }
+        input:focus, .expiration_date:focus div {
+            border-color: #5a67d8;
+            outline: none;
+        }
 
-    .expiration_date span {
-        margin: 0 4px;
-    }
-</style>
+        .expiration_date input {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            border: none;
+            text-align: center;
+            color: #000;
+            box-shadow: none;
+        }
+
+        .expiration_date span {
+            margin: 0 4px;
+        }
+    </style>
 {% endblock %}

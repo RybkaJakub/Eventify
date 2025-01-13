@@ -9,8 +9,6 @@ import re
 from geopy.geocoders import Nominatim
 from geopy.exc import GeopyError
 
-from django.utils.functional import empty
-
 
 def validate_postal_code(value):
     if not re.match(r'^\d{3} \d{2}$', value):
@@ -43,10 +41,12 @@ class Organization(models.Model):
     def __str__(self):
         return self.name
 
+
 class OrganizationAddress(models.Model):
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
     street = models.TextField(verbose_name="Ulice", help_text="Zadejte ulici")
-    number = models.PositiveSmallIntegerField(verbose_name="Číslo popisné", help_text="Zadejte číslo popisné", blank=True, null=True)
+    number = models.PositiveSmallIntegerField(verbose_name="Číslo popisné", help_text="Zadejte číslo popisné",
+                                              blank=True, null=True)
     city = models.TextField(verbose_name="Město", help_text="Zadejte město")
     postal_code = models.TextField(validators=[validate_postal_code], verbose_name="PSČ", help_text="Zadejte PSČ")
     country = models.CharField(max_length=255, verbose_name="Stát", help_text="Zadejte stát", default="Česko")
@@ -62,7 +62,8 @@ class CustomUser(AbstractUser):
     email = models.EmailField(unique=True, verbose_name='E-mail', help_text='Zadejte e-mail uživatele')
     image = models.ImageField(upload_to='user_images/', blank=True, null=True,
                               verbose_name='Obrázek uživatele', help_text='Vyberte obrázek uživatele')
-    date_birth = models.DateField(null=True, blank=True, verbose_name='Datum narození', help_text='Zadejte datum narození')
+    date_birth = models.DateField(null=True, blank=True, verbose_name='Datum narození',
+                                  help_text='Zadejte datum narození')
     phone_validator = RegexValidator(
         regex=r'^\d{9}$',
         message="Telefonní číslo musí obsahovat přesně 9 číslic."
@@ -113,10 +114,13 @@ class Event(models.Model):
     ]
     name = models.CharField(max_length=200, verbose_name='Název události', help_text='Zadejte název události')
     description = models.TextField(verbose_name='Popis události', help_text='Zadejte popis události')
-    day = models.DateField(verbose_name='Den konání eventu', help_text='Zadejte den konání eventu', default=timezone.now)
-    time = models.TimeField(verbose_name='Čas konání eventu', help_text='Zadejte čas konání eventu', default=timezone.now)
+    day = models.DateField(verbose_name='Den konání eventu', help_text='Zadejte den konání eventu',
+                           default=timezone.now)
+    time = models.TimeField(verbose_name='Čas konání eventu', help_text='Zadejte čas konání eventu',
+                            default=timezone.now)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
-                                   verbose_name='Vytvořeno uživatelem', help_text='Vyberte uživatele, který událost vytvořil')
+                                   verbose_name='Vytvořeno uživatelem',
+                                   help_text='Vyberte uživatele, který událost vytvořil')
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE, null=True,
                                      verbose_name='Organizace', help_text='Vyberte organizaci',
                                      error_messages={'null': 'Nejsi v organizaci nemůžeš vytvořit event!'})
@@ -144,7 +148,8 @@ class Event(models.Model):
 class EventAddress(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     street = models.TextField(verbose_name="Ulice", help_text="Zadejte ulici")
-    number = models.PositiveSmallIntegerField(verbose_name="Číslo popisné", help_text="Zadejte číslo popisné", blank=True, null=True)
+    number = models.PositiveSmallIntegerField(verbose_name="Číslo popisné", help_text="Zadejte číslo popisné",
+                                              blank=True, null=True)
     city = models.TextField(verbose_name="Město", help_text="Zadejte město")
     postal_code = models.TextField(validators=[validate_postal_code], verbose_name="PSČ", help_text="Zadejte PSČ")
     country = models.CharField(max_length=255, verbose_name="Stát", help_text="Zadejte stát", default="Česko")
@@ -176,7 +181,8 @@ class EventAddress(models.Model):
 class TicketType(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     name = models.CharField(max_length=255, verbose_name='Název vstupenky', help_text='Zadejte název vstupenky')
-    price = models.DecimalField(max_digits=8, decimal_places=2, verbose_name='Cena vstupenky', help_text='Zadejte cenu vstupenky')
+    price = models.DecimalField(max_digits=8, decimal_places=2, verbose_name='Cena vstupenky',
+                                help_text='Zadejte cenu vstupenky')
     quantity = models.IntegerField(verbose_name='Počet vstupenek', help_text='Zadejte počet vstupenek')
     left = models.IntegerField(verbose_name='Počet zbývajících vstupenek', default=0, editable=False)
 
@@ -187,10 +193,12 @@ class TicketType(models.Model):
     def __str__(self):
         return self.name
 
+
 class Order(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     order_id = models.CharField(max_length=255, verbose_name='ID objednávky')
-    total_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Celková částka', help_text='Zadejte celkovou částku', default=0)
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Celková částka',
+                                       help_text='Zadejte celkovou částku', default=0)
     date = models.DateTimeField(verbose_name='Datum vytvoření', default=timezone.now)
 
     class Meta:
@@ -200,13 +208,16 @@ class Order(models.Model):
     def __str__(self):
         return f"{self.order_id}"
 
+
 class PurchasedTickets(models.Model):
     order_id = models.CharField(max_length=255, verbose_name='ID objednávky')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     ticket_type = models.ForeignKey(TicketType, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField(verbose_name='Počet zakoupených vstupenek', help_text='Zadejte počet zakoupených vstupenek')
-    qr_code = models.ImageField(upload_to='qr_codes/', blank=True, null=True, verbose_name='QR kód', help_text='Vyberte QR kód', default='qr_codes/default.png')
+    quantity = models.PositiveIntegerField(verbose_name='Počet zakoupených vstupenek',
+                                           help_text='Zadejte počet zakoupených vstupenek')
+    qr_code = models.ImageField(upload_to='qr_codes/', blank=True, null=True, verbose_name='QR kód',
+                                help_text='Vyberte QR kód', default='qr_codes/default.png')
 
     class Meta:
         verbose_name = 'Zakoupené vstupenky'
@@ -215,16 +226,19 @@ class PurchasedTickets(models.Model):
     def __str__(self):
         return f"{self.user.username} - {self.event.name} - {self.quantity} vstupenek"
 
+
 class Cart(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     ticket_type = models.ForeignKey(TicketType, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(verbose_name='Počet vstupenek', help_text='Zadejte počet vstupenek v košíku')
-    total_amount = models.DecimalField(decimal_places=2, max_digits=10, verbose_name='Celková částka', help_text='Zadejte celkovou částku')
+    total_amount = models.DecimalField(decimal_places=2, max_digits=10, verbose_name='Celková částka',
+                                       help_text='Zadejte celkovou částku')
 
     class Meta:
         verbose_name = 'Košík'
         verbose_name_plural = 'Košíky'
+
 
 class DeliveryAddress(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -241,12 +255,18 @@ class DeliveryAddress(models.Model):
     def __str__(self):
         return f"{self.street}, {self.city}, {self.country}"
 
+
 class PaymentMethod(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Uživatel", help_text="Uživatel, který tuto platební metodu vlastní.")
-    name_on_card = models.TextField(default="", verbose_name="Jméno na kartě", help_text="Jméno, které je uvedeno na kartě.", max_length=255)
-    card_number = models.TextField(validators=[validate_card_number], verbose_name="Číslo karty", help_text="Zadejte 16místné číslo karty.", max_length=16)
-    cvc = models.TextField(validators=[validate_cvc], verbose_name="CVC", help_text="Bezpečnostní kód na zadní straně karty.", max_length=3)
-    expiration_date = models.DateField(verbose_name="Datum expirace", help_text="Datum expirace karty ve formátu MM/RR.", null=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Uživatel",
+                             help_text="Uživatel, který tuto platební metodu vlastní.")
+    name_on_card = models.TextField(default="", verbose_name="Jméno na kartě",
+                                    help_text="Jméno, které je uvedeno na kartě.", max_length=255)
+    card_number = models.TextField(validators=[validate_card_number], verbose_name="Číslo karty",
+                                   help_text="Zadejte 16místné číslo karty.", max_length=16)
+    cvc = models.TextField(validators=[validate_cvc], verbose_name="CVC",
+                           help_text="Bezpečnostní kód na zadní straně karty.", max_length=3)
+    expiration_date = models.DateField(verbose_name="Datum expirace",
+                                       help_text="Datum expirace karty ve formátu MM/RR.", null=True)
 
     class Meta:
         verbose_name = 'Platební metoda'

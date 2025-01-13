@@ -1,9 +1,6 @@
 from tkinter.font import names
-
 from django.urls import path, include
-
 from django.contrib import admin
-from django.contrib.auth.views import LogoutView
 from .views import index, purchase_ticket, EventManagerView, EventCreateView, EventDeleteView, EventDetailView, \
     EventUpdateView, UserProfileView, MyProfileView, UserProfileEditView, CartView, RemoveItemView, ClearCartView, \
     CartInformationsView, \

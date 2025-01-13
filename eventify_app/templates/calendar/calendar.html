@@ -9,12 +9,8 @@
         <main class="flex-1 p-8">
 
             <div class="date w-full bg-white shadow-md rounded-lg p-8 mb-5">
-                <!-- Nadpis na samostatném řádku -->
                 <h1 class="text-3xl font-bold text-center mb-8">Kalendář</h1>
-
-                <!-- Navigační lišta pro měsíce/roky -->
                 <div class="flex items-center justify-between">
-                    <!-- Tlačítko pro předchozí měsíc -->
                     <a href="?year={{ previous_year }}&month={{ previous_month }}" class="text-gray-400">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
                              viewBox="0 0 24 24" stroke="currentColor">
@@ -24,7 +20,6 @@
                     </a>
 
                     <div class="flex items-center space-x-4">
-                        <!-- Dropdown pro výběr měsíce -->
                         <select class="border border-gray-300 rounded px-4 py-2"
                                 onchange="window.location.href='?year={{ current_year }}&month=' + this.value">
                             {% for month_num, month_name in months.items %}
@@ -34,8 +29,6 @@
                                 </option>
                             {% endfor %}
                         </select>
-
-                        <!-- Dropdown pro výběr roku -->
                         <select class="border border-gray-300 rounded px-4 py-2"
                                 onchange="window.location.href='?year=' + this.value + '&month={{ current_month }}'">
                             {% for year in available_years %}
@@ -46,8 +39,6 @@
                             {% endfor %}
                         </select>
                     </div>
-
-                    <!-- Tlačítko pro další měsíc -->
                     <a href="?year={{ next_year }}&month={{ next_month }}" class="text-gray-400">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
                              viewBox="0 0 24 24" stroke="currentColor">
@@ -57,9 +48,6 @@
                     </a>
                 </div>
             </div>
-
-
-            <!-- Tabulka kalendáře -->
             <table class="table-auto w-full bg-white rounded-lg shadow-md">
                 <thead>
                 <tr>
@@ -75,11 +63,9 @@
                             <td class="border p-1 h-40 xl:w-40 lg:w-30 md:w-30 sm:w-20 w-10 overflow-auto transition cursor-pointer duration-500 ease hover:bg-gray-300">
                                 {% if day %}
                                     <div class="flex flex-col h-40 mx-auto xl:w-40 lg:w-30 md:w-30 sm:w-full w-10 overflow-hidden">
-                                        <!-- Datum -->
                                         <div class="top h-5 w-full">
                                             <span class="text-gray-500">{{ day.day.day }}</span>
                                         </div>
-                                        <!-- Události -->
                                         <div class="bottom flex-grow h-30 py-1 w-full cursor-pointer">
                                             {% if day.events %}
                                                 {% for event in day.events %}

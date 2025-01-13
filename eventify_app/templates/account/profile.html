@@ -4,57 +4,55 @@
 {% block title %}Profil uživatele {{ vieweduser.username }}{% endblock %}
 
 {% block content %}
-<div class="container mx-auto mt-10 p-6 max-w-2xl bg-white shadow-md rounded-lg">
-    <h1 class="text-3xl font-semibold mb-6 text-center">Profil uživatele {{ vieweduser.username }}</h1>
-    <div class="flex flex-col items-center">
-        <!-- Profilový obrázek -->
-        {% if viewed_picture %}
-            <img src="{{ viewed_picture }}" alt="Profilový obrázek" class="w-24 h-24 rounded-full mb-4">
-        {% elif vieweduser.image %}
-            <img src="{{ vieweduser.image.url }}" alt="Profilový obrázek" class="w-24 h-24 rounded-full mb-4">
-        {% else %}
-            <img src="{% static 'img/default_profile.jpg' %}" alt="Profilový obrázek" class="w-24 h-24 rounded-full mb-4">
-        {% endif %}
-
-        <!-- Informace o uživateli -->
-        <h2 class="text-2xl font-medium text-gray-800">{{ vieweduser.username }}</h2>
-        <p class="text-gray-600 mb-4">{{ vieweduser.email }}</p>
-
-        <div class="w-full px-6">
-            <p class="text-gray-800"><strong>Jméno:</strong> {{ vieweduser.first_name }} {{ vieweduser.last_name }}</p>
-            <p class="text-gray-800"><strong>Email ověřen:</strong>
-                {% if email_confirmed %}
-                    <span class="text-green-500">Ano</span>
-                {% else %}
-                    <span class="text-red-500">Ne</span>
-                {% endif %}
-            </p>
-            <p class="text-gray-800"><strong>Přezdívka:</strong> {{ vieweduser.username }}</p>
-        </div>
-
-        <!-- Propojené služby -->
-        <div class="w-full px-6 mt-6">
-            <h3 class="text-lg font-semibold text-gray-800 mb-2">Propojené služby:</h3>
-            {% if social_accounts %}
-                <ul class="list-disc list-inside text-gray-800">
-                    {% for account in social_accounts %}
-                        <li>
-                            <!-- Vylepšení zobrazení názvu poskytovatele -->
-                            {{ account.provider|title }}: 
-                            {% if account.provider == 'github' %}
-                                {{ account.extra_data.login }}
-                            {% elif account.provider == 'google' %}
-                                {{ account.extra_data.name }}
-                            {% elif account.provider == 'discord' %}
-                                {{ account.extra_data.global_name }}
-                            {% endif %}
-                        </li>
-                    {% endfor %}
-                </ul>
+    <div class="container mx-auto mt-10 p-6 max-w-2xl bg-white shadow-md rounded-lg">
+        <h1 class="text-3xl font-semibold mb-6 text-center">Profil uživatele {{ vieweduser.username }}</h1>
+        <div class="flex flex-col items-center">
+            {% if viewed_picture %}
+                <img src="{{ viewed_picture }}" alt="Profilový obrázek" class="w-24 h-24 rounded-full mb-4">
+            {% elif vieweduser.image %}
+                <img src="{{ vieweduser.image.url }}" alt="Profilový obrázek" class="w-24 h-24 rounded-full mb-4">
             {% else %}
-                <p class="text-gray-500">Žádné propojené služby.</p>
+                <img src="{% static 'img/default_profile.jpg' %}" alt="Profilový obrázek"
+                     class="w-24 h-24 rounded-full mb-4">
             {% endif %}
+
+            <h2 class="text-2xl font-medium text-gray-800">{{ vieweduser.username }}</h2>
+            <p class="text-gray-600 mb-4">{{ vieweduser.email }}</p>
+
+            <div class="w-full px-6">
+                <p class="text-gray-800"><strong>Jméno:</strong> {{ vieweduser.first_name }} {{ vieweduser.last_name }}
+                </p>
+                <p class="text-gray-800"><strong>Email ověřen:</strong>
+                    {% if email_confirmed %}
+                        <span class="text-green-500">Ano</span>
+                    {% else %}
+                        <span class="text-red-500">Ne</span>
+                    {% endif %}
+                </p>
+                <p class="text-gray-800"><strong>Přezdívka:</strong> {{ vieweduser.username }}</p>
+            </div>
+
+            <div class="w-full px-6 mt-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">Propojené služby:</h3>
+                {% if social_accounts %}
+                    <ul class="list-disc list-inside text-gray-800">
+                        {% for account in social_accounts %}
+                            <li>
+                                {{ account.provider|title }}:
+                                {% if account.provider == 'github' %}
+                                    {{ account.extra_data.login }}
+                                {% elif account.provider == 'google' %}
+                                    {{ account.extra_data.name }}
+                                {% elif account.provider == 'discord' %}
+                                    {{ account.extra_data.global_name }}
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-gray-500">Žádné propojené služby.</p>
+                {% endif %}
+            </div>
         </div>
     </div>
-</div>
 {% endblock %}

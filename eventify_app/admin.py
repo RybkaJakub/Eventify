@@ -1,10 +1,9 @@
 from django.contrib import admin
-from django.contrib.auth.models import User
 from django.utils.safestring import mark_safe
-from django import forms
 
 from .forms import EventForm, OrganizationForm
-from .models import Event, CustomUser, Organization, TicketType, EventAddress, OrganizationAddress
+from .models import Event, CustomUser, Organization, TicketType, EventAddress, OrganizationAddress, Order, \
+    PurchasedTickets
 
 admin.site.register(CustomUser)
 
@@ -16,6 +15,16 @@ class Organization(admin.ModelAdmin):
     form = OrganizationForm
     fields = ['name']
     inlines = [OrganizationAddressInline]
+
+@admin.register(Order)
+class Order(admin.ModelAdmin):
+    model = Order
+    fields = ['order_id', 'total_amount', 'date', 'user']
+
+@admin.register(PurchasedTickets)
+class PurchasedTickets(admin.ModelAdmin):
+    model = PurchasedTickets
+    fields = ['order_id', 'quantity', 'qr_code', 'event', 'ticket_type', 'user']
 
 class TicketTypeInline(admin.TabularInline):
     model = TicketType

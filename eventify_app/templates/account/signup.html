@@ -5,116 +5,131 @@
 {% block title %}{% trans "Registrace" %}{% endblock %}
 
 {% block content %}
-<div class="flex flex-col items-center mt-16">
-    <h1 class="text-4xl font-extrabold text-gray-900 mb-6">{% trans "Registrace" %}</h1>
+    <div class="flex flex-col items-center mt-16">
+        <h1 class="text-4xl font-extrabold text-gray-900 mb-6">{% trans "Registrace" %}</h1>
 
-    <p class="text-gray-500 text-center mb-8 max-w-lg leading-relaxed">
-        {% blocktrans %}
-        Vytvořte si nový účet nebo se <a href="{{ login_url }}" class="text-indigo-500 hover:underline">přihlaste zde</a>, pokud již máte účet.
-        {% endblocktrans %}
-    </p>
+        <p class="text-gray-500 text-center mb-8 max-w-lg leading-relaxed">
+            {% blocktrans %}
+                Vytvořte si nový účet nebo se
+                <a href="{{ login_url }}" class="text-indigo-500 hover:underline">přihlaste zde</a>, pokud již máte
+                účet.
+            {% endblocktrans %}
+        </p>
 
-    <div class="w-full max-w-md bg-white shadow-lg rounded-lg p-10 mb-10">
-        <form class="signup space-y-6" id="signup_form" method="post" action="{% url 'account_signup' %}">
-            {% csrf_token %}
-            <div class="space-y-4">
-                <div class="flex flex-col">
-                    {{ form.username.label_tag }}
-                    <input type="text" name="{{ form.username.name }}" id="{{ form.username.id_for_label }}" class="border border-gray-300 rounded-md p-2" placeholder="Zadejte své uživatelské jméno" required>
-                    {% for error in form.username.errors %}
-                        <div class="text-red-500 text-sm mt-1">{{ error }}</div>
-                    {% endfor %}
+        <div class="w-full max-w-md bg-white shadow-lg rounded-lg p-10 mb-10">
+            <form class="signup space-y-6" id="signup_form" method="post" action="{% url 'account_signup' %}">
+                {% csrf_token %}
+                <div class="space-y-4">
+                    <div class="flex flex-col">
+                        {{ form.username.label_tag }}
+                        <input type="text" name="{{ form.username.name }}" id="{{ form.username.id_for_label }}"
+                               class="border border-gray-300 rounded-md p-2" placeholder="Zadejte své uživatelské jméno"
+                               required>
+                        {% for error in form.username.errors %}
+                            <div class="text-red-500 text-sm mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="flex flex-col">
+                        {{ form.first_name.label_tag }}
+                        <input type="text" name="{{ form.first_name.name }}" id="{{ form.first_name.id_for_label }}"
+                               class="border border-gray-300 rounded-md p-2" placeholder="Zadejte své jméno" required>
+                        {% for error in form.first_name.errors %}
+                            <div class="text-red-500 text-sm mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="flex flex-col">
+                        {{ form.last_name.label_tag }}
+                        <input type="text" name="{{ form.last_name.name }}" id="{{ form.last_name.id_for_label }}"
+                               class="border border-gray-300 rounded-md p-2" placeholder="Zadejte své příjmení"
+                               required>
+                        {% for error in form.last_name.errors %}
+                            <div class="text-red-500 text-sm mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="flex flex-col">
+                        {{ form.email.label_tag }}
+                        <input type="email" name="{{ form.email.name }}" id="{{ form.email.id_for_label }}"
+                               class="border border-gray-300 rounded-md p-2" placeholder="Zadejte svůj email" required>
+                        {% for error in form.email.errors %}
+                            <div class="text-red-500 text-sm mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="flex flex-col">
+                        {{ form.telephone.label_tag }}
+                        <input type="tel" name="{{ form.telephone.name }}" id="{{ form.telephone.id_for_label }}"
+                               class="border border-gray-300 rounded-md p-2" placeholder="Zadejte své telefonní číslo"
+                               required>
+                        {% for error in form.telephone.errors %}
+                            <div class="text-red-500 text-sm mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="flex flex-col">
+                        {{ form.date_birth.label_tag }}
+                        <input type="date" name="{{ form.date_birth.name }}" id="{{ form.date_birth.id_for_label }}"
+                               class="border border-gray-300 rounded-md p-2" required>
+                        {% for error in form.date_birth.errors %}
+                            <div class="text-red-500 text-sm mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="flex flex-col">
+                        {{ form.image.label_tag }}
+                        <input type="file" name="{{ form.image.name }}" id="{{ form.image.id_for_label }}"
+                               class="border border-gray-300 rounded-md p-2" required>
+                        {% for error in form.image.errors %}
+                            <div class="text-red-500 text-sm mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="flex flex-col">
+                        {{ form.password1.label_tag }}
+                        <input type="password" name="{{ form.password1.name }}" id="{{ form.password1.id_for_label }}"
+                               class="border border-gray-300 rounded-md p-2" placeholder="Zadejte heslo" required>
+                        {% for error in form.password1.errors %}
+                            <div class="text-red-500 text-sm mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="flex flex-col">
+                        {{ form.password2.label_tag }}
+                        <input type="password" name="{{ form.password2.name }}" id="{{ form.password2.id_for_label }}"
+                               class="border border-gray-300 rounded-md p-2" placeholder="Potvrďte heslo" required>
+                        {% for error in form.password2.errors %}
+                            <div class="text-red-500 text-sm mt-1">{{ error }}</div>
+                        {% endfor %}
+                    </div>
                 </div>
 
-                <div class="flex flex-col">
-                    {{ form.first_name.label_tag }}
-                    <input type="text" name="{{ form.first_name.name }}" id="{{ form.first_name.id_for_label }}" class="border border-gray-300 rounded-md p-2" placeholder="Zadejte své jméno" required>
-                    {% for error in form.first_name.errors %}
-                        <div class="text-red-500 text-sm mt-1">{{ error }}</div>
-                    {% endfor %}
-                </div>
+                {% if redirect_field_value %}
+                    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+                {% endif %}
 
-                <div class="flex flex-col">
-                    {{ form.last_name.label_tag }}
-                    <input type="text" name="{{ form.last_name.name }}" id="{{ form.last_name.id_for_label }}" class="border border-gray-300 rounded-md p-2" placeholder="Zadejte své příjmení" required>
-                    {% for error in form.last_name.errors %}
-                        <div class="text-red-500 text-sm mt-1">{{ error }}</div>
-                    {% endfor %}
-                </div>
-
-                <div class="flex flex-col">
-                    {{ form.email.label_tag }}
-                    <input type="email" name="{{ form.email.name }}" id="{{ form.email.id_for_label }}" class="border border-gray-300 rounded-md p-2" placeholder="Zadejte svůj email" required>
-                    {% for error in form.email.errors %}
-                        <div class="text-red-500 text-sm mt-1">{{ error }}</div>
-                    {% endfor %}
-                </div>
-
-                <div class="flex flex-col">
-                    {{ form.telephone.label_tag }}
-                    <input type="tel" name="{{ form.telephone.name }}" id="{{ form.telephone.id_for_label }}" class="border border-gray-300 rounded-md p-2" placeholder="Zadejte své telefonní číslo" required>
-                    {% for error in form.telephone.errors %}
-                        <div class="text-red-500 text-sm mt-1">{{ error }}</div>
-                    {% endfor %}
-                </div>
-
-                <div class="flex flex-col">
-                    {{ form.date_birth.label_tag }}
-                    <input type="date" name="{{ form.date_birth.name }}" id="{{ form.date_birth.id_for_label }}" class="border border-gray-300 rounded-md p-2" required>
-                    {% for error in form.date_birth.errors %}
-                        <div class="text-red-500 text-sm mt-1">{{ error }}</div>
-                    {% endfor %}
-                </div>
-
-                <div class="flex flex-col">
-                    {{ form.image.label_tag }}
-                    <input type="file" name="{{ form.image.name }}" id="{{ form.image.id_for_label }}" class="border border-gray-300 rounded-md p-2" required>
-                    {% for error in form.image.errors %}
-                        <div class="text-red-500 text-sm mt-1">{{ error }}</div>
-                    {% endfor %}
-                </div>
-
-                <div class="flex flex-col">
-                    {{ form.password1.label_tag }}
-                    <input type="password" name="{{ form.password1.name }}" id="{{ form.password1.id_for_label }}" class="border border-gray-300 rounded-md p-2" placeholder="Zadejte heslo" required>
-                    {% for error in form.password1.errors %}
-                        <div class="text-red-500 text-sm mt-1">{{ error }}</div>
-                    {% endfor %}
-                </div>
-
-                <div class="flex flex-col">
-                    {{ form.password2.label_tag }}
-                    <input type="password" name="{{ form.password2.name }}" id="{{ form.password2.id_for_label }}" class="border border-gray-300 rounded-md p-2" placeholder="Potvrďte heslo" required>
-                    {% for error in form.password2.errors %}
-                        <div class="text-red-500 text-sm mt-1">{{ error }}</div>
-                    {% endfor %}
-                </div>
-            </div>
-
-            {% if redirect_field_value %}
-                <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-            {% endif %}
-
-            <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition duration-200 font-semibold shadow-md hover:shadow-lg">
-                {% trans "Zaregistrovat se" %}
-            </button>
-        </form>
+                <button type="submit"
+                        class="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition duration-200 font-semibold shadow-md hover:shadow-lg">
+                    {% trans "Zaregistrovat se" %}
+                </button>
+            </form>
+        </div>
     </div>
-</div>
 
-<style>
-    .signup input {
-        background-color: #f7f8fa;
-        border-radius: 8px;
-        padding: 12px;
-        color: #4a5568;
-        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-        transition: border-color 0.2s ease-in-out;
-    }
+    <style>
+        .signup input {
+            background-color: #f7f8fa;
+            border-radius: 8px;
+            padding: 12px;
+            color: #4a5568;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.2s ease-in-out;
+        }
 
-    .signup input:focus {
-        border-color: #5a67d8;
-        outline: none;
-    }
-</style>
+        .signup input:focus {
+            border-color: #5a67d8;
+            outline: none;
+        }
+    </style>
 {% endblock %}

@@ -7,10 +7,8 @@
 
     <div class="container mx-auto px-4 py-8">
         <div class="bg-white shadow-xl rounded-lg p-8 mt-5">
-            <!-- Title -->
             <h1 class="text-3xl font-bold text-center mb-10">Tvůj košík</h1>
 
-            <!-- Progress Tracker -->
             <div id="progress" class="flex justify-center items-center mb-8">
                 <ol class="flex w-full max-w-4xl justify-between items-center space-x-4">
                     <li class="flex-1">
@@ -62,12 +60,9 @@
                 {% include 'snippets/message.html' %}
             {% endif %}
 
-            <!-- Main Content Section -->
             {% if delivery_address %}
-                <!-- Display Address Card -->
                 <div id="address-card"
                      class="w-full bg-white border border-gray-200 rounded-lg shadow-lg p-8 flex flex-col md:flex-row items-center">
-                    <!-- Levá část: Fotka uživatele -->
                     <div class="w-full md:w-1/3 flex flex-col items-center">
                         {% if has_picture %}
                             <img class="w-full h-auto object-cover rounded-lg shadow-md" src="{{ profile_picture }}"
@@ -81,14 +76,10 @@
                         {% endif %}
                     </div>
 
-                    <!-- Vertikální divider s automatickou výškou -->
                     <div class="w-px bg-gray-300 mx-8 h-auto self-stretch"></div>
 
-
-                    <!-- Pravá část: Údaje uživatele -->
                     <div class="w-full relative h-auto flex-grow">
                         <div class="flex justify-between items-center p-4">
-                            <!-- Údaje uživatele -->
                             <div>
                                 <h5 class="text-2xl font-semibold text-gray-900">{{ user.first_name }} {{ user.last_name }}</h5>
                                 <p class="text-gray-500 mt-2">{{ user.email }}</p>
@@ -112,8 +103,6 @@
                             </svg>
                         </button>
 
-
-                        <!-- Akční tlačítka -->
                         <div class="flex justify-between mt-6">
                             <a href="{% url 'cart' %}"
                                class="inline-flex items-center justify-center bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-6 border border-gray-300 rounded-lg shadow-sm transition-all duration-200">
@@ -138,8 +127,6 @@
                     </div>
                 </div>
 
-
-                <!-- Edit Address Form (Initially Hidden) -->
                 <div id="edit-address-form" class="hidden w-full p-8">
                     {% include 'snippets/cart/edit_address_form.html' %}
                 </div>
@@ -153,7 +140,6 @@
     </div>
 
     <script>
-        // Toggle the form visibility
         function toggleForm() {
             var form = document.getElementById('edit-address-form');
             var card = document.getElementById('address-card');
@@ -173,22 +159,18 @@
                         dataType: "json",
                         success: function (data) {
                             var filteredCountries = data.filter(function (country) {
-                                // Filtrace podle českého názvu, pokud je dostupný, nebo podle anglického názvu
                                 var nameInCzech = country.translations && country.translations.ces ? country.translations.ces.common : null;
                                 var nameInEnglish = country.name.common;
 
-                                // Pokud český název existuje, filtrujeme podle něj, jinak podle anglického názvu
                                 return (nameInCzech && nameInCzech.toLowerCase().startsWith(request.term.toLowerCase())) ||
                                     (nameInEnglish && nameInEnglish.toLowerCase().startsWith(request.term.toLowerCase()));
                             });
 
                             var countries = filteredCountries.map(function (item) {
-                                // Použití českého názvu pokud je k dispozici, jinak anglický
                                 var nameInCzech = item.translations && item.translations.ces ? item.translations.ces.common : item.name.common;
-                                return nameInCzech; // Vracíme název státu v češtině, pokud je k dispozici
+                                return nameInCzech;
                             });
 
-                            // Vrátíme seznam názvů států
                             response(countries);
                         },
                         error: function (xhr, status, error) {
