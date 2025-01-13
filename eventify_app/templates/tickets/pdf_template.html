@@ -120,7 +120,6 @@
     <div class="ticket-container">
         {% for ticket in tickets %}
             {% if forloop.counter0|divisibleby:3 %}
-                <!-- Page header on every page -->
                 <div class="ticket-header">
                     <img src="{{ request.build_absolute_uri }}{% static 'img/eventify_logo_rounded.png' %}" alt="Eventify Logo">
                     <div class="address">Za humny 268/23<br>398 43 Bernatice u Milevska</div>
@@ -131,7 +130,6 @@
                 </div>
             {% endif %}
 
-            <!-- Ticket body -->
             <div class="ticket-body">
                 <div class="qr-code">
                     <img src="{{ request.build_absolute_uri }}{{ ticket.qr_code.url }}" alt="QR Code">

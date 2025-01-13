@@ -5,7 +5,6 @@
 
 {% block content %}
 <div class="container mx-auto py-12 px-6">
-    <!-- Úvodní sekce -->
     <div class="text-center mb-12">
         <div class="text-center mb-10">
             <h2 class="text-4xl font-extrabold text-gray-800 tracking-wide">
@@ -18,14 +17,12 @@
         </p>
     </div>
 
-    <!-- Kontaktní formulář -->
     <div class="bg-white shadow-lg rounded-xl p-10 mb-16">
         <h2 class="text-3xl font-semibold text-gray-800 mb-6">Napište nám</h2>
         <form method="POST" action="{% url 'support' %}" class="space-y-8">
             {% include 'snippets/message.html' %}
             {% csrf_token %}
 
-            <!-- Jméno -->
             <div class="form-group">
                 <label for="id_name" class="block text-sm font-medium text-gray-700">Vaše jméno</label>
                 <input type="text" name="name" id="id_name"
@@ -36,7 +33,6 @@
                 {% endif %}
             </div>
 
-            <!-- E-mail -->
             <div class="form-group">
                 <label for="id_email" class="block text-sm font-medium text-gray-700">Váš e-mail</label>
                 <input type="email" name="email" id="id_email"
@@ -46,8 +42,7 @@
                     <p class="mt-2 text-sm text-red-500">{{ form.email.errors }}</p>
                 {% endif %}
             </div>
-
-            <!-- Zpráva -->
+        
             <div class="form-group">
                 <label for="id_message" class="block text-sm font-medium text-gray-700">Vaše zpráva</label>
                 <textarea name="message" id="id_message"
@@ -58,7 +53,6 @@
                 {% endif %}
             </div>
 
-            <!-- Odeslání -->
             <button type="submit"
                     class="w-full py-3 bg-purple-600 text-white font-semibold rounded-lg shadow-lg hover:bg-purple-700 transition duration-300 focus:ring-2 focus:ring-purple-600 focus:outline-none">
                 Odeslat zprávu

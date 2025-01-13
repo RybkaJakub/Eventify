@@ -3,7 +3,6 @@
 
     <h2 class="text-2xl font-semibold mb-4">Osobní údaje</h2>
 
-    <!-- Jméno a Příjmení na jednom řádku -->
     <div class="grid grid-cols-2 gap-4">
         <div class="flex flex-col w-full">
             <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Křestní jméno</label>
@@ -23,7 +22,6 @@
         </div>
     </div>
 
-    <!-- Telefonní číslo a Email na jednom řádku -->
     <div class="grid grid-cols-2 gap-4">
         <div class="flex flex-col w-full">
             <label for="telephone" class="block text-sm font-medium text-gray-700 mb-2">Telefonní číslo</label>
@@ -42,8 +40,7 @@
                    value="{{ user_form.email.value|default_if_none:'' }}">
         </div>
     </div>
-
-    <!-- Datum narození -->
+    
     <div class="flex flex-col w-full">
         <label for="date_birth" class="block text-sm font-medium text-gray-700 mb-2">Datum narození</label>
         <input type="date" name="{{ user_form.date_birth.name }}"
@@ -55,7 +52,6 @@
 
     <h2 class="text-2xl font-semibold mt-6 mb-4">Doručovací adresa</h2>
 
-    <!-- Ulice a Číslo na jednom řádku (70% a 30%) -->
     <div class="grid grid-cols-7 gap-4">
         <div class="col-span-5 flex flex-col w-full">
             <label for="street_name" class="block text-sm font-medium text-gray-700 mb-2">Ulice</label>
@@ -75,7 +71,6 @@
         </div>
     </div>
 
-    <!-- Město a PSČ na jednom řádku (70% a 30%) -->
     <div class="grid grid-cols-7 gap-4">
         <div class="col-span-2 flex flex-col w-full">
             <label for="city" class="block text-sm font-medium text-gray-700 mb-2">Město</label>
@@ -104,7 +99,6 @@
         </div>
     </div>
 
-    <!-- Submit Button -->
     <button type="submit"
             class="w-full bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-md mt-6">
         Uložit změny

@@ -44,6 +44,8 @@ from .forms import (
 
 logger = logging.getLogger(__name__)
 
+# ===================== Funkce =====================
+
 def send_email(html_template, context):
     from_email = settings.EMAIL_HOST_USER
     subject = context.get('subject')
@@ -68,6 +70,7 @@ def send_email(html_template, context):
         logger.info(f"Sending email to {', '.join(to_email)} with subject: {subject} - Status 0")
         logger.exception(e)
 
+# ===================== Pohledy =====================
 
 def index(request):
     registered_events = []
@@ -95,20 +98,16 @@ def index(request):
 
     events = Event.objects.all()
 
-    # Načti všechny souřadnice pro události
     event_addresses = EventAddress.objects.all()
 
-    # Vytvoř slovník pro souřadnice podle event_id
     event_address_dict = {address.event.id: address for address in event_addresses}
 
-    # Předání událostí a jejich souřadnic
     events_data = []
     for event in events:
         address = event_address_dict.get(event.id)
         latitude = address.latitude if address else None
         longitude = address.longitude if address else None
 
-        # Převod datumu a času na řetězec
         event_day = event.day.strftime('%Y-%m-%d') if event.day else None
         event_time = event.time.strftime('%H:%M') if event.time else None
 
@@ -124,7 +123,6 @@ def index(request):
             'id': event.id,
         })
 
-    # Převod na JSON řetězec
     events_json = json.dumps(events_data)
 
     context = {
@@ -196,7 +194,6 @@ class EventInline():
         form.instance.created_by = self.request.user
         self.object = form.save()
 
-        # Uložení adresy eventu
         event_address_form = self.get_event_address_form()
         if event_address_form.is_valid():
             event_address = event_address_form.save(commit=False)
@@ -207,7 +204,6 @@ class EventInline():
                 self.get_context_data(form=form, event_address_form=event_address_form)
             )
 
-        # Uložení ticket typů
         for name, formset in named_formsets.items():
             formset_save_func = getattr(self, f'formset_{name}_valid', None)
             if formset_save_func is not None:
@@ -238,14 +234,11 @@ class EventCreateView(EventInline, CreateView, LoginRequiredMixin, PermissionReq
 
         ctx['categories'] = Event.CATEGORY_CHOICES
 
-        # Přidání formuláře pro adresu eventu
         if 'event_address_form' not in ctx:
             ctx['event_address_form'] = self.get_event_address_form()
 
-        # Přidání formsetů pro ticket types
         ctx['named_formsets'] = self.get_named_formsets()
 
-        # Získání profilového obrázku
         profile_picture = UserProfileView.get_user_profile_picture(
             self.request, SocialAccount.objects.filter(user=self.request.user)
         )
@@ -280,7 +273,6 @@ class EventUpdateView(LoginRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # Načteme formulář pro EventAddress
         context['categories'] = Event.CATEGORY_CHOICES
         event_address_form = self.get_event_address_form()
         context['event_address_form'] = event_address_form
@@ -291,43 +283,34 @@ class EventUpdateView(LoginRequiredMixin, UpdateView):
         return context
 
     def get_event_address_form(self):
-        # Získáme EventAddress spojený s tímto Event objektem
         event_address = EventAddress.objects.filter(event=self.object).first()
 
-        # Pokud neexistuje žádná adres, vytvoříme prázdnou instanci
         if not event_address:
             event_address = EventAddress(event=self.object)
 
-        # Pokud je POST požadavek, předáme data formuláře, jinak použijeme stávající instanci
         if self.request.method == 'POST':
             return EventAddressForm(self.request.POST, instance=event_address)
         return EventAddressForm(instance=event_address)
 
     def post(self, request, *args, **kwargs):
-        # Načteme objekt Event
-        self.object = self.get_object()  # Získání objektu Event podle primárního klíče
+        self.object = self.get_object()
 
-        # Načteme formuláře
         form = self.get_form()
         event_address_form = self.get_event_address_form()
 
-        # Pokud všechny formuláře a formsety jsou validní, pokračujeme
         if form.is_valid() and event_address_form.is_valid():
-            # Uložení Eventu
-            self.object = form.save(commit=False)  # Uložení bez commit, aby se neuložil dřív
+            self.object = form.save(commit=False)
             self.object.save()
 
             # Uložení EventAddress
             event_address = event_address_form.save(commit=False)
-            event_address.event = self.object  # Přiřazení Eventu k adrese
+            event_address.event = self.object
             event_address.save()
 
             messages.success(request, "Událost byla úspěšně upravena.")
 
-            # Přesměrování na seznam eventů po úspěšném uložení
             return redirect('edit_event' , pk=self.object.pk)
 
-        # Pokud nějaký formulář není validní, vykreslíme stránku s chybami
         context = self.get_context_data(form=form, event_address_form=event_address_form)
         return self.render_to_response(context)
 
@@ -337,7 +320,6 @@ class EditTicketView(View):
     def get(self, request, pk):
         event = get_object_or_404(Event, pk=pk)
 
-        # Formset pro existující TicketType objekty
         TicketTypeFormSet = modelformset_factory(TicketType, form=TicketTypeForm, extra=0)
         formset = TicketTypeFormSet(queryset=TicketType.objects.filter(event=event), prefix='ticket_types')
 
@@ -346,20 +328,18 @@ class EditTicketView(View):
     def post(self, request, pk):
         event = get_object_or_404(Event, pk=pk)
 
-        # Formset pro POST data
         TicketTypeFormSet = modelformset_factory(TicketType, form=TicketTypeForm, extra=0)
         formset = TicketTypeFormSet(request.POST, queryset=TicketType.objects.filter(event=event),
                                     prefix='ticket_types')
 
         if formset.is_valid():
-            tickets = formset.save(commit=False)  # Uloží pouze instance bez jejich uložení do DB
+            tickets = formset.save(commit=False)
             for ticket in tickets:
-                ticket.event = event  # Ručně nastavíme `event`
-                ticket.save()  # Uložíme do DB
+                ticket.event = event
+                ticket.save()
             messages.success(request, "Vstupenky byly úspěšně uloženy.")
             return redirect('edit_ticket', pk=event.pk)
         else:
-            # Debugging: vypíšeme chyby formulářů
             for form in formset:
                 print(form.errors)
             messages.error(request, "Došlo k chybě při ukládání vstupenek.")
@@ -368,10 +348,8 @@ class EditTicketView(View):
 
 class AddTicketView(View):
     def post(self, request, event_pk):
-        # Načtení eventu nebo vyvolání 404 chyby, pokud neexistuje
         event = Event.objects.filter(pk=event_pk).first()
 
-        # Vytvoření nového typu vstupenky
         TicketType.objects.create(
             event=event,
             name='Nový typ vstupenky',
@@ -380,7 +358,6 @@ class AddTicketView(View):
             left=0
         )
 
-        # Přesměrování zpět na úpravu vstupenek pro daný event
         return redirect('edit_ticket', pk=event.pk)
 
 
@@ -413,10 +390,10 @@ class EventDeleteView(LoginRequiredMixin, PermissionRequiredMixin, UserPassesTes
         self.object = self.get_object()
         if self.object.image and self.object.image.path:
             try:
-                if os.path.isfile(self.object.image.path):  # Ověříme, že soubor existuje
-                    os.remove(self.object.image.path)  # Smažeme obrázek
+                if os.path.isfile(self.object.image.path):
+                    os.remove(self.object.image.path)
             except Exception as e:
-                print(f"Chyba při mazání obrázku: {e}")  # Logování chyby (pouze pro ladění)
+                print(f"Chyba při mazání obrázku: {e}")
         return super().delete(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -461,7 +438,6 @@ class EventDetailView(DetailView):
                 has_picture = True
             context['has_picture'] = has_picture
             context['profile_picture'] = profile_picture
-            # Pouze pro přihlášené uživatele
             context['userTickets'] = PurchasedTickets.objects.filter(
                 user=self.request.user,
                 event=self.object
@@ -487,21 +463,19 @@ class MyProfileView(LoginRequiredMixin, TemplateView):
     template_name = 'account/myprofile.html'
 
     def get_user_profile_picture(self, social_accounts):
-        # Získání profilového obrázku podle priorit
         if social_accounts:
             for account in social_accounts:
-                extra_data = account.extra_data  # Uložení extra_data do proměnné
+                extra_data = account.extra_data
                 if account.provider == 'discord':
-                    # Opraveno: Přístup k hodnotám slovníku
                     url = f'https://cdn.discordapp.com/avatars/{extra_data["id"]}/{extra_data["avatar"]}.png?size=240'
                     return url
                 if account.provider == 'github':
                     url = f'https://avatars.githubusercontent.com/u/{extra_data["id"]}'
                     return url
                 if account.provider == 'google':
-                    return extra_data.get("picture", '')  # Použij get pro bezpečný přístup k hodnotě
+                    return extra_data.get("picture", '')
 
-        return ''  # Pokud nemá žádný sociální účet, vrátí se uživatelský obrázek
+        return ''
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -525,21 +499,19 @@ class UserProfileView(LoginRequiredMixin, TemplateView):
     template_name = 'account/profile.html'
 
     def get_user_profile_picture(self, social_accounts):
-        # Získání profilového obrázku podle priorit
         if social_accounts:
             for account in social_accounts:
-                extra_data = account.extra_data  # Uložení extra_data do proměnné
+                extra_data = account.extra_data
                 if account.provider == 'discord':
-                    # Opraveno: Přístup k hodnotám slovníku
                     url = f'https://cdn.discordapp.com/avatars/{extra_data["id"]}/{extra_data["avatar"]}.png?size=240'
                     return url
                 if account.provider == 'github':
                     url = f'https://avatars.githubusercontent.com/u/{extra_data["id"]}'
                     return url
                 if account.provider == 'google':
-                    return extra_data.get("picture", '')  # Použij get pro bezpečný přístup k hodnotě
+                    return extra_data.get("picture", '')
 
-        return ''  # Pokud nemá žádný sociální účet, vrátí se uživatelský obrázek
+        return ''
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -579,13 +551,12 @@ class UserProfileEditView(UpdateView):
 
 
 class MyEventsListView(ListView):
-    model = Order  # <--- ZMĚNA: stránkujeme objednávky
+    model = Order
     template_name = 'events/my_tickets.html'
-    context_object_name = 'orders'  # <--- V šabloně pak iteruješ přes 'orders'
-    paginate_by = 6  # <--- 2 objednávky na stránku
+    context_object_name = 'orders'
+    paginate_by = 6
 
     def get_queryset(self):
-        """Vrátí objednávky pro přihlášeného uživatele, seřazené od nejnovější."""
         if not self.request.user.is_authenticated:
             return Order.objects.none()
         return Order.objects.filter(user=self.request.user).order_by('-date')
@@ -593,7 +564,6 @@ class MyEventsListView(ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # Profilový obrázek
         has_picture = False
         profile_picture = UserProfileView.get_user_profile_picture(
             self.request, SocialAccount.objects.filter(user=self.request.user)
@@ -605,7 +575,6 @@ class MyEventsListView(ListView):
         context['profile_picture'] = profile_picture
         context['isAuth'] = self.request.user.is_authenticated
 
-        # K objednávkám přidáme rovnou tikety do `order.tickets`
         for order in context['orders']:
             purchasedTickets = PurchasedTickets.objects.filter(order_id=order.order_id)
             order.tickets = purchasedTickets
@@ -616,7 +585,7 @@ class MyEventsListView(ListView):
 @login_required
 def purchase_ticket(request, pk):
     if request.method == 'POST':
-        event_id = pk  # Získej event_id z formuláře
+        event_id = pk
         ticket_type_id = request.POST.get('ticket_type')
         quantity = int(request.POST.get('quantity'))
 
@@ -630,16 +599,13 @@ def purchase_ticket(request, pk):
 
         total_amount = ticket_type.price * quantity
 
-        # Zjisti, jestli už položka existuje v košíku
         cart_item = Cart.objects.filter(user=request.user, event=event, ticket_type=ticket_type).first()
 
         if cart_item:
-            # Aktualizuj existující položku
             cart_item.quantity += quantity
             cart_item.total_amount += total_amount
             cart_item.save()
         else:
-            # Vytvoř novou položku v košíku
             Cart.objects.create(
                 user=request.user,
                 event=event,
@@ -707,7 +673,6 @@ class CartInformationsView(LoginRequiredMixin, TemplateView):
         context['user_form'] = CustomUserForm(instance=user)
         context['address_form'] = DeliveryAddressForm(instance=delivery_address)
 
-        # Kontrola pro profilový obrázek
         has_picture = False
         profile_picture = UserProfileView.get_user_profile_picture(self.request,
                                                                    SocialAccount.objects.filter(user=self.request.user))
@@ -738,9 +703,8 @@ class CartInformationsView(LoginRequiredMixin, TemplateView):
         else:
             messages.error(request, 'Chyba při aktualizaci informací. Zkontrolujte zadání.')
 
-            # Vrátí formuláře s chybami
         context = self.get_context_data()
-        context['user_form'] = user_form  # Vrátí formuláře s chybami
+        context['user_form'] = user_form
         context['address_form'] = address_form
         context['new_message'] = True
         return self.render_to_response(context)
@@ -753,12 +717,10 @@ class CartPaymentView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         user = self.request.user
         context['user'] = user
-        # Načítání metody platby a formuláře pro zobrazení a úpravy
         payment_method = PaymentMethod.objects.filter(user=user).first()
         context['payment_method'] = payment_method
         context['payment_form'] = PaymentMethodForm(instance=payment_method)
 
-        # Načítání profilové fotografie
         profile_picture = UserProfileView.get_user_profile_picture(
             self.request, SocialAccount.objects.filter(user=user)
         )
@@ -781,7 +743,6 @@ class CartPaymentView(LoginRequiredMixin, TemplateView):
         else:
             messages.error(request, 'Chyba při aktualizaci platebních údajů. Zkontrolujte zadání.')
 
-        # Vrátí formulář s chybami
         context = self.get_context_data()
         context['payment_form'] = payment_form
         context['new_message'] = True
@@ -836,7 +797,6 @@ class CartConfirmationView(LoginRequiredMixin, TemplateView):
         subject = "Objednávka vstupenek"
 
         if delivery_address and payment_method and items:
-            # Vytvoření objednávky
             order = Order.objects.create(
                 user=user,
                 order_id=order_id,
@@ -844,7 +804,6 @@ class CartConfirmationView(LoginRequiredMixin, TemplateView):
                 date=timezone.now()
             )
 
-            # Přidání vstupenek k objednávce
             for item in items:
                 new_ticket = PurchasedTickets.objects.create(
                     order_id=order_id,
@@ -862,10 +821,8 @@ class CartConfirmationView(LoginRequiredMixin, TemplateView):
                     "event_name": item.event.name
                 }
 
-                # Serializace dat do JSON
                 qr_data = json.dumps(data)
 
-                # Vytvoření QR kódu
                 qr = qrcode.QRCode(
                     version=1,
                     error_correction=qrcode.constants.ERROR_CORRECT_L,
@@ -875,24 +832,19 @@ class CartConfirmationView(LoginRequiredMixin, TemplateView):
                 qr.add_data(qr_data)
                 qr.make(fit=True)
 
-                # Vytvoření obrázku QR kódu
                 img = qr.make_image(fill_color="black", back_color="white")
 
-                # Uložení QR kódu do paměti
                 buffer = BytesIO()
                 img.save(buffer, format="PNG")
                 buffer.seek(0)
 
-                # Uložení do pole `qr_code`
                 new_ticket.qr_code.save(f"{order_id}_{item.id}.png", ContentFile(buffer.read()), save=False)
                 buffer.close()
 
                 new_ticket.save()
 
-            # Odebrání vstupenek z košíku
-            items.delete()  # QuerySet nemá `save()`
+            items.delete()
 
-            # Odeslání emailu
             tickets = PurchasedTickets.objects.filter(order_id=order_id)
 
             if address and subject:
@@ -917,16 +869,12 @@ class CartConfirmationView(LoginRequiredMixin, TemplateView):
                 )
                 email.content_subtype = 'html'
 
-                # 1) Zavoláme tvou funkci, která vrací HttpResponse (PDF)
-                pdf_response = generate_ticket_pdf(request, order.id)  # Tohle pravděpodobně vrací HttpResponse
+                pdf_response = generate_ticket_pdf(request, order.id)
 
-                # 2) Získáme binární obsah PDF
-                pdf_content = pdf_response.content  # .content = bytes v těle odpovědi
+                pdf_content = pdf_response.content
 
-                # 3) Přidáme jako přílohu
                 email.attach(f"{order.order_id}.pdf", pdf_content, "application/pdf")
 
-                # 4) Odeslání
                 email.send()
 
             return redirect('index')
@@ -935,7 +883,6 @@ class CartConfirmationView(LoginRequiredMixin, TemplateView):
 
 
 def generate_ticket_pdf(request, order_id):
-    # Načtěte objednávku a tickety
     try:
         order = Order.objects.get(id=order_id)
     except Order.DoesNotExist:
@@ -943,13 +890,10 @@ def generate_ticket_pdf(request, order_id):
 
     tickets = PurchasedTickets.objects.filter(order_id=order.order_id)
 
-    # Renderujte HTML šablonu s daty
     html_content = render_to_string('tickets/pdf_template.html', {'tickets': tickets, 'order': order})
 
-    # Vytvoření PDF pomocí WeasyPrint
     pdf = HTML(string=html_content, base_url=request.build_absolute_uri('/')).write_pdf()
 
-    # Vytvořte HTTP odpověď
     response = HttpResponse(pdf, content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="order_{order.order_id}.pdf"'
 
@@ -972,9 +916,7 @@ class EventsListView(ListView):
     model = Event
     template_name = 'events/events_list.html'
 
-    # context_object_name nepoužijeme,
-    # aby Django použilo výchozí jméno: "object_list" + "page_obj", "paginator", "is_paginated".
-    paginate_by = 3  # Tady nastavíš, kolik eventů na stránku
+    paginate_by = 3
 
     def get_queryset(self):
         events = super().get_queryset()
@@ -983,7 +925,6 @@ class EventsListView(ListView):
         location_filter = self.request.GET.get('location')
         category_filter = self.request.GET.get('category')
 
-        # Filtrování
         if name_filter:
             events = events.filter(name__icontains=name_filter)
         if date_filter:
@@ -1217,11 +1158,9 @@ class ContactView(View):
         }})
 
     def post(self, request):
-        form = ContactForm(request.POST)  # Načtení odeslaných dat z formuláře
-        # Ověření, zda uživatel neodeslal formulář v posledních 10 minutách
+        form = ContactForm(request.POST)
         last_submitted = request.session.get('last_submission_time')
         if last_submitted:
-            # Převeďte uložený čas na datetime objekt
             last_submitted_time = timezone.datetime.fromisoformat(last_submitted)
             time_diff = timezone.now() - last_submitted_time
             if time_diff < timedelta(minutes=10):
@@ -1240,7 +1179,6 @@ class ContactView(View):
         new_captcha_key = CaptchaStore.generate_key()
         new_captcha_image = captcha_image_url(new_captcha_key)
 
-        # Ověření Captchy
         if not CaptchaStore.objects.filter(response__iexact=captcha_value, hashkey=captcha_key).exists():
             messages.error(request, "Špatně zadaná Captcha. Zkuste to prosím znovu.")
             return render(request, 'informations/contact.html',
@@ -1250,7 +1188,6 @@ class ContactView(View):
         }})
 
         if form.is_valid():
-            # Odeslání e-mailu adminovi
             subject = f"Nová zprávac od {form.cleaned_data['name']}"
             name = form.cleaned_data['name']
             email = form.cleaned_data['email']
@@ -1262,13 +1199,12 @@ class ContactView(View):
 
             send_mail(subject, plain_message, from_email, [address], html_message=html_message)
 
-            # Uložení času odeslání do session jako ISO formátovaný řetězec pro kompatibilitu s JSON
             request.session['last_submission_time'] = timezone.now().isoformat()
 
-            messages.success(request, "Váš tiket byl úspěšně odeslán.")  # Zobrazení úspěšné zprávy
-            return redirect('index')  # Přesměrování zpět na stránku support
+            messages.success(request, "Váš tiket byl úspěšně odeslán.")
+            redirect('index')
         else:
-            messages.error(request, "Formulář obsahuje chyby. Zkuste to prosím znovu.")  # Zobrazení chybové zprávy
+            messages.error(request, "Formulář obsahuje chyby. Zkuste to prosím znovu.")
             return render(request, 'informations/contact.html', {'form': form, "captcha": {
             "key": new_captcha_key,
             "image": new_captcha_image,
@@ -1277,15 +1213,13 @@ class ContactView(View):
 
 class SupportView(View):
     def get(self, request):
-        form = SupportForm()  # Vytvoření prázdného formuláře pro GET request
+        form = SupportForm()
         return render(request, 'informations/support.html', {'form': form})
 
     def post(self, request):
-        form = SupportForm(request.POST)  # Načtení odeslaných dat z formuláře
-        # Ověření, zda uživatel neodeslal formulář v posledních 10 minutách
+        form = SupportForm(request.POST)
         last_submitted = request.session.get('last_submission_time')
         if last_submitted:
-            # Převeďte uložený čas na datetime objekt
             last_submitted_time = timezone.datetime.fromisoformat(last_submitted)
             time_diff = timezone.now() - last_submitted_time
             if time_diff < timedelta(minutes=10):
@@ -1294,7 +1228,6 @@ class SupportView(View):
                 return render(request, 'informations/support.html', {'form': form})
 
         if form.is_valid():
-            # Odeslání e-mailu adminovi
             subject = f"Nový tiket od {form.cleaned_data['name']}"
             name = form.cleaned_data['name']
             email = form.cleaned_data['email']
@@ -1306,35 +1239,29 @@ class SupportView(View):
 
             send_mail(subject, plain_message, from_email, [address], html_message=html_message)
 
-            # Uložení času odeslání do session jako ISO formátovaný řetězec pro kompatibilitu s JSON
             request.session['last_submission_time'] = timezone.now().isoformat()
 
-            messages.success(request, "Váš tiket byl úspěšně odeslán.")  # Zobrazení úspěšné zprávy
-            return redirect('support')  # Přesměrování zpět na stránku support
+            messages.success(request, "Váš tiket byl úspěšně odeslán.")
+            return redirect('support')
         else:
-            messages.error(request, "Formulář obsahuje chyby. Zkuste to prosím znovu.")  # Zobrazení chybové zprávy
+            messages.error(request, "Formulář obsahuje chyby. Zkuste to prosím znovu.")
             return render(request, 'informations/support.html', {'form': form})
 
 class CalendarView(View):
     template_name = 'calendar/calendar.html'
 
     def get(self, request):
-        # Získání aktuálního roku a měsíce
         year = int(request.GET.get('year', datetime.now().year))
         month = int(request.GET.get('month', datetime.now().month))
 
-        # Získání prvního a posledního dne měsíce
         first_day = datetime(year, month, 1)
         last_day = first_day + timedelta(days=monthrange(year, month)[1] - 1)
 
-        # Získání všech událostí pro aktuální měsíc
         events = Event.objects.filter(day__range=(first_day, last_day))
 
-        # Rozdělení kalendáře na týdny
-        cal = Calendar(firstweekday=0)  # 0 = Pondělí
+        cal = Calendar(firstweekday=0)
         weeks = cal.monthdatescalendar(year, month)
 
-        # Struktura kalendáře s událostmi
         calendar_weeks = []
         for week in weeks:
             week_days = []
@@ -1343,21 +1270,18 @@ class CalendarView(View):
                     day_events = events.filter(day=day)
                     week_days.append({'day': day, 'events': day_events})
                 else:
-                    week_days.append(None)  # Dny mimo aktuální měsíc
+                    week_days.append(None)
             calendar_weeks.append(week_days)
 
-        # Slovník měsíců (1 - Leden, 2 - Únor, ...)
         months = {
             1: 'Leden', 2: 'Únor', 3: 'Březen', 4: 'Duben',
             5: 'Květen', 6: 'Červen', 7: 'Červenec', 8: 'Srpen',
             9: 'Září', 10: 'Říjen', 11: 'Listopad', 12: 'Prosinec'
         }
 
-        # Generování dostupných let (např. 2022 - 2029)
         current_year = datetime.now().year
         available_years = list(range(current_year - 5, current_year + 5))
 
-        # Kontext pro šablonu
         context = {
             'calendar_weeks': calendar_weeks,
             'current_year': year,
@@ -1367,7 +1291,7 @@ class CalendarView(View):
             'next_month': (month + 1) if month < 12 else 1,
             'next_year': year if month < 12 else year + 1,
             'weekdays': ["Pondělí", "Úterý", "Středa", "Čtvrtek", "Pátek", "Sobota", "Neděle"],
-            'months': months,  # Přidáno do kontextu
-            'available_years': available_years,  # Přidáno do kontextu
+            'months': months,
+            'available_years': available_years,
         }
         return render(request, self.template_name, context)

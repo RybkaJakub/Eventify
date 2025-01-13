@@ -14,7 +14,6 @@
                 {% csrf_token %}
                 <h1 class="text-3xl font-bold text-center mb-8">Upravit událost: {{ event.name }}</h1>
 
-                <!-- Hlavní formulář pro Event -->
                 <div class="mb-8">
                     <div class="mb-4">
                         <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Název události</label>
@@ -47,7 +46,6 @@
                     <div class="mb-4">
                         <label for="image" class="block text-sm font-medium text-gray-700 mb-2">Obrázek události</label>
 
-                        <!-- Obrázek s efektem ztmavnutí při najetí -->
                         <div class="relative group cursor-pointer max-w-md mx-auto"
                              id="image-container"
                              ondrop="handleDrop(event)"
@@ -63,7 +61,6 @@
                                      onclick="triggerFileInput()">
                             {% endif %}
 
-                            <!-- Ikona pro nahrání souboru a text nápovědy -->
                             <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                                  onclick="triggerFileInput()">
                                 <i class="ml-5 fas fa-cloud-upload-alt text-4xl mb-2"></i>
@@ -73,7 +70,6 @@
                             </div>
                         </div>
 
-                        <!-- Skrytý input pro výběr souboru -->
                         <input type="file" id="image-upload" name="image"
                                class="hidden"
                                accept="image/*"
@@ -81,19 +77,16 @@
                     </div>
 
                     <script>
-                        // Funkce pro aktivaci inputu při kliknutí na obrázek nebo text
                         function triggerFileInput() {
                             document.getElementById('image-upload').click();
                         }
 
-                        // Funkce pro zpracování přetahování souboru
                         function handleFileSelect(event) {
                             const file = event.target.files[0];
 
                             if (file) {
                                 const reader = new FileReader();
 
-                                // Přečte soubor a nastaví ho jako obrázek
                                 reader.onload = function (e) {
                                     document.getElementById('current-image').src = e.target.result;
                                 };
@@ -102,17 +95,16 @@
                             }
                         }
 
-                        // Funkce pro drag-and-drop (volitelně)
                         function handleDragOver(event) {
-                            event.preventDefault();  // Umožní přetahování
+                            event.preventDefault();
                         }
 
                         function handleDragLeave(event) {
-                            event.preventDefault();  // Předchází výchozímu chování
+                            event.preventDefault();
                         }
 
                         function handleDrop(event) {
-                            event.preventDefault();  // Zabrání výchozímu chování
+                            event.preventDefault();
                             const file = event.dataTransfer.files[0];
                             if (file) {
                                 handleFileSelect({target: {files: [file]}});
@@ -128,7 +120,6 @@
                             <span class="text-red-500 font-semibold">*</span>
                         {% endif %}
 
-                        <!-- Custom dropdown -->
                         <div class="relative">
                             <button type="button" id="categoryDropdown"
                                     class="w-full p-3 border border-gray-300 rounded-lg text-gray-600 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -146,7 +137,6 @@
                             </div>
                         </div>
 
-                        <!-- Hidden input to store the selected category value -->
                         <input type="hidden" id="category" name="category" value="{{ form.instance.category }}">
 
                         {% if form.instance.category.help_text %}
@@ -159,7 +149,6 @@
                     </div>
                 </div>
 
-                <!-- Formulář pro adresu eventu -->
                 <div class="mb-8">
                     <h2 class="text-2xl font-semibold text-gray-800 mb-4">Adresa události</h2>
                     <div class="flex gap-4 mb-4">
@@ -208,14 +197,11 @@
 
     <script>
         $(document).ready(function () {
-            // Automatické nastavení výchozí hodnoty kategorie při načítání stránky
-            var defaultCategory = $('#category').val(); // Získání hodnoty skrytého pole pro kategorii
+            var defaultCategory = $('#category').val();
             if (defaultCategory) {
-                // Pokud je kategorie nastavena, aktualizujeme text tlačítka a vybereme hodnotu v dropdownu
                 $('#categoryDropdown').text($('#categoryOptions a[data-value="' + defaultCategory + '"]').text());
             }
 
-            // Dropdown toggle
             $('#categoryDropdown').click(function () {
                 $('#categoryOptions').toggleClass('hidden');
             });
@@ -229,8 +215,8 @@
             $('#categoryOptions a').click(function (e) {
                 e.preventDefault();
                 var selectedValue = $(this).data('value');
-                $('#categoryDropdown').text($(this).text());  // Update button text
-                $('#category').val(selectedValue);  // Update hidden input value
+                $('#categoryDropdown').text($(this).text());
+                $('#category').val(selectedValue);
             });
         });
     </script>
@@ -247,22 +233,18 @@
                         dataType: "json",
                         success: function (data) {
                             var filteredCountries = data.filter(function (country) {
-                                // Filtrace podle českého názvu, pokud je dostupný, nebo podle anglického názvu
                                 var nameInCzech = country.translations && country.translations.ces ? country.translations.ces.common : null;
                                 var nameInEnglish = country.name.common;
 
-                                // Pokud český název existuje, filtrujeme podle něj, jinak podle anglického názvu
                                 return (nameInCzech && nameInCzech.toLowerCase().startsWith(request.term.toLowerCase())) ||
                                     (nameInEnglish && nameInEnglish.toLowerCase().startsWith(request.term.toLowerCase()));
                             });
 
                             var countries = filteredCountries.map(function (item) {
-                                // Použití českého názvu pokud je k dispozici, jinak anglický
                                 var nameInCzech = item.translations && item.translations.ces ? item.translations.ces.common : item.name.common;
-                                return nameInCzech; // Vracíme název státu v češtině, pokud je k dispozici
+                                return nameInCzech;
                             });
 
-                            // Vrátíme seznam názvů států
                             response(countries);
                         },
                         error: function (xhr, status, error) {

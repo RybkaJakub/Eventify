@@ -33,26 +33,18 @@
                     {% for form in formset %}
                         <tr id="ticket_types-{{ forloop.counter0 }}"
                             class="hover:bg-gray-100 transition-colors border-b border-gray-200">
-                            <!-- Skryté pole ID -->
                             <td class="px-6 py-4 text-gray-700" hidden>
                                 {{ form.id|add_class:"w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300" }}
                             </td>
-                            <!-- Název -->
                             <td class="px-6 py-4 text-gray-700">
                                 {{ form.name|add_class:"w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300" }}
                             </td>
-
-                            <!-- Cena -->
                             <td class="px-6 py-4 text-gray-700">
                                 {{ form.price|add_class:"w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300" }}
                             </td>
-
-                            <!-- Počet -->
                             <td class="px-6 py-4 text-gray-700">
                                 {{ form.quantity|add_class:"w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300" }}
                             </td>
-
-                            <!-- Akce -->
                             <td class="p-4">
                                 <form action="{% url 'delete_ticket' form.instance.id %}" method="POST"
                                       style="display: inline;">
@@ -67,15 +59,12 @@
                 </table>
             </div>
 
-            <!-- Uložit změny -->
             <div class="flex gap-4 mt-10 w-full">
-                <!-- Uložit změny -->
                 <button type="submit"
                         class="flex-1 flex justify-center items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
                     Uložit změny
                 </button>
 
-                <!-- Formulář pro přidání dalších položek -->
                 <form action="{% url 'add_ticket' event.id %}" method="POST" class="flex-1">
                     {% csrf_token %}
                     <button type="submit"
@@ -87,7 +76,6 @@
                     </button>
                 </form>
 
-                <!-- Zrušit -->
                 <button type="button" onclick="location.href='{% url 'event_manager' %}'"
                         class="flex-1 flex justify-center items-center px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
                     Zrušit

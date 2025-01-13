@@ -1,23 +1,23 @@
 * {
-    max-width: 100vw; /* 100% šířky okna prohlížeče */
-    margin: 0 auto; /* zarovnání na střed */
+    max-width: 100vw;
+    margin: 0 auto;
 }
 
 .table-wrapper {
-    overflow-x: auto; /* horizontální posuvník pro případ, že tabulka překročí šířku obrazovky */
+    overflow-x: auto;
 }
 
 table {
-    width: 100%; /* tabulka bude mít šířku 100% */
+    width: 100%;
     border-collapse: collapse;
-    table-layout: fixed; /* Pevná šířka tabulky */
+    table-layout: fixed;
 }
 
 th, td {
     padding: 8px;
     text-align: center;
     border-bottom: 1px solid #ddd;
-    word-wrap: break-word; /* Zalomení slov v buňkách */
+    word-wrap: break-word;
 }
 
 tr:hover {
@@ -25,10 +25,10 @@ tr:hover {
 }
 
 .event-data {
-    width: 100%; /* Zabere celou šířku buňky */
-    white-space: nowrap; /* zabráníme zalamování textu na nový řádek */
-    overflow: hidden; /* skryjeme text, který překračuje šířku buňky */
-    text-overflow: ellipsis; /* přidáme třešničku na dortu - zkrácený text bude ukončen třešničkou */
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* Buttons */
@@ -52,12 +52,10 @@ tr:hover {
     border-color: #545b62;
 }
 
-/* Alerts */
 .alert {
     margin-bottom: 20px;
 }
 
-/* Task Detail Page */
 .card {
     margin-top: 30px;
 }
@@ -81,9 +79,9 @@ tr:hover {
 }
 
 .user-data {
-    width: 100%; /* Tabulka bude mít šířku 100% */
-    table-layout: fixed; /* Pevná šířka tabulky */
-    border-collapse: collapse; /* Sloučení okrajů buněk */
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
 }
 
 .user-data th,
@@ -91,9 +89,9 @@ tr:hover {
     padding: 8px;
     text-align: center;
     border-bottom: 1px solid #ddd;
-    white-space: nowrap; /* Zabráníme zalamování textu na nový řádek */
-    overflow: hidden; /* Skryjeme text, který překračuje šířku buňky */
-    text-overflow: ellipsis; /* Přidáme třešničku na dortu - zkrácený text bude ukončen třešničkou */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .user-data th:first-child,
@@ -130,13 +128,11 @@ tr:hover {
     background-color: #f5f5f5;
 }
 
-/* CSS pro animaci rozbalení menu */
 .group:hover .scale-y-0 {
     transform: scaleY(1);
     transition: transform 0.2s ease-in-out;
 }
 
-/* Zaoblení tabulky */
 .rounded-md {
-    border-radius: 12px; /* Nastavuje zaoblení */
+    border-radius: 12px;
 }

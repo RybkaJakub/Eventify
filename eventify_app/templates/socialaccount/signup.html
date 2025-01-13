@@ -1,22 +1,31 @@
 {% extends "base.html" %}
 
-{% load i18n %}
-
-{% block head_title %}TEST{% endblock %}
+{% block head_title %}Registrace{% endblock head_title %}
 
 {% block content %}
-    <h1>{% trans "Sign Up" %}</h1>
+<div class="min-h-screen flex flex-col items-center justify-center bg-gray-50 py-12">
+    <div class="w-full max-w-md bg-white shadow-lg rounded-lg p-6 space-y-6">
+        <h1 class="text-3xl font-semibold text-center text-gray-800">Registrace</h1>
 
-<p>{% blocktrans with provider_name=account.get_provider.name site_name=site.name %}You are about to use your {{provider_name}} account to login to
-{{site_name}}. As a final step, please complete the following form:{% endblocktrans %}</p>
+        <p class="text-gray-600 text-center">
+            Chystáte se použít svůj účet <span class="font-medium">{{ account.get_provider.name }}</span> pro přihlášení na <span class="font-medium">{{ site.name }}</span>.
+            Jako poslední krok prosím vyplňte následující formulář:
+        </p>
 
-<form class="signup" id="signup_form" method="post" action="{% url 'socialaccount_signup' %}">
-  {% csrf_token %}
-  {{ form.as_p }}
-  {% if redirect_field_value %}
-  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-  {% endif %}
-  <button type="submit" class="btn btn-primary">{% trans "Sign Up" %} &raquo;</button>
-</form>
+        <form class="space-y-4" id="signup_form" method="post" action="{% url 'socialaccount_signup' %}">
+            {% csrf_token %}
+            <div class="space-y-4">
+                {{ form.as_p }}
+            </div>
 
+            {% if redirect_field_value %}
+                <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">
+            {% endif %}
+
+            <button type="submit" class="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg shadow hover:bg-blue-700 transition">
+                Registrujte se &raquo;
+            </button>
+        </form>
+    </div>
+</div>
 {% endblock %}

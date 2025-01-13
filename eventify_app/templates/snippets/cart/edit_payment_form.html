@@ -12,7 +12,6 @@
 
     <h2 class="text-2xl font-semibold mb-4">Platební údaje</h2>
 
-    <!-- Jméno na kartě -->
     <div class="flex flex-col w-full h-20">
         <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Jméno na kartě</label>
         <input type="text" name="{{ payment_form.name_on_card.name }}"
@@ -22,7 +21,6 @@
                value="{{ payment_form.name_on_card.value|default_if_none:'' }}">
     </div>
 
-    <!-- Číslo karty a CVV -->
     <div class="grid grid-cols-7 gap-4 h-20">
         <div class="col-span-4 flex flex-col w-full">
             <label for="card_number" class="block text-sm font-medium text-gray-700 mb-2">Číslo karty</label>
@@ -55,7 +53,6 @@
         </div>
     </div>
 
-    <!-- Submit Button -->
     <button type="submit"
             class="w-full bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-md mt-6 h-14">
         Uložit změny
@@ -67,21 +64,18 @@
     const hiddenDateInput = document.getElementById('expiration_date');
 
     function updateHiddenDate() {
-        const month = monthInput.value.padStart(2, '0'); // Doplní na 2 číslice
-        const year = yearInput.value.padStart(2, '0');   // Doplní na 2 číslice
+        const month = monthInput.value.padStart(2, '0');
+        const year = yearInput.value.padStart(2, '0'); 
         if (month.length === 2 && year.length === 2) {
-            // Převod na datum ve formátu YYYY-MM-DD (např. 2024-05-01)
             const fullYear = `20${year}`;
             const formattedDate = `${fullYear}-${month}-01`;
             hiddenDateInput.value = formattedDate;
         }
     }
 
-    // Aktualizace skrytého pole při změně vstupu
     monthInput.addEventListener('input', updateHiddenDate);
     yearInput.addEventListener('input', updateHiddenDate);
 
-    // Povolení pouze čísel
     monthInput.addEventListener('keypress', (e) => {
         if (!/[0-9]/.test(e.key)) e.preventDefault();
     });
@@ -91,12 +85,12 @@
     });
     
     function initializeExpirationDate() {
-        const expirationDate = hiddenDateInput.value; // Např. "2025-12-01"
+        const expirationDate = hiddenDateInput.value;
 
         if (expirationDate) {
-            const [year, month] = expirationDate.split('-'); // Rozdělíme na rok a měsíc
-            monthInput.value = month.padStart(2, '0'); // Nastavíme měsíc
-            yearInput.value = year.slice(-2); // Nastavíme poslední dvě čísla roku
+            const [year, month] = expirationDate.split('-');
+            monthInput.value = month.padStart(2, '0');
+            yearInput.value = year.slice(-2);
         }
     }
     

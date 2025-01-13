@@ -5,7 +5,6 @@
 
 {% block content %}
     <div class="container mx-auto py-12 px-6">
-        <!-- Úvodní sekce -->
         <div class="text-center mb-12">
             <div class="text-center mb-10">
                 <h2 class="text-4xl font-extrabold text-gray-800 tracking-wide">
@@ -19,7 +18,6 @@
             </p>
         </div>
 
-        <!-- Kontaktní formulář -->
         <div class="bg-white shadow-lg rounded-xl p-10 mb-16">
             <h2 class="text-3xl font-semibold text-gray-800 mb-6">Napište nám</h2>
             <form method="POST" action="{% url 'contact' %}" class="space-y-8">
@@ -59,9 +57,7 @@
             </form>
         </div>
 
-        <!-- Sekce s informacemi a mapou vedle sebe -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <!-- Kontaktní informace -->
             <div class="bg-white shadow-lg rounded-lg p-8 w-full">
                 <h2 class="text-2xl font-bold text-gray-800 mb-4">Kontaktní údaje</h2>
                 <ul class="space-y-4 text-lg text-gray-600">
@@ -72,7 +68,6 @@
                 </ul>
             </div>
 
-            <!-- Mapa -->
             <div class="bg-white shadow-lg rounded-lg p-8 w-full">
                 <h2 class="text-2xl font-bold text-gray-800 mb-4">Kde nás najdete</h2>
                 <iframe

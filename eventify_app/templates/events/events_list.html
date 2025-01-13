@@ -6,11 +6,9 @@
 {% block content %}
     <div class="min-h-screen flex bg-gray-50">
         <main class="flex-1 p-8">
-            <!-- Filtrovací formulář -->
             <form method="get" class="w-full bg-white p-8 rounded-lg shadow-md mb-5">
                 <h1 class="text-3xl font-bold text-center mb-8">Seznam událostí</h1>
                 <div class="flex flex-wrap items-end gap-4">
-                    <!-- Název -->
                     <div class="flex-1">
                         <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Název</label>
                         <input type="text" name="name" id="name"
@@ -18,14 +16,12 @@
                                placeholder="Hledat podle názvu"
                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
                     </div>
-                    <!-- Datum -->
                     <div class="flex-1">
                         <label for="date" class="block text-sm font-medium text-gray-700 mb-1">Datum</label>
                         <input type="date" name="date" id="date"
                                value="{{ date_filter|default_if_none:'' }}"
                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
                     </div>
-                    <!-- Lokace -->
                     <div class="flex-1">
                         <label for="location" class="block text-sm font-medium text-gray-700 mb-1">Lokace</label>
                         <input type="text" name="location" id="location"
@@ -33,7 +29,6 @@
                                placeholder="Např. Ostrava"
                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
                     </div>
-                    <!-- Kategorie -->
                     <div class="flex-1 relative">
                         <label for="category" class="block text-sm font-medium text-gray-700 mb-1">Kategorie</label>
                         <input type="hidden" name="category" id="category" value="{{ category_filter }}">
@@ -53,14 +48,12 @@
                             {% endfor %}
                         </div>
                     </div>
-                    <!-- Filtrovat -->
                     <div class="flex-1">
                         <button type="submit"
                                 class="w-full p-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all">
                             Filtrovat
                         </button>
                     </div>
-                    <!-- Reset -->
                     <div class="w-10 h-10">
                         <a href="{% url 'events_list' %}"
                            class="flex items-center justify-center w-full h-full bg-gray-300 text-gray-700 rounded-full hover:bg-gray-400 transition-all">
@@ -70,36 +63,40 @@
                 </div>
             </form>
 
-            <!-- Výpis eventů: iterujeme přes "object_list" -->
             <div class="grid grid-cols-1 gap-6">
                 {% if object_list %}
                     {% for event in object_list %}
                         <div class="w-full flex items-stretch bg-white rounded-lg shadow-md overflow-hidden">
-    <div class="w-1/4 h-full">
-        {% if event.image %}
-            <img src="{{ event.image.url }}" class="w-full h-full object-cover object-center rounded-l-lg" alt="{{ event.name }}">
-        {% else %}
-            <img src="{% static 'img/static.jpg' %}" class="w-full h-full object-cover object-center rounded-l-lg" alt="{{ event.name }}">
-        {% endif %}
-    </div>
-    <div class="w-3/4 p-6 flex flex-col justify-between items-start text-left">
-        <div class="w-full">
-            <h5 class="font-bold text-lg mb-2">{{ event.name }}</h5>
-            <p class="text-gray-700 text-sm mb-4 line-clamp-3">{{ event.description }}</p>
-            {% for address in event.eventaddress_set.all %}
-                <p class="text-gray-600 text-sm">
-                    Adresa: {{ address.street }} {{ address.number }}, {{ address.city }} {{ address.postal_code }}, {{ address.country }}
-                </p>
-            {% endfor %}
-            <p class="text-gray-600 text-sm">Datum: {{ event.day }}</p>
-            <p class="text-gray-600 text-sm">Čas: {{ event.time }}</p>
-            <p class="text-gray-600 text-sm">Kategorie: {{ event.get_category_display }}</p>
-        </div>
-        <div class="mt-4">
-            <a href="{% url 'event_detail' event.id %}" class="inline-block bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600">Zobrazit</a>
-        </div>
-    </div>
-</div>
+                            <div class="w-1/4 h-full">
+                                {% if event.image %}
+                                    <img src="{{ event.image.url }}"
+                                         class="w-full h-full object-cover object-center rounded-l-lg"
+                                         alt="{{ event.name }}">
+                                {% else %}
+                                    <img src="{% static 'img/static.jpg' %}"
+                                         class="w-full h-full object-cover object-center rounded-l-lg"
+                                         alt="{{ event.name }}">
+                                {% endif %}
+                            </div>
+                            <div class="w-3/4 p-6 flex flex-col justify-between items-start text-left">
+                                <div class="w-full">
+                                    <h5 class="font-bold text-lg mb-2">{{ event.name }}</h5>
+                                    <p class="text-gray-700 text-sm mb-4 line-clamp-3">{{ event.description }}</p>
+                                    {% for address in event.eventaddress_set.all %}
+                                        <p class="text-gray-600 text-sm">
+                                            Adresa: {{ address.street }} {{ address.number }}, {{ address.city }} {{ address.postal_code }}, {{ address.country }}
+                                        </p>
+                                    {% endfor %}
+                                    <p class="text-gray-600 text-sm">Datum: {{ event.day }}</p>
+                                    <p class="text-gray-600 text-sm">Čas: {{ event.time }}</p>
+                                    <p class="text-gray-600 text-sm">Kategorie: {{ event.get_category_display }}</p>
+                                </div>
+                                <div class="mt-4">
+                                    <a href="{% url 'event_detail' event.id %}"
+                                       class="inline-block bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600">Zobrazit</a>
+                                </div>
+                            </div>
+                        </div>
 
                     {% endfor %}
                 {% else %}
@@ -107,14 +104,12 @@
                 {% endif %}
             </div>
 
-            <!-- PAGINACE: Využíváme page_obj.*, ne events.* -->
             {% if is_paginated %}
-                <!-- Místo <nav> použijeme <div> a role="navigation" (kvůli přístupnosti) -->
                 <div class="mt-10 flex justify-center items-center" role="navigation" aria-label="Pagination">
-                    <!-- "Předchozí" tlačítko -->
                     {% if page_obj.has_previous %}
                         <a class="mx-1 px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded hover:bg-gray-100 transition-all"
                            href="?page=
+                                   
                                    {{ page_obj.previous_page_number }}{% if name_filter %}&name={{ name_filter }}{% endif %}{% if date_filter %}&date={{ date_filter }}{% endif %}{% if location_filter %}&location={{ location_filter }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}">
                             Předchozí
                         </a>
@@ -124,17 +119,16 @@
             </span>
                     {% endif %}
 
-                    <!-- Číselná část -->
                     <div class="flex space-x-1 mx-2">
                         {% for num in paginator.page_range %}
                             {% if num == page_obj.number %}
-                                <!-- Aktuální stránka -->
                                 <span class="px-4 py-2 bg-blue-500 text-white rounded">
                         {{ num }}
                     </span>
                             {% else %}
                                 <a class="px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded hover:bg-gray-100 transition-all"
                                    href="?page=
+                                           
                                            {{ num }}{% if name_filter %}&name={{ name_filter }}{% endif %}{% if date_filter %}&date={{ date_filter }}{% endif %}{% if location_filter %}&location={{ location_filter }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}">
                                     {{ num }}
                                 </a>
@@ -142,10 +136,10 @@
                         {% endfor %}
                     </div>
 
-                    <!-- "Další" tlačítko -->
                     {% if page_obj.has_next %}
                         <a class="mx-1 px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded hover:bg-gray-100 transition-all"
                            href="?page=
+                                   
                                    {{ page_obj.next_page_number }}{% if name_filter %}&name={{ name_filter }}{% endif %}{% if date_filter %}&date={{ date_filter }}{% endif %}{% if location_filter %}&location={{ location_filter }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}">
                             Další
                         </a>

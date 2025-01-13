@@ -1,48 +1,46 @@
 {% load static %}
 
 <style>
-    /* Custom CSS to override body and header styles */
     body {
-        margin: 0; /* Remove default margin */
-        padding: 0; /* Remove default padding */
+        margin: 0;
+        padding: 0; 
     }
 
     .welcome-section {
-        min-height: 400px; /* Set a minimum height for the header */
-        padding-left: 20px; /* Add left padding */
-        padding-right: 20px; /* Add right padding */
+        min-height: 400px; 
+        padding-left: 20px; 
+        padding-right: 20px;
     }
 
     .button {
-        border-radius: 0.375rem; /* Round the corners */
-        padding: 0.75rem 1.5rem; /* Add padding */
-        color: white; /* Text color */
-        font-weight: bold; /* Bold text */
-        display: block; /* Make buttons block-level */
-        margin: 10px 0; /* Space between buttons */
-        text-align: center; /* Center the text */
-        transition: opacity 0.3s; /* Transition for fading effect */
+        border-radius: 0.375rem;
+        padding: 0.75rem 1.5rem;
+        color: white; 
+        font-weight: bold;
+        display: block;
+        margin: 10px 0;
+        text-align: center;
+        transition: opacity 0.3s;
     }
 
     .explore-button {
-        background-color: #5b21b6; /* Purple fill */
+        background-color: #5b21b6;
     }
 
     .calendar-button {
-        border: 2px solid #4a4a4a; /* Dark gray border */
-        background-color: #333; /* Dark gray fill */
+        border: 2px solid #4a4a4a;
+        background-color: #333;
     }
 
     @media (max-width: 768px) {
         .buttons {
-            display: none; /* Hide buttons on small screens */
+            display: none;
         }
 
-        /* Show buttons if there is enough space */
         @media (min-width: 768px) {
             .buttons {
-                display: flex; /* Show buttons in flex layout */
-                flex-direction: column; /* Stack buttons vertically */
+                display: flex;
+                flex-direction: column;
             }
         }
     }

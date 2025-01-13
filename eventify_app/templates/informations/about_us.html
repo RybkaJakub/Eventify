@@ -6,7 +6,6 @@
 {% block content %}
 
     <div class="container mx-auto py-12 px-6" x-data>
-        <!-- Úvodní sekce -->
         <div class="text-center mb-12">
             <div class="text-center mb-10">
                 <h2 class="text-4xl font-extrabold text-gray-800 tracking-wide">
@@ -23,7 +22,6 @@
             </p>
         </div>
 
-        <!-- Sekce statistiky (dynamický counter) -->
         <div x-data="{
             stats: {
                 events: 0,
@@ -60,7 +58,6 @@
              class="bg-purple-50 rounded-xl p-8 shadow mb-12 hover:shadow-lg transition-shadow duration-300">
             <div class="container mx-auto">
                 <div class="grid grid-cols-1 md:grid-cols-4 divide-x divide-gray-300 text-center">
-                    <!-- Eventy -->
                     <div class="p-6">
                         <h2 class="text-4xl font-extrabold text-purple-600 mb-2" x-text="stats.events"></h2>
                         <p class="text-lg text-gray-700 font-medium">
@@ -73,7 +70,6 @@
                             {% endif %}
                         </p>
                     </div>
-                    <!-- Organizace -->
                     <div class="p-6">
                         <h2 class="text-4xl font-extrabold text-purple-600 mb-2" x-text="stats.orgs"></h2>
                         <p class="text-lg text-gray-700 font-medium">
@@ -84,7 +80,6 @@
                             {% endif %}
                         </p>
                     </div>
-                    <!-- Zákazníci -->
                     <div class="p-6">
                         <h2 class="text-4xl font-extrabold text-purple-600 mb-2" x-text="stats.customers"></h2>
                         <p class="text-lg text-gray-700 font-medium">
@@ -97,7 +92,6 @@
                             {% endif %}
                         </p>
                     </div>
-                    <!-- Objednávky -->
                     <div class="p-6">
                         <h2 class="text-4xl font-extrabold text-purple-600 mb-2" x-text="stats.orders"></h2>
                         <p class="text-lg text-gray-700 font-medium">
@@ -113,9 +107,7 @@
                 </div>
             </div>
         </div>
-
-
-        <!-- Náš příběh (zmodernizovaný a rozšířený) -->
+    
         <div class="bg-purple-50 rounded-xl p-8 shadow mb-12 hover:shadow-lg transition-shadow duration-300">
             <h2 class="text-3xl font-semibold mb-4 text-gray-800">Náš příběh</h2>
             <p class="text-lg text-gray-700 leading-relaxed mb-4">
@@ -136,7 +128,6 @@
             </p>
         </div>
 
-        <!-- Koho obsluhujeme + jedinečná hodnota -->
         <div class="bg-white shadow rounded-xl p-8 mb-12 hover:shadow-lg transition-shadow duration-300">
             <h2 class="text-3xl font-semibold text-gray-800 mb-6">Koho obsluhujeme</h2>
             <p class="text-lg text-gray-600 leading-relaxed mb-4">
@@ -165,8 +156,7 @@
                 na který budou hosté rádi vzpomínat.
             </p>
         </div>
-
-        <!-- Jak to děláme -->
+    
         <div class="bg-gray-100 text-gray-800 rounded-xl p-8 shadow mb-12 hover:shadow-lg transition-shadow duration-300">
             <h2 class="text-3xl font-semibold mb-4">Jak to děláme</h2>
             <p class="text-lg text-gray-700 leading-relaxed mb-4">
@@ -186,7 +176,6 @@
             </p>
         </div>
 
-        <!-- Tým -->
         <div class="bg-white shadow rounded-xl p-8 mb-12">
             <h2 class="text-3xl font-semibold text-gray-800 text-center mb-6">Náš tým</h2>
             <p class="text-md text-gray-600 text-center max-w-3xl mx-auto mb-8 leading-relaxed">
@@ -212,7 +201,6 @@
             </div>
         </div>
 
-        <!-- CTA blok (kontakt) -->
         <div class="bg-purple-50 text-gray-800 rounded-xl p-8 shadow mb-12 hover:shadow-lg transition-shadow duration-300 text-center">
             <h2 class="text-3xl font-semibold mb-4">Připraveni na další krok?</h2>
             <p class="text-lg text-gray-700 leading-relaxed max-w-3xl mx-auto mb-6">

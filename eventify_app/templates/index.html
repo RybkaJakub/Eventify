@@ -7,7 +7,6 @@
         {% for group in user.groups.all %}
             {% if group.name == "editor" or group.name == "admin" %}
                 <div class="container mx-auto mt-10 bg-white py-10 px-6 rounded-lg shadow-lg">
-                    <!-- Nadpis sekce -->
                     <div class="text-center mb-10">
                         <h2 class="text-4xl font-extrabold text-gray-800 tracking-wide relative inline-block">
                             <span class="relative z-10">Události organizace {{ user.organization.name }}</span>
@@ -15,12 +14,10 @@
                         <div class="mt-3 h-1 w-20 mx-auto bg-purple-600 rounded"></div>
                     </div>
 
-                    <!-- Karty eventů -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                         {% if organization_events %}
                             {% for organization_event in organization_events %}
                                 <div class="w-full bg-white rounded-xl shadow-lg hover:shadow-2xl overflow-hidden flex flex-col transition duration-300 transform hover:scale-105">
-                                    <!-- Obrázek eventu -->
                                     <div class="relative w-full h-56">
                                         {% if organization_event.image %}
                                             <img src="{{ organization_event.image.url }}"
@@ -47,13 +44,11 @@
                                         </div>
                                     </div>
 
-                                    <!-- Obsah karty -->
                                     <div class="w-full p-6 flex-1">
                                         <h3 class="text-lg font-semibold text-gray-800 mb-2">{{ organization_event.name }}</h3>
                                         <p class="text-sm text-gray-600 mb-4">{{ organization_event.description }}</p>
                                     </div>
 
-                                    <!-- Adresa, den a čas -->
                                     <div class="w-full p-6 text-sm text-gray-500 mt-auto">
                                         {% if organization_event.eventaddress_set.exists %}
                                             <p class="flex items-center">
@@ -76,7 +71,6 @@
                                         </p>
                                     </div>
 
-                                    <!-- Tlačítko detailu -->
                                     <div class="p-4">
                                         <a href="{% url 'event_detail' organization_event.id %}"
                                            class="block text-center text-white font-medium py-2 px-4 rounded transition duration-300"
@@ -101,7 +95,6 @@
                 </div>
             {% else %}
                 <div class="container mx-auto mt-10 bg-white py-10 px-6 rounded-lg shadow-lg">
-                    <!-- Nadpis sekce -->
                     <div class="text-center mb-10">
                         <h2 class="text-4xl font-extrabold text-gray-800 tracking-wide relative inline-block">
                             <span class="relative z-10">Moje údálosti</span>
@@ -109,12 +102,10 @@
                         <div class="mt-3 h-1 w-20 mx-auto bg-purple-600 rounded"></div>
                     </div>
 
-                    <!-- Karty eventů -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                         {% if registered_events %}
                             {% for registered_event in registered_events %}
                                 <div class="w-full bg-white rounded-xl shadow-lg hover:shadow-2xl overflow-hidden flex flex-col transition duration-300 transform hover:scale-105">
-                                    <!-- Obrázek eventu -->
                                     <div class="relative w-full h-56">
                                         {% if registered_event.event.image %}
                                             <img src="{{ registered_event.event.image.url }}"
@@ -141,13 +132,11 @@
                                         </div>
                                     </div>
 
-                                    <!-- Obsah karty -->
                                     <div class="p-6 flex-1 w-full">
                                         <h3 class="text-lg font-semibold text-gray-800 mb-2">{{ registered_event.event.name }}</h3>
                                         <p class="text-sm text-gray-600 mb-4">{{ registered_event.event.description }}</p>
                                     </div>
 
-                                    <!-- Adresa, den a čas -->
                                     <div class="p-6 text-sm text-gray-500 mt-auto w-full">
                                         {% if registered_event.event.eventaddress_set.exists %}
                                             <p class="flex items-center">
@@ -170,7 +159,6 @@
                                         </p>
                                     </div>
 
-                                    <!-- Tlačítko detailu -->
                                     <div class="p-4">
                                         <a href="{% url 'event_detail' registered_event.event.id %}"
                                            class="block text-center text-white font-medium py-2 px-4 rounded transition duration-300"
@@ -197,7 +185,6 @@
         {% endfor %}
         {% if not user.groups.all %}
             <div class="container mx-auto mt-10 bg-white py-10 px-6 rounded-lg shadow-lg">
-                <!-- Nadpis sekce -->
                 <div class="text-center mb-10">
                     <h2 class="text-4xl font-extrabold text-gray-800 tracking-wide relative inline-block">
                         <span class="relative z-10">Moje údálosti</span>
@@ -205,12 +192,10 @@
                     <div class="mt-3 h-1 w-20 mx-auto bg-purple-600 rounded"></div>
                 </div>
 
-                <!-- Karty eventů -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                     {% if registered_events %}
                         {% for registered_event in registered_events %}
                             <div class="w-full bg-white rounded-xl shadow-lg hover:shadow-2xl overflow-hidden flex flex-col transition duration-300 transform hover:scale-105">
-                                <!-- Obrázek eventu -->
                                 <div class="relative w-full h-56">
                                     {% if registered_event.event.image %}
                                         <img src="{{ registered_event.event.image.url }}"
@@ -237,13 +222,11 @@
                                     </div>
                                 </div>
 
-                                <!-- Obsah karty -->
                                 <div class="p-6 flex-1 w-full">
                                     <h3 class="text-lg font-semibold text-gray-800 mb-2">{{ registered_event.event.name }}</h3>
                                     <p class="text-sm text-gray-600 mb-4">{{ registered_event.event.description }}</p>
                                 </div>
 
-                                <!-- Adresa, den a čas -->
                                 <div class="p-6 text-sm text-gray-500 mt-auto w-full">
                                     {% if registered_event.event.eventaddress_set.exists %}
                                         <p class="flex items-center">
@@ -266,7 +249,6 @@
                                     </p>
                                 </div>
 
-                                <!-- Tlačítko detailu -->
                                 <div class="p-4">
                                     <a href="{% url 'event_detail' registered_event.event.id %}"
                                        class="block text-center text-white font-medium py-2 px-4 rounded transition duration-300"
@@ -293,7 +275,6 @@
     {% endif %}
 
     <div class="container mx-auto mt-10 bg-white py-10 px-6 rounded-lg shadow-lg">
-        <!-- Nadpis sekce -->
         <div class="text-center mb-10">
             <h2 class="text-4xl font-extrabold text-gray-800 tracking-wide relative inline-block">
                 <span class="relative z-10">Nadcházející události</span>
@@ -301,13 +282,11 @@
             <div class="mt-3 h-1 w-20 mx-auto bg-purple-600 rounded"></div>
         </div>
 
-        <!-- Karty eventů -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {% if upcoming_events %}
                 {% with upcoming_events|slice:":3" as limited_events %}
                     {% for event in limited_events %}
                         <div class="w-full bg-white rounded-xl shadow-lg hover:shadow-2xl overflow-hidden flex flex-col transition duration-300 transform hover:scale-105">
-                            <!-- Obrázek eventu -->
                             <div class="relative w-full h-56">
                                 {% if event.image %}
                                     <img src="{{ event.image.url }}" class="w-full h-full object-cover"
@@ -333,13 +312,11 @@
                                 </div>
                             </div>
 
-                            <!-- Obsah karty -->
                             <div class="w-full p-6 flex-1">
                                 <h3 class="text-lg font-semibold text-gray-800 mb-2">{{ event.name }}</h3>
                                 <p class="text-sm text-gray-600 mb-4">{{ event.description }}</p>
                             </div>
 
-                            <!-- Adresa, den a čas -->
                             <div class="w-full p-6 text-sm text-gray-500 mt-auto">
                                 {% if event.eventaddress_set.exists %}
                                     <p class="flex items-center">
@@ -362,7 +339,6 @@
                                 </p>
                             </div>
 
-                            <!-- Tlačítko detailu -->
                             <div class="p-4">
                                 <a href="{% url 'event_detail' event.id %}"
                                    class="block text-center text-white font-medium py-2 px-4 rounded transition duration-300"
@@ -464,7 +440,6 @@
                             popupAnchor: [0, -40]
                         });
 
-                        // Přidání markeru na mapu
                         if (event.latitude && event.longitude) {
                             L.marker([event.latitude, event.longitude], {icon: customIcon})
                                 .addTo(map)
@@ -512,7 +487,6 @@
         }
     </style>
 
-    <!-- Obalová div pro toasty vpravo nahoře -->
     {% if messages %}
         <div
                 x-data="{ 
@@ -527,7 +501,6 @@
   }"
                 class="fixed top-5 right-5 flex flex-col space-y-4 z-50"
         >
-            <!-- Smyčka pro každý toast -->
             <template x-for="(toast, index) in toasts" :key="index">
                 <div
                         x-data="{
@@ -563,11 +536,8 @@
 
                         class="w-72 bg-gray-900 p-4 text-gray-400 shadow-lg rounded relative flex flex-col justify-center"
                 >
-                    <!-- Horní část: ikona a text -->
                     <div class="flex items-center">
-                        <!-- Ikona (větší a tlustší) -->
                         <div class="mr-3 flex items-center justify-center bg-gray-800 rounded-lg">
-                            <!-- Success ikona -->
                             <svg x-show="toast.tag.includes('success')"
                                  xmlns="http://www.w3.org/2000/svg"
                                  class="w-8 h-8 text-green-600"
@@ -575,7 +545,6 @@
                                  stroke="currentColor" stroke-width="3">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
                             </svg>
-                            <!-- Error ikona -->
                             <svg x-show="toast.tag.includes('error')"
                                  xmlns="http://www.w3.org/2000/svg"
                                  class="w-8 h-8 text-red-600"
@@ -584,13 +553,9 @@
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                       d="M18.364 5.636L5.636 18.364m12.728 0L5.636 5.636"/>
                             </svg>
-                            <!-- Můžeš doplnit variantu pro info/warning apod. -->
                         </div>
-
-                        <!-- Text zprávy -->
                         <div class="flex-1" x-text="toast.text"></div>
 
-                        <!-- Tlačítko zavřít -->
                         <button @click="hide()" class="text-gray-500 hover:text-gray-700 ml-3">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
                                  viewBox="0 0 24 24">
@@ -600,7 +565,6 @@
                         </button>
                     </div>
 
-                    <!-- Fialový progress bar dole -->
                     <div class="bg-gray-800 h-2 w-full rounded mt-3 overflow-hidden">
                         <div class="h-2 bg-purple-900 transition-all duration-50"
                              :style="`width: ${progress}%;`">

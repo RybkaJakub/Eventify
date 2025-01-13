@@ -87,7 +87,7 @@
 
                         const formattedLongitude = parseFloat(longitude).toFixed(10);
                         const formattedLatitude = parseFloat(latitude).toFixed(10);
-                        
+
                         var map = L.map('map').setView([formattedLatitude, formattedLongitude], 13);
 
                         L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
@@ -158,12 +158,10 @@
         {% if isAuth and not isAdmin and not userOrganization %}
             <div class="grid grid-cols-1 bg-white shadow-xl rounded-lg p-8 mt-5">
 
-                <!-- Nadpis uprostřed řádku -->
                 <h1 class="text-3xl font-semibold mb-6 text-gray-900 text-center">
                     Nákup vstupenek na událost: {{ event.name }}
                 </h1>
 
-                <!-- Error zprávy na celém řádku -->
                 {% if messages %}
                     <div class="w-full mb-4 space-y-4">
                         {% for message in messages %}
@@ -180,16 +178,13 @@
                     </div>
                 {% endif %}
 
-                <!-- Formulář na výběr vstupenek -->
                 <form method="post" action="{% url 'purchase_ticket' pk=event.id %}" class="mt-4">
                     {% csrf_token %}
                     <input type="hidden" name="event_id" value="{{ event.id }}">
 
-                    <!-- Pole na výběr typu vstupenky a počet na jednom řádku -->
                     <div class="buytickets mb-4">
                         <div class="flex items-center gap-6">
 
-                            <!-- Výběr typu vstupenky -->
                             <label for="ticket_type" class="flex items-center w-15/20">
                                 <span class="mr-5 font-medium">Typ vstupenky:</span>
                                 <select name="ticket_type" id="ticket_type" required
@@ -203,7 +198,6 @@
                                 </select>
                             </label>
 
-                            <!-- Výběr počtu vstupenek -->
                             <label for="quantity" class="flex items-center w-5/20">
                                 <span class="mr-2 font-medium">Počet:</span>
                                 <input type="number" name="quantity" id="quantity" min="1" max="20" value="1" required
@@ -212,7 +206,6 @@
                         </div>
                     </div>
 
-                    <!-- Tlačítko koupit -->
                     <div class="flex justify-center mt-4">
                         <button type="submit"
                                 class="bg-gray-500 text-white py-3 px-6 rounded w-full sm:w-1/2 hover:bg-gray-600 transition">
@@ -225,7 +218,6 @@
         {% if isAuth and isAdmin or userOrganization %}
             <div class="grid grid-cols-1 bg-white shadow-2xl rounded-xl p-10 mt-8">
 
-                <!-- Nadpis uprostřed řádku -->
                 <h1 class="text-4xl font-bold mb-8 text-gray-900 text-center">
                     Nakoupené vstupenky na událost: {{ event.name }}
                 </h1>
