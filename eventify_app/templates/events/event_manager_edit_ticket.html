@@ -7,7 +7,7 @@
 
         <form method="post" enctype="multipart/form-data" class="bg-white shadow-md rounded-lg p-8">
             {% include 'snippets/message.html' %}
-            <h1 class="text-3xl font-bold text-center mb-8">Upravit vstupenky eventu: {{ event.name }}</h1>
+            <h1 class="text-3xl font-bold text-center mb-8">Upravit vstupenky události: {{ event.name }}</h1>
             {% csrf_token %}
             {{ formset.management_form }}
 

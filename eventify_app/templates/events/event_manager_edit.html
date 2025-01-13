@@ -2,7 +2,7 @@
 {% load widget_tweaks %}
 {% load static %}
 
-{% block title %}Upravení eventu {{ event.name }}{% endblock %}
+{% block title %}Upravení události {{ event.name }}{% endblock %}
 
 {% block content %}
     <div class="container mx-auto my-8">
@@ -12,7 +12,7 @@
                   action="{% url 'edit_event' event.id %}" id="event_form">
                 {% include 'snippets/message.html' %}
                 {% csrf_token %}
-                <h1 class="text-3xl font-bold text-center mb-8">Upravit event: {{ event.name }}</h1>
+                <h1 class="text-3xl font-bold text-center mb-8">Upravit událost: {{ event.name }}</h1>
 
                 <!-- Hlavní formulář pro Event -->
                 <div class="mb-8">
@@ -32,13 +32,13 @@
                     <div class="flex gap-4 mb-4">
                         <div class="w-1/2">
                             <label for="day" class="block text-sm font-medium text-gray-700 mb-2">Den konání
-                                eventu</label>
+                                události</label>
                             <input type="date" name="day" value="{{ form.instance.day|date:'Y-m-d' }}"
                                    class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300">
                         </div>
                         <div class="w-1/2">
                             <label for="time" class="block text-sm font-medium text-gray-700 mb-2">Čas konání
-                                eventu</label>
+                                události</label>
                             <input type="time" name="time" value="{{ form.instance.time }}"
                                    class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300">
                         </div>
@@ -123,7 +123,7 @@
 
                     <div class="mb-4">
                         <label for="category" class="block text-sm font-medium text-gray-700 mb-2">Kategorie
-                            eventu</label>
+                            události</label>
                         {% if form.instance.category.field.required %}
                             <span class="text-red-500 font-semibold">*</span>
                         {% endif %}
@@ -161,7 +161,7 @@
 
                 <!-- Formulář pro adresu eventu -->
                 <div class="mb-8">
-                    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Adresa eventu</h2>
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Adresa události</h2>
                     <div class="flex gap-4 mb-4">
                         <input type="text" name="street" placeholder="Ulice" value="{{ event_address.street }}"
                                class="w-2/3 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300">
@@ -197,7 +197,7 @@
                           d="M18 10c0 4.418-3.582 8-8 8s-8-3.582-8-8 3.582-8 8-8 8 3.582 8 8zm-8 3a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-1-7a1 1 0 0 1 2 0v4a1 1 0 0 1-2 0V6z"
                           clip-rule="evenodd"/>
                 </svg>
-                <span class="text-sm font-medium">Nemáte oprávnění upravovat tento event</span>
+                <span class="text-sm font-medium">Nemáte oprávnění upravovat tuto událost</span>
             </div>
         {% endif %}
     </div>

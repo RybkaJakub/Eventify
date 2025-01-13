@@ -19,20 +19,20 @@ class EventForm(forms.ModelForm):
         model = Event
         fields = ['name', 'description', 'day', 'time','image', 'category']
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Zadej název eventu'}),
-            'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Zadej popisek eventu'}),
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Zadej název události'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Zadej popisek události'}),
             'day': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'time': forms.TimeInput(attrs={'type': 'time', 'class': 'form-control'}),
             'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
             'category': forms.Select(attrs={'class': 'form-control'}),
         }
         labels = {
-            'name': 'Název Eventu',
-            'description': 'Popisek Eventu',
-            'day': 'Datum konání Eventu',
-            'time': 'Čas konání Eventu',
-            'image': 'Foto Eventu',
-            'category': 'Kategorie Eventu',
+            'name': 'Název události',
+            'description': 'Popisek události',
+            'day': 'Datum konání události',
+            'time': 'Čas konání události',
+            'image': 'Foto události',
+            'category': 'Kategorie události',
         }
 
     def __init__(self, *args, **kwargs):
@@ -91,14 +91,14 @@ class EventEditForm(forms.ModelForm):
         model = Event
         fields = ['name', 'description', 'image']
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Zadej název eventu'}),
-            'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Zadej popisek eventu'}),
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Zadej název události'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Zadej popisek události'}),
             'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
         }
         labels = {
-            'name': 'Název Eventu',
-            'description': 'Popisek Eventu',
-            'image': 'Foto Eventu',
+            'name': 'Název události',
+            'description': 'Popisek události',
+            'image': 'Foto události',
         }
 
     def __init__(self, *args, **kwargs):
@@ -111,7 +111,7 @@ class EventEditForm(forms.ModelForm):
         self.helper.field_class = 'col-md-9'
         self.helper.layout = Layout(
             Fieldset(
-                'Informace o eventu',
+                'Informace o události',
                 'name',
                 'description',
                 'image',

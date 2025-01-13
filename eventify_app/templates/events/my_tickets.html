@@ -103,7 +103,7 @@
                                                 {{ ticket.event.name }}
                                             </h3>
                                             <p class="text-sm text-gray-600">
-                                                Místo: {{ ticket.event.address }}
+                                                Místo: {{ ticket.event.eventaddress_set.first }}
                                             </p>
                                             <p class="text-sm text-gray-600">
                                                 Datum: {{ ticket.event.day|date:"d.m.Y" }}

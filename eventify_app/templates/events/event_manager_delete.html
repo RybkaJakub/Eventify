@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 
-{% block title %}Smazání eventu {{ event.name }}{% endblock %}
+{% block title %}Smazání událost {{ event.name }}{% endblock %}
 
 {% block content %}
     <div class="container mx-auto my-8">
         <form method="post" class="bg-white shadow-md rounded-lg p-8">
-            <h1 class="text-3xl font-bold text-center mb-8">Smazat event: {{ event.name }}</h1>
-        <p class="mb-4">Opravdu chcete smazat event "<strong>{{ event.name }}</strong>"?</p>
+            <h1 class="text-3xl font-bold text-center mb-8">Smazat událost: {{ event.name }}</h1>
+        <p class="mb-4">Opravdu chcete smazat událost "<strong>{{ event.name }}</strong>"?</p>
             {% csrf_token %}
             <div class="flex gap-4 mt-6">
                 <button type="submit" class="w-2/4 bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700">Ano</button>

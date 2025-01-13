@@ -2,7 +2,7 @@
 {% load widget_tweaks %}
 {% load static %}
 
-{% block title %}Vytvoření eventu{% endblock %}
+{% block title %}Vytvoření události{% endblock %}
 
 {% block content %}
     <div class="container mx-auto my-8">
@@ -20,7 +20,7 @@
                                 </svg>
                                 <span class="text-sm font-medium">
                                     {% if field == 'category' %}
-                                        Kategorie eventu: {{ error }}
+                                        Kategorie události: {{ error }}
                                     {% else %}
                                         {{ field.label }}: {{ error }}
                                     {% endif %}
@@ -31,7 +31,7 @@
                 </div>
             {% endif %}
             {% csrf_token %}
-            <h1 class="text-3xl font-bold text-center mb-8">Vytvořit nový event</h1>
+            <h1 class="text-3xl font-bold text-center mb-8">Vytvořit novou událost</h1>
 
             <!-- Hlavní formulář pro Event -->
             <div class="mb-8">
@@ -52,12 +52,12 @@
                 <div class="flex gap-4 mb-4">
                     <div class="w-1/2">
                         <label for="day" class="block text-sm font-medium text-gray-700 mb-2">Den konání
-                            eventu</label>
+                            události</label>
                         <input type="date" name="day" value="{{ form.instance.day|date:'Y-m-d' }}"
                                class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300">
                     </div>
                     <div class="w-1/2">
-                        <label for="time" class="block text-sm font-medium text-gray-700 mb-2">Čas konání eventu</label>
+                        <label for="time" class="block text-sm font-medium text-gray-700 mb-2">Čas konání události</label>
                         <input type="time" id="time" name="time" value="{{ form.instance.time }}"
                                class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300">
                     </div>
@@ -146,7 +146,7 @@
 
                 <div class="mb-4">
                     <label for="category" class="block text-sm font-medium text-gray-700 mb-2">Kategorie
-                        eventu</label>
+                        události</label>
                     {% if form.instance.category.field.required %}
                         <span class="text-red-500 font-semibold">*</span>
                     {% endif %}
@@ -183,7 +183,7 @@
 
                 <!-- Formulář pro adresu eventu -->
                 <div class="mb-8">
-                    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Adresa eventu</h2>
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Adresa události</h2>
                     <div class="flex gap-4 mb-4">
                         <input type="text" name="street" placeholder="{{ event_address_form.street.help_text }}"
                                class="w-2/3 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-300">
