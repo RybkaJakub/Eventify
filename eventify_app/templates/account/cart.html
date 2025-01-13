@@ -7,7 +7,7 @@
     <div class="container mx-auto px-4 py-8">
         <div class="bg-white shadow-xl rounded-lg p-8 mt-5">
             <h1 class="text-3xl font-bold text-center mb-10">Tvůj košík</h1>
-
+            
             <div id="progress" class="flex justify-center items-center">
                 <ol class="flex w-full max-w-4xl justify-between items-center space-x-4">
                     <li class="flex-1">
@@ -55,6 +55,7 @@
         <div class="bg-white shadow-xl rounded-lg p-8 mt-5">
             <form method="POST">
                 <div class="relative overflow-hidden shadow-2xl rounded-2xl bg-white mt-10">
+                    {% include 'snippets/message.html' %}
                     {% csrf_token %}
                     <table class="w-full text-sm text-left text-gray-800">
                         <thead class="bg-gray-200 text-gray-700 text-sm uppercase tracking-wide">
