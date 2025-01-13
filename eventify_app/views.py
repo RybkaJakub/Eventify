@@ -787,7 +787,7 @@ class CartPaymentView(LoginRequiredMixin, TemplateView):
         context['new_message'] = True
         return self.render_to_response(context)
 
-from random import random
+import random
 
 class CartConfirmationView(LoginRequiredMixin, TemplateView):
     template_name = "account/cart_confirmation.html"
