@@ -39,12 +39,14 @@
                 <ul class="list-disc list-inside text-gray-800">
                     {% for account in social_accounts %}
                         <li>
+                            <!-- Vylepšení zobrazení názvu poskytovatele -->
+                            {{ account.provider|title }}: 
                             {% if account.provider == 'github' %}
-                                {{ account.provider }}: {{ account.extra_data.login }}
+                                {{ account.extra_data.login }}
                             {% elif account.provider == 'google' %}
-                                {{ account.provider }}: {{ account.extra_data.name }}
+                                {{ account.extra_data.name }}
                             {% elif account.provider == 'discord' %}
-                                {{ account.provider }}: {{ account.extra_data.global_name }}
+                                {{ account.extra_data.global_name }}
                             {% endif %}
                         </li>
                     {% endfor %}

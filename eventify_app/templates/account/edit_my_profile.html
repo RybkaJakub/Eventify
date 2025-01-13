@@ -10,7 +10,7 @@
     {% if messages %}
     <div class="mb-4">
         {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} mb-2 p-3 rounded 
+            <div class="alert alert-{{ message.tags }} mb-2 p-3 rounded
                 {% if message.tags == 'success' %}bg-green-100 text-green-700{% else %}bg-red-100 text-red-700{% endif %}">
                 {{ message }}
             </div>

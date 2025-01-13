@@ -1,50 +1,49 @@
 import os
-from calendar import monthrange
-from datetime import timedelta, datetime
-from lib2to3.fixes.fix_input import context
+import json
+import logging
+import qrcode
+from io import BytesIO
 from random import random
+from datetime import datetime, timedelta
+from calendar import monthrange, Calendar
 
-from allauth.account.views import SignupView
 from captcha.helpers import captcha_image_url
 from captcha.models import CaptchaStore
 from django.conf import settings
-from django.contrib.auth import logout
-import json
-
-from django.core.files.base import ContentFile
-from django.db.models import Q
-from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
-from django.shortcuts import redirect
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMixin
 from django.contrib import messages
-from django.urls import reverse
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMixin, LoginRequiredMixin
+from django.core.files.base import ContentFile
+from django.core.mail import send_mail, EmailMessage
+from django.db.models import Q
+from django.forms import modelformset_factory
+from django.http import HttpResponse
+from django.shortcuts import redirect, render
+from django.template.loader import render_to_string
+from django.urls import resolve, reverse_lazy
+from django.utils import timezone
 from django.utils.html import strip_tags
 from django.views import View
+from django.views.generic import (
+    DetailView, UpdateView, DeleteView, CreateView, ListView, TemplateView
+)
 from weasyprint import HTML
-
-from .models import Event, TicketType, Address, CustomUser, Cart, DeliveryAddress, PaymentMethod, \
-    EventAddress, PurchasedTickets, Order, Organization
-from allauth.socialaccount.models import SocialAccount
-from .forms import UserProfileEditForm, DeliveryAddressForm, CustomUserForm, PaymentMethodForm, ContactForm, \
-    SupportForm, EventAddressForm, TicketTypeForm
-from django.utils import timezone
-from django.views.generic import ListView, DetailView, UpdateView, DeleteView, FormView
-from django.urls import resolve
-
-import logging
-from django.template.loader import render_to_string
-from django.core.mail import EmailMessage, send_mail
-
-import logging
-from django.template.loader import render_to_string
-from django.core.mail import EmailMessage
-
+from geopy import Nominatim
 from geopy.distance import geodesic
-from geopy.geocoders import Nominatim
+from allauth.account.models import EmailAddress
+from allauth.socialaccount.models import SocialAccount
+
+from .models import (
+    CustomUser, Cart, DeliveryAddress, PaymentMethod, PurchasedTickets,
+    Order, Organization, TicketType, Address, Event, EventAddress
+)
+from .forms import (
+    UserProfileEditForm, PaymentMethodForm, ContactForm, SupportForm,
+    EventAddressForm, TicketTypeForm, EventForm, TicketTypeFormSet,
+    CustomUserForm, DeliveryAddressForm
+)
 
 logger = logging.getLogger(__name__)
-
 
 def send_email(html_template, context):
     from_email = settings.EMAIL_HOST_USER
@@ -181,16 +180,6 @@ class EventManagerView(PermissionRequiredMixin, ListView):
         context['current_url'] = current_url_name
 
         return context
-
-
-from django.shortcuts import render
-from django.urls import reverse_lazy
-from django.forms import inlineformset_factory, modelformset_factory
-from django.views.generic import CreateView
-from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import Event, TicketType
-from .forms import EventForm, TicketTypeFormSet
-
 
 class EventInline():
     form_class = EventForm
@@ -495,14 +484,6 @@ class EventDetailView(DetailView):
 
         return context
 
-
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import TemplateView
-from allauth.socialaccount.models import SocialAccount
-from allauth.account.models import EmailAddress
-from .models import Address  # Import your Address model
-
-
 class MyProfileView(LoginRequiredMixin, TemplateView):
     template_name = 'account/myprofile.html'
 
@@ -714,14 +695,6 @@ class CartView(LoginRequiredMixin, TemplateView):
         messages.success(request, 'Košík byl úspěšně aktualizován.')
         return redirect('cart')
 
-
-from django.contrib import messages
-from django.shortcuts import redirect, render
-from django.views.generic import TemplateView
-from allauth.socialaccount.models import SocialAccount
-from .forms import CustomUserForm, DeliveryAddressForm
-
-
 class CartInformationsView(LoginRequiredMixin, TemplateView):
     template_name = "account/cart_informations.html"
 
@@ -814,12 +787,6 @@ class CartPaymentView(LoginRequiredMixin, TemplateView):
         context['payment_form'] = payment_form
         context['new_message'] = True
         return self.render_to_response(context)
-
-
-import qrcode
-from io import BytesIO
-import random
-
 
 class CartConfirmationView(LoginRequiredMixin, TemplateView):
     template_name = "account/cart_confirmation.html"
@@ -998,14 +965,7 @@ class RemoveItemView(LoginRequiredMixin, View):
 class ClearCartView(LoginRequiredMixin, View):
     def post(self, request):
         Cart.objects.filter(user=request.user).delete()
-        return redirect('cart')  # Přesměrování zpět na stránku s košíkem
-
-
-from django.views.generic import ListView
-from geopy import Nominatim
-from geopy.distance import geodesic
-from .models import Event, EventAddress
-
+        return redirect('cart')
 
 class EventsListView(ListView):
     model = Event
@@ -1353,19 +1313,6 @@ class SupportView(View):
         else:
             messages.error(request, "Formulář obsahuje chyby. Zkuste to prosím znovu.")  # Zobrazení chybové zprávy
             return render(request, 'informations/support.html', {'form': form})
-
-
-from calendar import monthrange
-from datetime import datetime, timedelta
-from django.views import View
-from django.shortcuts import render
-from .models import Event  # Import vašeho modelu Event
-
-from calendar import Calendar
-from datetime import datetime, timedelta
-from django.shortcuts import render
-from .models import Event
-
 
 class CalendarView(View):
     template_name = 'calendar/calendar.html'
