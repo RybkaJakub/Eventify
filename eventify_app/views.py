@@ -133,7 +133,8 @@ def index(request):
         'profile_picture': profile_picture,
         'has_picture': has_picture,
         'user': request.user,
-        'events_json': events_json
+        'events_json': events_json,
+        'BASE_DIR' : settings.BASE_DIR
     }
 
     return render(request, 'index.html', context=context)

@@ -3,6 +3,8 @@
 
 {% block content %}
 
+    {{ BASE_DIR }}
+    
     {% if user.is_authenticated %}
         {% for group in user.groups.all %}
             {% if group.name == "editor" or group.name == "admin" %}
