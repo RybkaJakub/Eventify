@@ -23,9 +23,8 @@ from . import settings
 
 urlpatterns = [
     path('eventify_app/', include('eventify_app.urls')),
-    path('captcha/', include('captcha.urls')),
+path('captcha/', include('captcha.urls')),
     path('', RedirectView.as_view(url='eventify_app/')),
-
 ]
 
 if not settings.DEBUG:

@@ -1,10 +1,6 @@
 from tkinter.font import names
-
-from django.conf.urls.static import static
 from django.urls import path, include
 from django.contrib import admin
-
-from eventify import settings
 from .views import index, purchase_ticket, EventManagerView, EventCreateView, EventDeleteView, EventDetailView, \
     EventUpdateView, UserProfileView, MyProfileView, UserProfileEditView, CartView, RemoveItemView, ClearCartView, \
     CartInformationsView, \
@@ -46,7 +42,3 @@ urlpatterns = [
     path('order/<int:order_id>/pdf/', generate_ticket_pdf, name='generate_ticket_pdf'),
     path('captcha/', include('captcha.urls')),
 ]
-
-if not settings.DEBUG:
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
