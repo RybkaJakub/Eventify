@@ -25,8 +25,9 @@ urlpatterns = [
     path('eventify_app/', include('eventify_app.urls')),
 path('captcha/', include('captcha.urls')),
     path('', RedirectView.as_view(url='eventify_app/')),
+
 ]
 
-if settings.DEBUG:
+if not settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
