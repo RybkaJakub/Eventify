@@ -2,8 +2,6 @@
 {% load static %}
 
 {% block content %}
-
-    {{ BASE_DIR }}
     
     {% if user.is_authenticated %}
         {% for group in user.groups.all %}
