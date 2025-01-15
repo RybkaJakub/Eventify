@@ -1,0 +1,1228 @@
+% ŠABLONA PRO PSANÍ ZÁVĚREČNÉ STUDIJNÍ PRÁCE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Autor: Jakub Dokulil (kubadokulil99@gmail.com)
+% Tato šablona byla vytvořena tak, aby pomocí ní mohli v systému LaTeX soutěžící sázet své práce a zároveň odpovídala požadavkům na formátování vyplývajícím z wordové šablony umístěné na webu soc.cz.
+%
+\documentclass[12pt, a4paper,
+%oneside,      %% -- odkomentujte, pokud chcete svou práci mít pouze jednostrannou, mezera pro hřbet pak automaticky bude pouze na levé straně
+twoside,        %% -- pro oboustranné práce, mezera pro hřbet následně střídá strany.
+openright
+]{report}
+
+%% Nutné balíčky a nastavení
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Proměnné
+\newcommand\obor{INFORMAČNÍ TECHNOLOGIE} %% -- napiš číslo a název tvého oboru
+\newcommand\kodOboru{18-20-M/01} %% -- napiš číslo a název tvého oboru
+\newcommand\zamereni{se zaměřením na počítačové sítě a programování} %% -- napiš číslo a název tvého oboru
+\newcommand\skola{Střední škola průmyslová a umělecká, Opava} %% vyplň název školy
+\newcommand\trida{IT4} %% vyplň jméno svého konzultanta
+\newcommand\jmenoAutora{Jakub Rybka}  %% vyplň své jméno
+\newcommand\skolniRok{2024/25}%% vyplň rok
+\newcommand\datumOdevzdani{1. 1. 2025} %% vyplň rok
+\newcommand\nazevPrace{Eventify: Online platforma pro organizaci událostí } %% vyplň název své prác
+
+\title{\nazevPrace} %% -- Název tvé práce
+\author{\jmenoAutora} %% -- tvé jméno
+\date{\datumOdevzdani} %% -- rok, kdy píšeš SOČku
+
+\usepackage[top=2.5cm, bottom=2.5cm, left=3.5cm, right=1.5cm]{geometry} %% nastaví okraje, left -- vnitřní okraj, right -- vnější okraj
+
+\usepackage[czech]{babel} %% balík babel pro sazbu v češtině
+\usepackage[utf8]{inputenc} %% balíky pro kódování textu
+\usepackage{listings}
+\usepackage[T1]{fontenc}
+
+\usepackage{listings}	% Balíček pro sazbu zdrojových textů
+\lstset{              % nastavení
+	%	Definice jazyka použitého ve výpisech
+	%    language=[LaTeX]{TeX},	% LaTeX
+	%	language={Matlab},		% Matlab
+	language={C},           % jazyk C
+	basicstyle=\ttfamily,	% definice základního stylu písma
+	tabsize=2,			% definice velikosti tabulátoru
+	inputencoding=utf8,         % pro soubory uložené v kódování UTF-8
+	columns=fixed,  %fixed nebo flexible,
+	fontadjust=true %licovani sloupcu
+	extendedchars=true,
+	literate=%  definice symbolů s diakritikou
+	{á}{{\'a}}1
+	{č}{{\v{c}}}1
+	{ď}{{\v{d}}}1
+	{é}{{\'e}}1
+	{ě}{{\v{e}}}1
+	{í}{{\'i}}1
+	{ň}{{\v{n}}}1
+	{ó}{{\'o}}1
+	{ř}{{\v{r}}}1
+	{š}{{\v{s}}}1
+	{ť}{{\v{t}}}1
+	{ú}{{\'u}}1
+	{ů}{{\r{u}}}1
+	{ý}{{\'y}}1
+	{ž}{{\v{z}}}1
+	{Á}{{\'A}}1
+	{Č}{{\v{C}}}1
+	{Ď}{{\v{D}}}1
+	{É}{{\'E}}1
+	{Ě}{{\v{E}}}1
+	{Í}{{\'I}}1
+	{Ň}{{\v{N}}}1
+	{Ó}{{\'O}}1
+	{Ř}{{\v{R}}}1
+	{Š}{{\v{S}}}1
+	{Ť}{{\v{T}}}1
+	{Ú}{{\'U}}1
+	{Ů}{{\r{U}}}1
+	{Ý}{{\'Y}}1
+	{Ž}{{\v{Z}}}1
+}
+
+\usepackage{cmap} %% balíček zajišťující, že vytvořené PDF bude prohledávatelné a kopírovatelné
+
+\usepackage{graphicx} %% balík pro vkládání obrázků
+
+\usepackage{subcaption} %% balíček pro vkládání podobrázků
+
+\usepackage{hyperref} %% balíček, který v PDF vytváří odkazy
+
+\usepackage{forest}
+
+\linespread{1.25} %% řádkování
+\setlength{\parskip}{0.5em} %% odsazení mezi odstavci
+
+
+\usepackage[pagestyles]{titlesec} %% balíček pro úpravu stylu kapitol a sekcí
+\titleformat{\chapter}[block]{\scshape\bfseries\LARGE}{\thechapter}{10pt}{\vspace{0pt}}[\vspace{-22pt}]
+\titleformat{\section}[block]{\scshape\bfseries\Large}{\thesection}{10pt}{\vspace{0pt}}
+\titleformat{\subsection}[block]{\bfseries\large}{\thesubsection}{10pt}{\vspace{0pt}}
+
+
+\usepackage{tocloft} % Balíček umožní přizpůsobit vzhled tabulky obsahu
+\setlength{\cftbeforechapskip}{0pt}  % Menší rozestup pro kapitoly
+\setlength{\cftbeforesecskip}{0pt}   % Menší rozestup pro sekce
+
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{4}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\renewcommand{\headrulewidth}{0.025pt}
+
+\usepackage{booktabs}
+
+\usepackage{url}
+
+%% Balíčky co se můžou hodit :) 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{pdfpages} %% Balíček umožňující vkládat stránky z PDF souborů, 
+
+\usepackage{upgreek} %% Balíček pro sazbu stojatých řeckých písmen, třeba u jednotky mikrometr. Například stojaté mí: \upmu, stojaté pí: \uppi
+
+\usepackage{amsmath}    %% Balíčky amsmath a amsfonts 
+\usepackage{amsfonts}   %% pro sazbu matematických symbolů
+\usepackage{esint}     %% pro sazbu různých integrálů (např \oiint)
+\usepackage{mathrsfs}
+\usepackage{helvet} % Helvet font
+\usepackage{mathptmx} % Times New Roman
+\usepackage{Oswald} % Oswald font
+
+
+%% makra pro sazbu matematiky
+\newcommand{\dif}{\mathrm{d}} %% makro pro sazbu diferenciálu, místo toho
+%% abych musel psát '\mathrm{d}' mi stačí napsat '\dif' což je mnohem 
+%% kratší a mohu si tak usnadnit práci
+
+\usepackage{listings}
+\usepackage{xcolor}
+
+\renewcommand{\lstlistingname}{Kód}% Listing -> Algorithm
+\renewcommand{\lstlistlistingname}{Seznam programových kódů}% List of Listings -> List of Algorithms
+
+%% Definice 
+\lstdefinelanguage{JavaScript}{
+	morekeywords=[1]{break, continue, delete, else, for, function, if, in,
+		new, return, this, typeof, var, void, while, with},
+	% Literals, primitive types, and reference types.
+	morekeywords=[2]{false, null, true, boolean, number, undefined,
+		Array, Boolean, Date, Math, Number, String, Object},
+	% Built-ins.
+	morekeywords=[3]{eval, parseInt, parseFloat, escape, unescape},
+	sensitive,
+	morecomment=[s]{/*}{*/},
+	morecomment=[l]//,
+	morecomment=[s]{/**}{*/}, % JavaDoc style comments
+	morestring=[b]',
+	morestring=[b]"
+}[keywords, comments, strings]
+
+
+\lstdefinelanguage[ECMAScript2015]{JavaScript}[]{JavaScript}{
+	morekeywords=[1]{await, async, case, catch, class, const, default, do,
+		enum, export, extends, finally, from, implements, import, instanceof,
+		let, static, super, switch, throw, try},
+	morestring=[b]` % Interpolation strings.
+}
+
+\lstalias[]{ES6}[ECMAScript2015]{JavaScript}
+
+% Nastavení barev
+% Requires package: color.
+\definecolor{mediumgray}{rgb}{0.3, 0.4, 0.4}
+\definecolor{mediumblue}{rgb}{0.0, 0.0, 0.8}
+\definecolor{forestgreen}{rgb}{0.13, 0.55, 0.13}
+\definecolor{darkviolet}{rgb}{0.58, 0.0, 0.83}
+\definecolor{royalblue}{rgb}{0.25, 0.41, 0.88}
+\definecolor{crimson}{rgb}{0.86, 0.8, 0.24}
+
+% Nastavení pro Python
+\lstdefinestyle{Python}{
+	language=Python,
+	backgroundcolor=\color{white},
+	basicstyle=\ttfamily,
+	breakatwhitespace=false,
+	breaklines=false,
+	captionpos=b,
+	columns=fullflexible,
+	commentstyle=\color{mediumgray}\upshape,
+	emph={},
+	emphstyle=\color{crimson},
+	extendedchars=true,  % requires inputenc
+	fontadjust=true,
+	frame=single,
+	identifierstyle=\color{black},
+	keepspaces=true,
+	keywordstyle=\color{mediumblue},
+	keywordstyle={[2]\color{darkviolet}},
+	keywordstyle={[3]\color{royalblue}},
+	literate=%
+	{á}{{\'a}}1 {č}{{\v{c}}}1 {ď}{{\v{d}}}1 {é}{{\'e}}1 {ě}{{\v{e}}}1
+	{í}{{\'i}}1 {ň}{{\v{n}}}1 {ó}{{\'o}}1 {ř}{{\v{r}}}1 {š}{{\v{s}}}1
+	{ť}{{\v{t}}}1 {ú}{{\'u}}1 {ů}{{\r{u}}}1 {ý}{{\'y}}1 {ž}{{\v{z}}}1,		
+	numbers=left,
+	numbersep=5pt,
+	numberstyle=\tiny\color{black},
+	rulecolor=\color{black},
+	showlines=true,
+	showspaces=false,
+	showstringspaces=false,
+	showtabs=false,
+	stringstyle=\color{forestgreen},
+	tabsize=2,
+	title=\lstname,
+	upquote=true  % requires textcomp	
+}
+
+
+\lstdefinestyle{JSES6Base}{
+	backgroundcolor=\color{white},
+	basicstyle=\ttfamily,
+	breakatwhitespace=false,
+	breaklines=false,
+	captionpos=b,
+	columns=fullflexible,
+	commentstyle=\color{mediumgray}\upshape,
+	emph={},
+	emphstyle=\color{crimson},
+	extendedchars=true,  % requires inputenc
+	fontadjust=true,
+	frame=single,
+	identifierstyle=\color{black},
+	keepspaces=true,
+	keywordstyle=\color{mediumblue},
+	keywordstyle={[2]\color{darkviolet}},
+	keywordstyle={[3]\color{royalblue}},
+ literate=%
+{á}{{\'a}}1 {č}{{\v{c}}}1 {ď}{{\v{d}}}1 {é}{{\'e}}1 {ě}{{\v{e}}}1
+{í}{{\'i}}1 {ň}{{\v{n}}}1 {ó}{{\'o}}1 {ř}{{\v{r}}}1 {š}{{\v{s}}}1
+{ť}{{\v{t}}}1 {ú}{{\'u}}1 {ů}{{\r{u}}}1 {ý}{{\'y}}1 {ž}{{\v{z}}}1,		
+	numbers=left,
+	numbersep=5pt,
+	numberstyle=\tiny\color{black},
+	rulecolor=\color{black},
+	showlines=true,
+	showspaces=false,
+	showstringspaces=false,
+	showtabs=false,
+	stringstyle=\color{forestgreen},
+	tabsize=2,
+	title=\lstname,
+	upquote=true  % requires textcomp
+}
+
+\lstdefinestyle{JavaScript}{
+	language=JavaScript,
+	style=JSES6Base,
+}
+\lstdefinestyle{ES6}{
+	language=ES6,
+	style=JSES6Base
+}
+
+
+\lstdefinestyle{HTML}{
+	language=HTML, 
+	basicstyle=\ttfamily\small, 
+	breaklines=true, 
+	keywordstyle=\color{blue}, 
+	commentstyle=\color{gray}, 
+	stringstyle=\color{red},
+	style=JSES6Base
+}
+
+\lstdefinestyle{PostgreSQL}{
+	language=SQL, 
+	basicstyle=\ttfamily\small, 
+	breaklines=true, 
+	keywordstyle=\color{blue}, 
+	commentstyle=\color{gray}, 
+	stringstyle=\color{red},
+	style=JSES6Base
+}
+
+%% Bordel pro práci - můžeš smáznout :) 
+%%%%%%%%%%%%%%%%%%%
+
+\usepackage{lipsum} %% balíček který píše lipsum (nesmyslný text, který se používá pro kontrolu typografie)
+
+\pagenumbering{arabic}
+\setcounter{page}{1} %% Nastavení počitadla stránek
+\pagestyle{plain}
+
+%% Začátek dokumentu
+%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+	
+	\pagestyle{empty}
+	
+	\cleardoublepage
+
+%% Titulní stránka s informacemi
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	{\fontfamily{phv}\selectfont
+		%% Logo školy
+		\begin{figure}[h]
+			\centering
+			\includegraphics[width=0.6\linewidth]{image/logo-skoly.png} 
+		\end{figure}
+		
+		
+		%% Hlavička práce a její název (viz proměnná \nazev prace)
+		%% \sffamily %%% bezpatkové písmo - sans serif
+		{\bfseries %%% písmo na stránce je tučně
+			\begin{center}
+				\vspace{0.025 \textheight}
+				\LARGE{ZÁVĚREČNÁ STUDIJNÍ PRÁCE}\\
+				\large{dokumentace}\\
+				\vspace{0.075 \textheight}
+				\LARGE {\nazevPrace}\\
+			\end{center}  
+		}%%%
+		
+		\begin{figure}[h]
+			\centering
+			\includegraphics[width=0.5\linewidth]{image/eventify_logo_rounded.png} 
+		\end{figure}
+		
+		\vspace{0.02 \textheight}
+		\begin{table}[h!]
+			\begin{tabular}{ll}
+				\textbf{Autor:} & \jmenoAutora\\ 
+				\textbf{Obor:} & \kodOboru { } \obor\\
+				\textbf{} & \zamereni\\
+				\textbf{Třída:} & \trida\\
+				\textbf{Školní rok:} & \skolniRok\\
+			\end{tabular}
+			
+		\end{table}		
+	}
+	
+\cleardoublepage %% Zalomení dvojstránky
+	
+%% Stránka obsahující poděkování a prohlášení
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Poděkování - nepovinné
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	\noindent{\large{\bfseries{Poděkování}\\}}
+	
+	\noindent Rád bych poděkoval panu učiteli Ing. Petru Grussmanovi za cenné nápady a rady, které mi poskytl během vývoje tohoto projektu.
+	
+	Dále bych chtěl poděkovat Mgr. Marku Lučnému za jeho inspiraci a poradenství v průběhu vývoje. Jeho konstruktivní připomínky byly neocenitelné při hledání správných řešení a při rozvoji mých technických dovedností.
+	
+	\vspace*{0.5\textheight} %% Vertikální mezeru je možné upravit
+
+%% Prohlášení - povinné
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\noindent{\large{\bfseries{Prohlášení}\\}}  %% uprav si koncovky podle toho na jaký rod se cítíš, vypadá to pak lépe :) 
+	\noindent{Prohlašuji, že jsem závěrečnou práci vypracoval samostatně a uvedl veškeré použité 
+		informační zdroje.\\}
+	\noindent{Souhlasím, aby tato studijní práce byla použita k výukovým a prezentačním účelům na Střední průmyslové a umělecké škole v Opavě, Praskova 399/8.}
+	\vfill
+	\noindent{V Opavě \datumOdevzdani\\}
+	\noindent
+	\begin{minipage}{\linewidth}
+		\hspace{9.5cm} 
+		\begin{tabular}{@{}p{6cm}@{}}
+			\dotfill \\
+			Podpis autora
+		\end{tabular}
+	\end{minipage}
+	
+	\cleardoublepage %% Zalomení dvojstránky
+
+%% Stránka obsahující abstrakt (anotaci)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
+
+%% Abstrakt v češtině
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\noindent{\Large{\bfseries{Abstrakt}\\}}
+	\noindent Eventify je webová aplikace zaměřená na efektivní správu různých typů událostí, jako jsou konference, festivaly, workshopy nebo sportovní akce. \\
+	Hlavním cílem tohoto projektu bylo vytvoření platformy, která by zjednodušila proces organizace událostí a zároveň poskytla účastníkům přehledný a jednoduchý způsob, jak se na ně registrovat. \\
+	Aplikace je rozdělena na dvě hlavní sekce: jednu pro organizátory, kteří mohou spravovat události, sledovat registrace a druhou pro účastníky, kteří si mohou prohlížet nabídky událostí, filtrovat je podle zájmu a provádět registrace na vybrané akce.
+	
+	Projekt využívá moderní technologie jako je Django pro backend, PostgreSQL pro databázi a Tailwind CSS pro frontend. Bezpečné přihlašování uživatelů je zajištěno prostřednictvím \linebreak integrace OAuth 2.0. V rámci aplikace je rovněž implementována možnost nákupu vstupenek \linebreak a správy jejich dostupnosti. Cílem bylo navrhnout aplikaci, která je jak funkčně bohatá, tak uživatelsky přívětivá, která se snadno přizpůsobí různým typům událostí a uživatelským potřebám.
+	
+	
+	
+	\vspace{18pt}
+	
+	\noindent{\large{\bfseries{Klíčová slova}}}
+	
+	\noindent správa událostí, webová aplikace, registrace, vstupenky, Django, Tailwind CSS, \\PostgreSQL, \dots 
+	
+	\vspace{18pt}
+
+	\clearpage %% Zalomení stránky
+
+%% Stránka s generovaným obsahem
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
+	
+	\tableofcontents %% Vygeneruje tabulku s obsahem
+	\clearpage
+
+%% Stránka s úvodem - povinná část
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%		
+	\chapter*{Úvod}
+%Tento příkaz vytvoří novou kapitolu s názvem "Úvod" ve vašem dokumentu.
+%Hvězdička * u příkazu \chapter* znamená, že tato kapitola nebude mít číslo. Ve výsledném dokumentu se tedy objeví jako "Úvod" bez předcházejícího čísla kapitoly, které se obvykle zobrazuje u číslovaných kapitol.
+%Tento příkaz také znamená, že kapitola se automaticky neobjeví v obsahu, protože LaTeX standardně zahrnuje do obsahu pouze číslované kapitoly.
+	\addcontentsline{toc}{chapter}{Úvod}
+%Tento příkaz ručně přidává záznam do obsahu.
+%První parametr toc označuje, že přidáváme záznam do Table of Contents (obsahu).
+%Druhý parametr chapter specifikuje úroveň záznamu. V tomto případě říkáme, že přidávaný záznam má být považován za kapitolu.
+%Třetí parametr Úvod je text, který se objeví v obsahu. V tomto případě bude v obsahu zobrazen název "Úvod".	
+Rozhodl jsem se vytvořit aplikaci Eventify, která slouží k efektivní správě a rezervaci vstupenek na různé typy událostí, protože jsem chtěl rozšířit své znalosti ve frameforku Django. Tento projekt mi poskytl příležitost vytvořit komplexní systém, který usnadní organizátorům \linebreak a účastníkům přístup k potřebným informacím a zároveň umožní bezproblémovou správu událostí. Podobné systémy jsou dnes velmi populární a nacházejí uplatnění při pořádání koncertů, konferencí nebo sportovních událostí.
+
+Hlavním cílem projektu Eventify bylo vytvořit aplikaci, která umožňuje uživatelům nejen organizovat a spravovat různé typy událostí, ale i zakoupení vstupenek. Aplikace je určena jak pro organizátory, kteří mohou přidávat nové akce, nastavovat typy vstupenek a sledovat jejich prodeje, tak pro uživatele, kteří si mohou pohodlně zakoupit vstupenky a procházet jednotlivé události nebo kategorie událostí. Uživatelé se připojují k aplikaci prostřednictvím svého uživatelského účtu a mají přístup ke všem funkcím potřebným pro správu jejich účasti na událostech.
+
+Pro realizaci jsem zvolil technologii Django pro backend a Tailwind CSS společně s \linebreak Alpine.js pro frontend, což mi umožnilo vytvořit responsivní a uživatelsky přívětivou aplikaci s moderním designem. V rámci projektu jsem se zaměřil na zabezpečení aplikace a uživatelských dat, zajištění správné komunikace mezi uživatelskými účty a databází, optimalizaci pro různé zařízení.
+
+Tato dokumentace detailně popisuje vývoj aplikace Eventify, včetně analýzy požadavků, návrhu systému, implementace funkcionalit a testování. V další části se zaměřím na technologické aspekty projektu a popis jednotlivých modulů aplikace. Na závěr hodnotím výsledky práce a možná vylepšení pro budoucí verze aplikace.
+\pagestyle{empty}
+\clearpage
+%Tipy k psaní úvodu
+%Je povinný, nadpis neměňte, rozsah - max. 1 strana. 
+%Tato část práce obsahuje: 
+%* náhled do řešené problematiky, zdůvodnění volby problematiky, 
+%* předem definované cíle práce, 
+%* motivaci pro další čtení textu včetně stručného uvedení obsahu následujících kapitol 
+
+
+\chapter{VÝVOJOVÝ POSTUP A POUŽITÉ TECHNOLOGIE }
+
+\section{Přehled existujících řešení }
+
+V dnešní době je na trhu dostupných několik řešení pro správu událostí a prodej vstupenek, která umožňují organizátorům efektivně spravovat různé aspekty jejich událostí. Mezi nejznámější a nejrozšířenější platformy patří Eventbrite, Ticketmaster a GoOut, každá z nich přináší vlastní specifika, výhody a nevýhody. Cílem této části je představit tyto konkurenční systémy a porovnat je s aplikací Eventify, která je zaměřena na poskytování vysoce flexibilního a cenově dostupného řešení pro správu událostí.
+
+\subsection{Evenbrite}
+Eventbrite je jedním z nejznámějších a nejpoužívanějších řešení pro správu a prodej vstupenek. Umožňuje organizátorům snadno vytvářet události, spravovat vstupenky a platby, zároveň nabízí nástroje pro marketing, jako jsou e-mailové kampaně a integrace s dalšími platformami (např. Facebook a Instagram). Jednou z klíčových výhod je jednoduchost použití a široká uživatelská základna, což znamená, že události mohou mít velkou viditelnost a marketingovou podporu.
+
+Nicméně Eventbrite má také několik nevýhod. Za používání této platformy je účtován poplatek, což může být pro menší organizátory a jednotlivce nevýhodné. Poplatky jsou účtovány nejen za prodej vstupenek, ale i za některé pokročilé funkce, jako je přizpůsobení vzhledu stránek nebo pokročilá analytika. Další nevýhodou je, že platforma je velmi orientována na velké události, což může být pro menší organizátory složité a nákladné. Dále, platforma neumožňuje plnou kontrolu nad funkcemi a vzhledem aplikace, což může být limitující pro ty, kteří hledají více přizpůsobitelné řešení.
+
+\pagestyle{plain}
+\clearpage
+
+\subsection{Ticketmaster}
+Ticketmaster je další silný hráč na trhu, který je zaměřen především na prodej vstupenek pro velké kulturní a sportovní akce. Tento systém je známý svou spolehlivostí, zabezpečením a širokým rozsahem služeb, včetně rezervace míst na sedadlech, pokročilých analytických nástrojů a možnosti integrace s jinými prodejními platformami. Ticketmaster je jedním z největších a nejrozšířenějších poskytovatelů vstupenek na světě a používají ho zejména velcí organizátoři akcí, jako jsou koncerty, divadelní představení nebo sportovní události.
+
+Hlavní nevýhodou Ticketmasteru je vysoká cena za služby, což může být pro malé organizátory velkou překážkou. Platforma se zaměřuje na velké komerční události, a tak její funkce nejsou optimálně přizpůsobeny potřebám menších organizátorů, kteří by si rádi přizpůsobili systém na míru. Ticketmaster také vyžaduje určitou míru složitosti při integraci a nastavování vstupenek, což může být pro uživatele bez technických znalostí komplikované.
+
+\subsection{GoOut}
+GoOut je platforma, která se zaměřuje především na kulturní a společenské události v České republice a na Slovensku. Nabízí funkce pro správu událostí, prodej vstupenek a možnost propagace akcí. GoOut je populární především mezi organizátory koncertů, festivalů, divadelních představení a dalších kulturních akcí. Platforma nabízí několik nástrojů pro analýzu účasti na událostech, umožňuje jednoduché sdílení informací na sociálních sítích, což může výrazně zvýšit viditelnost událostí.
+
+Přestože GoOut nabízí některé velmi užitečné nástroje pro organizátory, má podobné problémy jako Eventbrite a Ticketmaster – je zpoplatněn a cena může být pro malé organizátory nevýhodná. Kromě toho je platforma omezená především na český a slovenský trh, což může být problém pro organizátory, kteří plánují mezinárodní události. GoOut také neumožňuje tolik flexibility v přizpůsobení uživatelského rozhraní a správy vstupenek, což je pro některé organizátory limitující.
+
+\clearpage
+
+\section{Aplikace Eventify}
+
+Tento projekt se zaměřuje na vývoj aplikace Eventify, která má sloužit jako komplexní řešení pro správu událostí, organizaci vstupenek a interakci s uživateli. V průběhu vývoje bylo klíčové zohlednit potřeby koncových uživatelů, jako jsou snadná navigace, responzivní design a robustní backend pro správu dat. Tato kapitola podrobně popisuje jednotlivé fáze vývoje, klíčové výzvy, způsob jejich řešení a dosažené výsledky.
+
+\subsection{Cíle projektu a myšlenky vzniku}
+
+\subsubsection{Inpirace pro vznik projektu}
+
+Myšlenka vytvoření aplikace Eventify vznikla během hledání vhodného nápadu pro můj projekt v rámci ročníkové práce ve třetím ročníku. V té době jsem plánoval zakoupit vstupenky na jednu událost a při procházení různých portálů jsem si uvědomil, že proces zakoupení vstupenek je často zbytečně složitý.
+
+Systémy, které jsem zkoumal, byly zahlcené funkcemi a nebyly příliš uživatelsky přívětivé. Při analýze jejich designu a funkcionality jsem si uvědomil, že bych mohl vytvořit platformu, která by celý proces nejen zjednodušila, ale zároveň poskytla organizátorům nástroj, který by byl snadný na správu a flexibilní pro různé typy událostí.
+
+\subsubsection{Hlavní cíle projektu}
+
+Cíle projektu byly stanoveny tak, aby reflektovaly potřeby uživatelů i organizátorů a zajistily, že aplikace bude funkční, bezpečná a uživatelsky přívětivá. Zároveň měly umožnit snadnou správu událostí a zjednodušit proces nákupu vstupenek, což přispěje k lepšímu uživatelskému zážitku.
+
+\begin{enumerate}
+	\item \textbf{Jednoduchá správa událostí}
+
+Hlavním cílem bylo vytvořit intuitivní systém, který organizátorům umožní:
+
+\begin{itemize}
+
+	\item Snadno vytvářet, upravovat a mazat události prostřednictvím jednoduchého uživatelského rozhraní.
+	\item Každou událost opatřit klíčovými detaily, jako jsou název, datum, čas, místo konání, popis a kategorie.
+	\item Nahrávat obrázky, které vizuálně zatraktivní zobrazení události.
+	\item Automaticky zobrazovat události ve veřejné části aplikace s možností filtrování podle kategorií, data nebo lokace.
+	\item Tento systém měl za cíl usnadnit organizátorům správu jejich akcí a zvýšit přehlednost pro koncové uživatele.
+
+\end{itemize}
+
+\item \textbf{Správa vstupenek}
+
+Další klíčovou funkcionalitou byla flexibilní správa vstupenek, která měla zahrnovat:
+
+\begin{itemize}
+	
+	\item Možnost vytvářet různé typy vstupenek (např. VIP, standardní, dětské), každou s vlastním názvem, cenou a dostupným množstvím.
+	\item Automatické sledování počtu prodaných a zbývajících vstupenek s dynamickým zobrazováním této informace uživatelům.
+	\item Snadné přidávání nových typů vstupenek prostřednictvím dynamického formuláře.
+	\item Tento systém měl zajistit přehlednou a jednoduchou správu vstupenek jak pro organizátory, tak pro účastníky událostí.
+
+\end{itemize}
+
+\item \textbf{Uživatelské role}
+
+Rozdělení uživatelských rolí bylo dalším zásadním cílem, který měl zajistit, že každý typ uživatele bude mít přístup pouze k funkcím, které jsou pro něj relevantní. Role byly definovány následovně:
+
+\begin{itemize}
+	
+	\item Běžný uživatel: Může prohlížet seznam událostí, nakupovat vstupenky a spravovat svůj profil.
+	\item Organizátor: Má přístup k administrační části, kde může vytvářet a spravovat své události a sledovat statistiky prodeje.
+	\item Administrátor: Může spravovat všechny události, uživatele a má přístup k dalším pokročilým funkcím, jako je kontrola systému a údržba databáze.
+	
+\end{itemize}
+
+\item \textbf{Atraktivní a responzivní design}
+
+Cílem bylo vytvořit moderní design, který bude:
+
+\begin{itemize}
+
+	\item Přehledný a snadno ovladatelný pro uživatele všech věkových kategorií.
+	\item Responzivní, tedy optimalizovaný pro zobrazení na různých zařízeních, včetně mobilních telefonů a tabletů.
+	\item Vizuálně atraktivní díky použití Tailwind CSS a jednoduše přizpůsobitelný.
+	\item Důraz byl kladen na minimalismus a jednoduchost, které by uživatelům usnadnily orientaci a práci s aplikací.
+
+\end{itemize}
+
+\clearpage
+
+\item \textbf{Komplexní proces nákupu}
+
+Proces nákupu byl navržen jako jednoduchý, ale zároveň dostatečně robustní, aby zahrnoval všechny potřebné kroky. Mezi hlavní cíle patřilo:
+
+\begin{itemize}
+
+\item Možnost přidat více vstupenek do košíku s jasným přehledem o jejich ceně a dostupnosti.
+\item Potvrzovací mechanismus, který zahrnuje zasílání e-mailu s potvrzením objednávky.
+\item Generování QR kódů, které mohou být využity pro ověření vstupenek při vstupu na akci.
+\item Tvorba PDF vstupenek s detaily o události, jménem uživatele a QR kódem.
+\item Možnost přidání platebních metod a správa doručovacích adres přímo v profilu uživatele.
+
+\end{itemize}
+
+\item \textbf{Zobrazení adresy na mapě}
+
+Dalším cílem bylo umožnit zobrazení přesné lokace události na interaktivní mapě, což mělo zlepšit uživatelský zážitek a zjednodušit plánování cesty na akci. Tento cíl zahrnoval:
+
+\begin{itemize}
+	
+\item Implementaci mapového API, které dokáže zobrazit lokaci zadanou organizátorem.
+\item Validaci adresy při zadávání, aby bylo zajištěno správné zobrazení na mapě.
+\item Tato funkce měla uživatelům poskytnout lepší přehled o místě konání a zvýšit komfort při organizaci účasti na události.
+
+\end{itemize}
+
+\end{enumerate}
+
+\subsubsection{Motivace k realizaci projektu}
+
+Hlavní motivací k vytvoření projektu Eventify byla snaha řešit problémy, se kterými se běžní uživatelé i organizátoři potýkají při správě a účasti na událostech. Zároveň jsem chtěl vytvořit aplikaci, která by:
+
+\begin{itemize}
+	
+\item \textbf{Pomáhala malým organizátorům:} Umožnit snadnou organizaci událostí bez nutnosti platit drahé poplatky za platformy třetích stran.
+\item \textbf{Byla dostupná široké veřejnosti:} Cílem bylo vytvořit aplikaci, která bude jednoduchá na ovládání a dostupná i pro méně technicky zdatné uživatele.
+\item \textbf{Poskytovala moderní nástroje:} Nabídnout funkce, které reflektují současné požadavky uživatelů, jako je online nákup vstupenek, interaktivní mapy nebo personalizované doporučení událostí.
+
+\end{itemize}
+
+Tento projekt pro mě také představoval příležitost naučit se pracovat s moderními technologiemi, jako je Django, PostgreSQL, Tailwind CSS a HTMX, a prohloubit své znalosti v oblasti návrhu databází, responzivního designu a bezpečnosti aplikací.
+
+
+\subsection{Počáteční fáze a analýza požadavků}
+
+První fáze projektu zahrnovala důkladnou analýzu požadavků na aplikaci. Bylo nutné pochopit potřeby uživatelů a definovat klíčové funkce:
+
+\begin{enumerate}
+	\item \textbf{Organizace událostí:} Umožnit organizátorům přidávat a spravovat události.
+	\item \textbf{Prodej vstupenek:} Vytvořit systém, který umožní uživatelům zakoupit vstupenky online.
+	\item \textbf{Role uživatelů:} Oddělit role administrátorů, organizátorů a běžných uživatelů.
+	\item \textbf{Přehlednost aplikace:} Aplikace musí být jednoduchá a nesmí v ní být žádné složité prvky, tak aby ji dokázal ovládat každý.
+\end{enumerate}
+
+Po stanovení požadavků byl navržen základní model aplikace včetně databázových schémat, které zohledňují klíčové entity, jako jsou události, uživatelé, vstupenky a organizace.
+
+\subsection{Návrh architektury}
+
+Projekt byl postaven na frameworku Django s využitím PostgreSQL jako databázového systému. Klíčové vlastnosti architektury zahrnovaly:
+
+\begin{enumerate}
+	\item \textbf{Responzivní design:} Za použití Tailwind CSS byl vytvořen moderní a intuitivní design.
+	\item \textbf{Bezpečnost:} Implementace autentizace a autorizace pomocí Django AllAuth
+\end{enumerate}
+
+\subsection{Počáteční fáze: Plánování a analýza požadavků}
+
+Procházel jsem konkurenční aplikace a hledal jaké funkce nabízejí. Některé mi nepřišly dobře zpracované, proto jsem je chtěl udělat jednodužší. Klíčové požadavky zahrnovaly:
+
+\begin{enumerate}
+	\item \textbf{Snadná organizace událostí:} Chtěl jsem dosáhnout jednoduché formy pro organizátory, jak vytvořit událost a dále jej upravovat.
+	\item \textbf{Efektivní správa vstupenek:} Přidávání druhů vstupenek do košíku a jeho následné zakoupení muselo být jednoduché a uživatelsky přívětivé.
+	\item \textbf{Uživatelské role:} Bylo potřeba rozdělit uživatele do kategorií jako jsou: administrátoři, organizátoři a U
+	uživatelé
+\end{enumerate}
+
+V této fázi jsem také vytvořil základní návrh databázového modelu, kde jsem se zaměřil na vztahy mezi entitami, jako jsou uživatelé, události a vstupenky. 
+
+\subsection{První verze aplikace}
+
+První verzi aplikace jsem vytvořil již v červnu roku 2024 jako jednoduchý projekt v Django. Obsahovala základní funkcnionalitu:
+
+\begin{itemize}
+	\item Přidávání událostí, které zahrnovaly název, popis, datum, čas.
+	\item Správu uživatelských účtů s možností registrace a přihlášení.
+	\item Základní systém pro přihlášení se na událost.
+\end{itemize}
+
+Tato verze však měla několik omezení, například chyběla možnost přidat datum události, nebyly implementovány vstupenky ani kategorie události a design byl velmi základní. \linebreak Po dokončení jsem dostal další nápady, co přidat a co vylepšit. Na tom jsem začal dále pracovat.
+
+\begin{figure}[h!]
+	\centering %% příkaz, který ti obrázek zarovná na střed
+	\includegraphics[width=1\textwidth]{image/main_old.jpeg} %% vložení samotného obrátku
+	\caption{První verze aplikace Eventify - Základní stránka} %% popisek obrázku, nezapomeň na citace!
+	\label{fig:mainold} %% označení až budeš chtít na obrázek odkazovat
+\end{figure}
+
+\subsection{Postupné zdokonalování projektu}
+
+Na základě nasbíraných zkušeností a zpětné vazby jsem přepracoval některé důležité funkce a rozšířil jejich možnosti.
+
+\textbf{Hlavní změny zahrnovaly}
+
+\begin{enumerate}
+	\item \textbf{Přidání kategorií událostí:} Přidal jsem možnosti kategorií a přidal jejich zobrazení na frontendu.
+	\item \textbf{Přidání mapy a adresy událostí:} Přidal jsem možnost adresy události a její následné zobrazení na detailu události.
+	\item \textbf{Přidání vstupenek:} Odstranil jsem jednoduché přihlášení na událost a zapracoval do systému propracované vstupenky a jejich různé možnosti.
+	\item \textbf{Responzivní design:} Oproti minulé verzi, která byla v Bootstrapu jsem tuhle verzi začal dělat v Tailwind CSS a k tomu ještě využívám Alpine.js k dynamickým prvkům.
+\end{enumerate}
+
+\begin{figure}[h!]
+	\centering %% příkaz, který ti obrázek zarovná na střed
+	\includegraphics[width=0.8\textwidth]{image/main_new.jpeg} %% vložení samotného obrátku
+	\caption{Pokročilá verze aplikace Eventify - Hlavní stránka} %% popisek obrázku, nezapomeň na citace!
+	\label{fig:main} %% označení až budeš chtít na obrázek odkazovat
+\end{figure}
+
+\clearpage
+
+\subsection{Výzvy během vývoje}
+
+\begin{enumerate}
+	\item{Stylování Tailwind CSS}
+	
+	Jednou z prvních výzev, na kterou jsem narazil, byla práce s Tailwind CSS. Před začátkem tohoto projektu jsem neměl žádné zkušenosti s tímto utility-first frameworkem, což značně zpomalilo první fáze vývoje. Tailwind se odlišuje od klasických CSS frameworků jako Bootstrap tím, že klade důraz na použití utilit přímo v HTML kódu, což vyžaduje jiný přístup k psaní stylů.
+	
+	Postupně jsem se naučil základní principy Tailwindu a začal využívat jeho výhody, například rychlé přizpůsobení vzhledu nebo jednoduchou implementaci responzivního designu. Nicméně stylování složitějších prvků, jako byly modální okna a podobné věci, mi zabralo více času, než jsem očekával.
+	
+	\item{Práce s formuláři a formsety}
+	
+	Další velkou výzvou bylo zpracování formsetů pro vstupenky. Implementace dynamického přidávání a odebírání typů vstupenek na jedné stránce vyžadovala důkladné porozumění tomu, jak formsety fungují. Navíc jsem musel zajistit, že všechny typy vstupenek budou správně validovány a uloženy do databáze, což si vyžádalo kombinaci práce s Django backendem a HTMX na frontendové straně.
+	
+	Prvotní verze měla problémy se synchronizací mezi frontendem a backendem, zejména při validaci formulářů, což vedlo k tomu, že některé vstupenky nebyly správně uloženy. Řešením bylo detailní ladění každé části procesu a pečlivé testování.
+	
+	\item{Formulář pro události}
+	
+	Na jedné stránce je zpracováváno několik formulářů – formulář pro základní údaje o události, formulář pro přidání vstupenek a formulář pro přiřazení adresy. Práce s více formuláři na jedné stránce byla komplikovaná, protože bylo nutné zajistit správnou validaci všech částí a jejich synchronní odesílání.
+	
+	Řešením bylo využití Django FormView s přizpůsobenými metodami pro zpracování každého formuláře. Každý formulář byl validován samostatně.
+	
+	\item{Designování stránky}
+	
+	Jedním z největších problémů byl nedostatek nápadů na vzhled aplikace. Přestože jsem měl jasnou představu o funkcích, samotný design webu byl výzvou. Nemám zkušenosti jako designér, což vedlo k několika pokusům vytvořit přehledné a moderní rozhraní, které by zároveň bylo intuitivní.
+	
+	Responzivní design byl vytvořen s pomocí Tailwind CSS, což umožnilo přizpůsobit aplikaci různým zařízením, včetně mobilních telefonů.
+	
+	\item{Kategorie událostí}
+	
+	Implementace systému kategorií byla složitější, než se zdálo. Každá událost může být přiřazena jedné kategorii, ale zároveň bylo nutné zajistit, aby kategorie byly dynamicky zobrazovány v různých částech aplikace (např. při filtrování událostí).
+	
+	Prvotní problém byl s databázovou strukturou, kde jsem musel zajistit, že kategorie budou uloženy jako volba z předdefinovaného seznamu. Použitím choices v Django modelu jsem tento problém vyřešil. Musel jsem také přizpůsobit formuláře a šablony tak, aby dynamicky zobrazovaly dostupné kategorie jako přeložená hodnota id, která se ukládá do databáze.
+	
+	\item{Adresa události a její zobrazení na mapě}
+	
+	Další technickou výzvou bylo přidání možnosti zadat adresu události a následně ji zobrazit na mapě. Zpracování adres bylo řešeno pomocí Geopy, které převádí textovou adresu na souřadnice. Tyto souřadnice byly poté použity k vykreslení mapy pomocí Leaflet.js a OpenStreetMap.
+	
+	Zajištění správného formátu adresy a práce s knihovnou byla zpočátku náročná, protože některé nevalidní adresy vedly k chybám. Řešením bylo přidání validace na straně serveru, která kontroluje zda je adresa platná a jestli knihovna vrací odpovídající souřadnice.
+	
+	\item{Košík a zpracování nákupů}
+	
+	Práce na košíku a celém procesu nákupu byla jedna z nejkomplexnějších částí projektu. Košík musel zahrnovat následující funkce:
+	
+	\begin{itemize}
+		\item Zobrazení přehledu zakoupených vstupenek.
+		\item \textbf{Potvrzování objednávky:} Posílání potvrzovacích e-mailů.
+		\item \textbf{Tvorba QR kódů:} Každá vstupenka byla generována s unikátním QR kódem pro ověření při vstupu.
+		\item \textbf{Generování PDF vstupenek:} Uživatel si mohl stáhnout vstupenky ve formátu PDF.
+	\end{itemize}
+	
+	Velkou výzvou bylo sladit všechny tyto kroky, aby proces nákupu probíhal hladce. K tomu bylo nutné kombinovat více technologií, jako je Django backend, knihovny pro generování QR kódů (qrcode) a knihovny pro tvorbu PDF souborů (weasyprint).
+\end{enumerate}
+
+\clearpage
+
+\pagestyle{empty}
+
+\clearpage
+
+\pagestyle{plain}
+
+\chapter{Popis aplikace}
+
+\section{Struktura aplikace}
+
+Aplikace Eventify je moderní webová platforma navržená pro snadnou správu událostí, prodej vstupenek a organizaci akcí. Umožňuje uživatelům objevovat nadcházející události, nakupovat vstupenky online a organizátorům poskytuje nástroje pro tvorbu událostí, správu vstupenek a sledování účasti. Díky intuitivnímu uživatelskému rozhraní a automatizovaným procesům usnadňuje Eventify organizátorům správu událostí a zajišťuje uživatelům pohodlný přístup ke vstupenkám.
+
+Tato kapitola poskytuje podrobný přehled o struktuře aplikace, uživatelském systému, správě událostí a dalších klíčových prvcích, které dohromady tvoří plně funkční ekosystém pro organizaci a účast na událostech. Aplikace je navržena s důrazem na uživatelskou přívětivost, rychlost a zabezpečení dat.
+
+\subsection{Adresářová struktura}
+
+Struktura souborů a složek aplikace je klíčová pro udržení přehlednosti kódu a efektivní vývoj aplikace. Dobře navržená struktura zajišťuje snadnější orientaci vývojářů a umožňuje rychlé ladění a aktualizace aplikace.
+
+Adresářová struktura aplikace Eventify je založena na standardní struktuře Django projektu. Každá složka a soubor má přesně definovanou funkci, která přispívá k plynulému chodu aplikace. Níže je ukázka základní struktury složek:\\
+
+\begin{forest}
+	for tree={
+		font=\ttfamily,
+		grow'=0,
+		child anchor=west,
+		parent anchor=south,
+		anchor=west,
+		calign=first,
+		edge path={
+			\noexpand\path [draw, \forestoption{edge}]
+			(!u.south west) +(7.5pt,0) |- node[fill,inner sep=1.25pt] {} (.child anchor)\forestoption{edge label};
+		},
+		before typesetting nodes={
+			if n=1
+			{insert before={[,phantom]}}
+			{}
+		},
+		fit=band,
+		before computing xy={l=15pt},
+	}
+	[Eventify
+	[eventify
+	[.env - Konfigurační soubor s citlivými údaji]
+	[asgi.py - Nastavení pro asynchronní běh aplikace]
+	[settings.py - Hlavní konfigurace projektu]
+	[urls.py - Hlavní směrování URL adres projektu]
+	[wsgi.py - Nastavení pro synchronní běh aplikace na serverech]
+	]
+	[eventifyapp
+	[migrations/ - Migrační soubory pro správu změn v databázových modelech]
+	[static/ - Statické soubory]
+	[templates/ - HTML šablony používané aplikací]
+	[admin.py - Konfigurace administrátorského rozhraní]
+	[apps.py - Nastavení a informace o aplikaci]
+	[forms.py - Definice formulářů aplikace]
+	[models.py - Definice formulářů aplikace]
+	[tests.py - Testovací funkce pro ověření správnosti aplikace]
+	[urls.py - Lokální směrování URL pro aplikaci]
+	[views.py - Funkce a logika pro zpracování uživatelských požadavků]
+	]
+	[media/ - Ukládání nahraných souborů uživateli]
+	[requirements.txt - Seznam závislostí potřebných pro běh projektu]
+	[manage.py - Hlavní skript pro správu projektu Django]
+	]
+\end{forest}
+
+\clearpage
+
+\subsection{Databázová struktura}
+
+\begin{figure}[h!]
+	\centering %% příkaz, který ti obrázek zarovná na střed
+	\includegraphics[width=1\textwidth]{image/diagram.png} %% vložení samotného obrátku
+	\caption{Potvrzení objednávky} %% popisek obrázku, nezapomeň na citace!
+	\label{fig:diagram} %% označení až budeš chtít na obrázek odkazovat
+\end{figure}
+
+Databázová struktura aplikace Eventify je jedním z nejdůležitějších prvků celého systému. Jejím cílem je efektivně uchovávat informace o uživatelích, událostech, vstupenkách a nákupech, přičemž vztahy mezi tabulkami jsou klíčové pro správnou funkčnost aplikace. Relace mezi tabulkami umožňují snadný přístup k propojeným datům, jako je například zjištění, které vstupenky byly zakoupeny konkrétním uživatelem pro určitou událost.
+
+Aplikace Eventify používá relační databázi PostgreSQL, která je známá pro svou spolehlivost, výkon a podporu pokročilých funkcí, jako jsou cizí klíče, transakce a indexy. Každá tabulka má primární klíč (ID) a vztahy mezi tabulkami jsou definovány pomocí cizích klíčů (Foreign Keys), což umožňuje zajistit referenční integritu mezi daty.
+
+\subsubsection{Přehled modelů}
+
+\begin{enumerate}
+	\item \textbf{Organization}\\
+	Tento model slouží k evidenci organizací, které spravují události v aplikaci. Každá organizace může mít své vlastní události a uživatele, což umožňuje efektivní správu větších struktur.
+	
+	\item \textbf{OrganizationAddress}\\
+	Model uchovává informace o adresách organizací. Tyto adresy mohou být použity například k identifikaci místa, kde organizace sídlí, nebo k zobrazení informací v rámci administrace.
+	
+	\item \textbf{CustomUser}\\
+	Tento model reprezentuje uživatele aplikace. Jeho rozšíření oproti výchozímu Django modelu umožňuje přizpůsobení funkcionality, jako je přidání organizace, profilového obrázku nebo ověření telefonního čísla. Uživatelé mohou mít různé role (organizátor, běžný uživatel), což je klíčové pro správu oprávnění.
+	
+	\item \textbf{Address}\\
+	Model slouží k uchovávání adres uživatelů, které mohou být použity například při doručování vstupenek, fakturaci nebo zobrazování detailů objednávek.
+	
+	\item \textbf{Event}\\
+	Model reprezentuje jednotlivé události, které organizátoři vytvářejí. Je základním stavebním kamenem aplikace, protože na něj navazují další entity, jako jsou vstupenky, adresy událostí nebo objednávky. Tento model umožňuje organizátorům spravovat detaily události a zpřístupnit je uživatelům.
+	
+	\item \textbf{EventAddress}\\
+	Model uchovává adresu spojenou s konkrétní událostí. Kromě toho dokáže prostřednictvím geolokačního API generovat souřadnice, což umožňuje zobrazení lokality události na mapě.
+	
+	\item \textbf{TicketType}\\
+	Tento model slouží k definování různých typů vstupenek pro jednotlivé události. Umožňuje organizátorům vytvářet specifické kategorie vstupenek (např. VIP, standardní) a sledovat jejich dostupnost. Je základem pro správu vstupenek v aplikaci.
+	
+	\item \textbf{Order}\\
+	Model reprezentuje objednávky, které uživatelé vytvářejí při nákupu vstupenek. Obsahuje informace o celkové částce, datu vytvoření a uživateli, což umožňuje správu transakcí a záznamů.
+	
+	\item \textbf{PurchasedTickets}\\
+	Tento model uchovává informace o zakoupených vstupenkách. Umožňuje generování QR kódů pro ověření při vstupu na akci. Je klíčovým prvkem pro zajištění bezpečnosti a snadné správy vstupenek.
+	
+	\item \textbf{Cart}\\
+	Model představuje virtuální košík uživatele, kde jsou uloženy položky, které chce zakoupit. Umožňuje správu nedokončených objednávek a kalkulaci celkové ceny před dokončením nákupu.
+	
+	\item \textbf{DeliveryAddress}\\
+	Model slouží k uchovávání doručovacích adres uživatelů, které mohou být využity při odesílání vstupenek poštou nebo při zasílání potvrzení objednávky.
+	
+	\item \textbf{PaymentMethod}\\
+	Tento model eviduje platební metody uživatelů, jako jsou údaje o kreditní kartě. Umožňuje bezpečnou správu platebních informací a usnadňuje proces plateb během nákupu vstupenek.
+	
+	\end{enumerate}
+\clearpage
+\subsubsection{Detailní popis složitějších modelů}
+
+Tato kapitola se zaměřuje na detailní popis tří klíčových modelů aplikace \textbf{Eventify:} Event, EventAddress a PaymentMethod. Tyto modely hrají zásadní roli při správě dat souvisejících s událostmi, adresami a platebními metodami. Kromě popisu funkcí je u modelů EventAddress a PaymentMethod vysvětlena i implementace validačních pravidel, která zajišťují správnost a bezpečnost dat.
+
+\begin{enumerate}
+	\item \textbf{Model Event}
+	
+	Model Event slouží jako hlavní entita aplikace, která reprezentuje jednotlivé události. Organizátoři mohou pomocí tohoto modelu definovat základní informace o událostech, jako je název, popis, datum, čas a kategorie. Tento model také umožňuje propojení s organizacemi, které události spravují, a s uživateli, kteří je vytvořili.
+	
+	Hlavní funkce modelu:
+	
+	\begin{itemize}
+		\item \textbf{Správa událostí:} Organizátoři mohou vytvářet, upravovat a mazat události.
+		\item \textbf{Kategorie událostí:} Každá událost je přiřazena jedné z předdefinovaných kategorií, což umožňuje filtrování událostí.
+		\item \textbf{Automatická asociace s organizací:} Pokud organizátor není přímo spojen s organizací, model při ukládání automaticky doplní organizaci na základě uživatele.
+	\end{itemize}
+	
+	
+	\begin{lstlisting}[style=Python, caption={Model Události}]
+		
+		class Event(models.Model):
+			CATEGORY_CHOICES = [
+				('conference', 'Konference'),
+				('festival', 'Festival'),
+				('workshop', 'Workshop'),
+				('sport', 'Sportovní událost'),
+				('social', 'Společenská akce'),
+				('exhibition', 'Výstava'),
+				('concert', 'Koncert'),
+				('online', 'Online událost'),
+				('local', 'Městská akce'),
+			] # - Možnosti kategorie Události
+			name = models.CharField(max_length=200) # - Jméno události
+			description = models.TextField() # - Popisek události
+			day = models.DateField(default=timezone.now) 
+			# - Den pořádání události
+			time = models.TimeField(default=timezone.now) 
+			# - čas pořádání události
+			created_by = models.ForeignKey(settings.AUTH_USER_MODEL,
+			 on_delete=models.CASCADE) # - Uživatel který vytvořil událost
+			organization = models.ForeignKey(Organization,
+			 on_delete=models.CASCADE, null=True) 
+			 # - Organizace která událost pořádá
+			category = models.CharField(max_length=20,
+			 choices=CATEGORY_CHOICES, default='conference') 
+			 # - Kategorie události z možností CATEGORY_CHOICES
+	\end{lstlisting}
+	
+	\item \textbf{Model EventAddress}
+	
+	Model EventAddress zajišťuje správu adres událostí a umožňuje generování geolokačních souřadnic na základě zadané adresy. Tato funkcionalita usnadňuje uživatelům navigaci k místu konání události.
+	
+	Hlavní funkce modelu:
+	
+	\begin{itemize}
+		\item \textbf{Správa adres:} Ukládá detaily, jako je ulice, číslo popisné, město, PSČ a stát.
+		\item \textbf{Geolokace:} Při uložení adresy automaticky generuje souřadnice pomocí API.
+		\item \textbf{Validace PSČ:} Používá pravidlo pro kontrolu formátu českého PSČ.
+	\end{itemize}
+	
+	
+	\begin{lstlisting}[style=Python, caption={Validace PSČ}]
+		
+		def validate_postal_code(value): 
+			# - Validace Poštovního směrovacího čísla
+			if not re.match(r'^\d{3} \d{2}$', value):
+				raise ValidationError("PSC musí být ve formátu 'xxx xx' 
+				a obsahovat pouze čísla.")
+	\end{lstlisting}
+	
+	\begin{lstlisting}[style=Python, caption={Model EventAddress}]
+	
+		class EventAddress(models.Model):
+			event = models.ForeignKey(Event, on_delete=models.CASCADE)
+			 # - Foreign key na událost
+			street = models.TextField() # - Ulice události
+			number = models.PositiveSmallIntegerField(blank=True,
+			 null=True) # - Císlo popisné události
+			city = models.TextField() # - Město události
+			postal_code = models.TextField(
+			 validators=[validate_postal_code]) # - Císlo popisné události.
+			country = models.CharField(max_length=255, default="Cesko")
+			 # - Stát události
+			latitude = models.FloatField(blank=True, null=True)
+				# - Latitude (vyplňuje se automaticky)
+			longitude = models.FloatField(blank=True, null=True)
+				# - Longitude (vyplňuje se automaticky)
+		
+			def save(self, *args, **kwargs): # - Ukládání modelu
+				if not self.latitude or not self.longitude:
+					address = 
+					f"{self.street} {self.number}, {self.city}, 
+					{self.postal_code}, {self.country}"
+					geolocator = Nominatim(user_agent="eventify")
+					try:
+						location = geolocator.geocode(address)
+						if location:
+							self.latitude = location.latitude
+							self.longitude = location.longitude
+					except GeopyError:
+						pass
+				super().save(*args, **kwargs) 
+					# - Uložení události buď s lokací a nebo bez
+	\end{lstlisting}
+	
+	\item \textbf{Model PaymentMethod}
+	
+	Model PaymentMethod ukládá informace o platebních metodách uživatelů. Zahrnuje validační pravidla pro číslo karty, CVC a datum expirace, což zajišťuje bezpečnost a správnost dat.
+	
+	Hlavní funkce modelu:
+	
+	\begin{itemize}
+		\item \textbf{Ukládání platebních údajů:} Slouží k evidenci platebních karet, včetně jména na kartě, čísla karty a data expirace.
+		\item \textbf{Bezpečnost dat:} Používá validace k ověření správného formátu údajů.
+		\item \textbf{Validace CVC a čísla karty:} Zajišťuje, že jsou zadány pouze platné údaje.
+	\end{itemize}
+	
+	\clearpage
+	\begin{lstlisting}[style=Python, caption={Validace platebních údajů}]
+		
+		def validate_card_number(value): 
+			# - Validace čísla karty
+			if not re.match(r'^4\d{15}$', value):
+				raise ValidationError(
+					"Císlo karty musí být 16 číslic 
+						začínajících číslem 4 (Visa).")
+		
+		def validate_cvc(value):
+			# - Validace CVC
+			if not re.match(r'^\d{3}$', value):
+				raise ValidationError("CVV musí být tříciferné číslo.")
+		
+		def validate_expiration_date(value):
+			# - Validace datumu expirace
+			if value < timezone.now().date():
+				raise ValidationError("Datum expirace nesmí 
+					být v minulosti.")
+		
+	\end{lstlisting}
+	
+	\begin{lstlisting}[style=Python, caption={Model PaymentMethod}]
+		
+		class PaymentMethod(models.Model):
+			user = models.ForeignKey(settings.AUTH_USER_MODEL,
+			 on_delete=models.CASCADE) # - Foreign key uživatele 
+			name_on_card = models.TextField(max_length=255)
+			# - Jméno na platební kartě 
+			card_number = models.TextField(
+				validators=[validate_card_number]) # - Císlo karty
+			cvc = models.TextField(validators=[validate_cvc]) # - CVC karty
+			expiration_date = models.DateField(
+			validators=[validate_expiration_date]) # - Datum expirace
+	\end{lstlisting}
+\end{enumerate}
+
+\chapter{Frontend a jeho vývoj}
+
+	\section{Úvodní stránka}
+		
+	Úvodní stránka prošla několika verzemi vývoje, aby byla co nejvíce přizpůsobena potřebám různých typů uživatelů. Jejím hlavním cílem je poskytnout rychlý přehled o relevantních událostech. Pokud je uživatel organizátorem, stránka zobrazuje všechny události, které jeho organizace pořádá. V případě běžného uživatele stránka vypisuje události, na které má uživatel zakoupené vstupenky.
+	
+	Další klíčovou funkcí je seznam nadcházejících událostí, který je uspořádán podle data. Události nejbližší k aktuálnímu datu jsou zobrazeny vlevo a postupně následují další. Tento přístup umožňuje uživatelům snadno najít nejaktuálnější události. Na závěr stránka zahrnuje interaktivní mapu, která zobrazuje všechny události s jejich geografickou polohou, což uživatelům umožňuje lépe se orientovat a naplánovat účast. Tato kombinace funkcí dělá z úvodní stránky praktický a uživatelsky přívětivý nástroj pro práci s aplikací.
+	
+	\begin{figure}[h!]
+		\centering %% příkaz, který ti obrázek zarovná na střed
+		\includegraphics[width=1\textwidth]{image/my_events-main.png} %% vložení samotného obrátku
+		\caption{Úvodní stránka aplikace Eventify - Mé události} %% popisek obrázku, nezapomeň na citace!
+		\label{fig:myevents} %% označení až budeš chtít na obrázek odkazovat
+	\end{figure}
+	
+	\begin{figure}[h!]
+		\centering %% příkaz, který ti obrázek zarovná na střed
+		\includegraphics[width=0.8\textwidth]{image/upcoming_events-main.png} %% vložení samotného obrátku
+		\caption{Úvodní stránka aplikace Eventify - Nadcházející události} %% popisek obrázku, nezapomeň na citace!
+		\label{fig:upcomingevents} %% označení až budeš chtít na obrázek odkazovat
+	\end{figure}
+	
+	\begin{figure}[h!]
+		\centering %% příkaz, který ti obrázek zarovná na střed
+		\includegraphics[width=0.8\textwidth]{image/interactive_map-main.png} %% vložení samotného obrátku
+		\caption{Úvodní stránka aplikace Eventify - Interaktivní mapa} %% popisek obrázku, nezapomeň na citace!
+		\label{fig:interactivemap} %% označení až budeš chtít na obrázek odkazovat
+	\end{figure}
+	
+	\clearpage
+	
+	\section{Seznam událostí}
+	
+	Stránka se seznamem událostí nabízí uživatelům přehled všech dostupných událostí. Je navržena tak, aby byla přehledná a snadno ovladatelná díky klíčovým funkcím, jako je stránkování, filtrování a responzivní design.
+	
+	Na stránce se využívá pagination, což umožňuje zobrazení omezeného počtu událostí na jedné stránce.
+	
+	Filtrování událostí je dalším důležitým nástrojem. Uživatelé mohou hledat události podle:
+	
+	\begin{itemize}
+		\item \textbf{Názvu} – rychlé vyhledání pomocí klíčových slov.
+		\item \textbf{Data konání} – výběr konkrétního dne nebo časového období.
+		\item \textbf{Místa} – s využitím rádiusu přibližně 10 km od zadané lokace.
+		\item \textbf{Kategorie} – možnost zobrazení pouze vybraných typů událostí, jako jsou koncerty, konference, festivaly a další.
+	\end{itemize}
+	
+	\begin{figure}[h!]
+		\centering %% příkaz, který ti obrázek zarovná na střed
+		\includegraphics[width=1\textwidth]{image/events_list.png} %% vložení samotného obrátku
+		\caption{Seznam událostí} %% popisek obrázku, nezapomeň na citace!
+		\label{fig:eventslist} %% označení až budeš chtít na obrázek odkazovat
+	\end{figure}
+	
+	\clearpage
+	
+	\section{Kalendář}
+	
+	Stránka s kalendářem slouží k přehlednému zobrazení událostí podle jednotlivých měsíců. Uživatelé zde mohou snadno procházet události organizované v konkrétním měsíci a roce, což usnadňuje plánování a orientaci v dostupných událostech.
+	
+	Uživatelé mají k dispozici dvě možnosti pro výběr zobrazeného měsíce a roku:
+	
+	\begin{itemize}
+		\item \textbf{Select boxy:} Umožňují přímý výběr konkrétního měsíce a roku z rozbalovací nabídky.
+		\item \textbf{Šipky pro přepínání:} Poskytují možnost postupného přepínání mezi měsíci vpřed nebo zpět. Každé kliknutí na šipku změní zobrazení na následující nebo předchozí měsíc.
+	\end{itemize}
+	
+	Kalendář zobrazuje všechny události příslušného měsíce s jejich základními detaily, jako je název, datum a kategorie. Události jsou uspořádány chronologicky a přehledně, což uživatelům umožňuje rychle najít relevantní informace.
+	
+	\begin{figure}[h!]
+		\centering %% příkaz, který ti obrázek zarovná na střed
+		\includegraphics[width=1\textwidth]{image/calendar.png} %% vložení samotného obrátku
+		\caption{Kalendář událostí} %% popisek obrázku, nezapomeň na citace!
+		\label{fig:caneldar} %% označení až budeš chtít na obrázek odkazovat
+	\end{figure}
+	
+	\section{Detail události}
+	
+	Stránka detailu události v slouží k zobrazení podrobných informací o konkrétní události. Uživatelé zde najdou název, popis, datum, čas, místo konání a kategorii události, doplněné o interaktivní mapu s přesnou polohou. Stránka rovněž umožňuje sdílet odkaz na událost prostřednictvím sociálních sítí nebo jej zkopírovat pro další použití.
+	
+	Pro běžné uživatele je k dispozici možnost zakoupení vstupenek přímo na stránce. Mohou si vybrat typ a množství vstupenek a dokončit nákup. Organizátoři naopak vidí tabulku zakoupených vstupenek na danou událost, která obsahuje informace o uživatelích, typu vstupenek \linebreak a jejich počtech. Tato stránka je klíčová pro interakci s událostí a umožňuje efektivní správu \linebreak i pohodlné využití pro všechny uživatele.
+	
+	\begin{figure}[h!]
+		\centering %% příkaz, který ti obrázek zarovná na střed
+		\includegraphics[width=1\textwidth]{image/event_detail.png} %% vložení samotného obrátku
+		\caption{Detail události} %% popisek obrázku, nezapomeň na citace!
+		\label{fig:eventdetail} %% označení až budeš chtít na obrázek odkazovat
+	\end{figure}
+	
+	\clearpage
+	
+	\section{Košík}
+	Košík v aplikaci Eventify slouží jako místo, kde si uživatelé mohou prohlédnout a spravovat své vybrané vstupenky před dokončením nákupu. Uživatelé vidí seznam vstupenek, které si přidali do košíku, včetně jejich názvu, typu, počtu a celkové ceny. Košík umožňuje:
+	
+	\begin{itemize}
+		\item \textbf{Úpravy vstupenek:} Uživatelé mohou měnit množství nebo odstraňovat jednotlivé položky.
+		\item \textbf{Přehled celkové ceny:} Dynamické přepočítání celkové částky na základě změn v košíku.
+	\end{itemize}
+	
+	\begin{figure}[h!]
+		\centering %% příkaz, který ti obrázek zarovná na střed
+		\includegraphics[width=1\textwidth]{image/cart.png} %% vložení samotného obrátku
+		\caption{Košík} %% popisek obrázku, nezapomeň na citace!
+		\label{fig:cart} %% označení až budeš chtít na obrázek odkazovat
+	\end{figure}
+	
+	\section{Doručovací údaje}
+	Stránka s doručovacími údaji umožňuje uživatelům zadat adresu, na kterou budou zaslány potvrzení objednávky nebo fyzické vstupenky, pokud je tato možnost povolena. Uživatelé zadávají:
+	
+	\begin{itemize}
+		\item  Jméno a příjmení.
+		\item Ulici a číslo popisné.
+		\item Město, PSČ a stát.
+	\end{itemize}
+	
+	Aplikace ověřuje správnost zadaných údajů a ukládá je pro budoucí použití. Doručovací údaje jsou také předvyplněny, pokud byly již dříve zadány.
+	
+	\begin{figure}[h!]
+		\centering %% příkaz, který ti obrázek zarovná na střed
+		\includegraphics[width=1\textwidth]{image/delivery_form.png} %% vložení samotného obrátku
+		\caption{Doručovací údaje - Formulář} %% popisek obrázku, nezapomeň na citace!
+		\label{fig:deliveryform} %% označení až budeš chtít na obrázek odkazovat
+	\end{figure}
+	
+	\begin{figure}[h!]
+		\centering %% příkaz, který ti obrázek zarovná na střed
+		\includegraphics[width=1\textwidth]{image/delivery_card.png} %% vložení samotného obrátku
+		\caption{Doručovací údaje - Vypněné údaje} %% popisek obrázku, nezapomeň na citace!
+		\label{fig:deliverycard} %% označení až budeš chtít na obrázek odkazovat
+	\end{figure}
+	
+	\clearpage
+	
+	\section{Platební metody}
+	Stránka s platebními metodami poskytuje uživatelům možnost vybrat nebo přidat preferovanou platební metodu. Aplikace podporuje různé platební možnosti, například platbu kartou. \linebreak Při přidávání nové karty je vyžadováno:
+	
+	\begin{itemize}
+		\item Jméno na kartě.
+		\item Číslo karty (s validací, aby bylo správné a bezpečné).
+		\item Datum expirace a CVC.
+	\end{itemize}
+	
+	Uložené platební metody jsou bezpečně spravovány a uživatelé je mohou kdykoli aktualizovat nebo odstranit.
+	
+	\clearpage
+	
+	\begin{figure}[h!]
+		\centering %% příkaz, který ti obrázek zarovná na střed
+		\includegraphics[width=1\textwidth]{image/payment_form.png} %% vložení samotného obrátku
+		\caption{Platební metoda - Formulář} %% popisek obrázku, nezapomeň na citace!
+		\label{fig:paymentform} %% označení až budeš chtít na obrázek odkazovat
+	\end{figure}
+	
+	\begin{figure}[h!]
+		\centering %% příkaz, který ti obrázek zarovná na střed
+		\includegraphics[width=1\textwidth]{image/payment_card.png} %% vložení samotného obrátku
+		\caption{Platevní metoda - Vyplněné údaje} %% popisek obrázku, nezapomeň na citace!
+		\label{fig:paymentcard} %% označení až budeš chtít na obrázek odkazovat
+	\end{figure}
+	
+	\clearpage
+	
+	\section{Potvrzení objednávky}
+	Poslední krok nákupu zahrnuje rekapitulaci objednávky, kde uživatelé vidí všechny detaily, jako je seznam vstupenek, celková cena, doručovací údaje a vybraná platební metoda. 
+	
+	Po potvrzení:
+	
+	\begin{itemize}
+		\item \textbf{Zpracování objednávky:} Systém vygeneruje QR kódy a PDF vstupenky, které jsou odeslány na e-mail uživatele.
+		\item \textbf{Notifikace:} Uživatel obdrží potvrzovací e-mail s detaily objednávky.
+	\end{itemize}
+	
+	\begin{figure}[h!]
+		\centering %% příkaz, který ti obrázek zarovná na střed
+		\includegraphics[width=1\textwidth]{image/confirmation.png} %% vložení samotného obrátku
+		\caption{Potvrzení objednávky} %% popisek obrázku, nezapomeň na citace!
+		\label{fig:confirmation} %% označení až budeš chtít na obrázek odkazovat
+	\end{figure}
+	
+	\begin{figure}[h!]
+		\centering %% příkaz, který ti obrázek zarovná na střed
+		\includegraphics[width=1\textwidth]{image/email.png} %% vložení samotného obrátku
+		\caption{E-mail s objednávkou} %% popisek obrázku, nezapomeň na citace!
+		\label{fig:email} %% označení až budeš chtít na obrázek odkazovat
+	\end{figure}
+	
+	\clearpage
+
+	\section{Mé vstupenky}
+	
+	Stránka Mé vstupenky slouží k přehlednému zobrazení všech zakoupených vstupenek uživatele. Vstupenky jsou seskupeny dle jednotlivých objednávek, přičemž u každé objednávky je zobrazeno její číslo, datum vytvoření a celková částka. Po rozkliknutí konkrétní objednávky se uživateli zobrazí detailní seznam jednotlivých vstupenek.
+	
+	Každá vstupenka obsahuje informace o názvu akce, datu, čase a místě konání, stejně jako unikátní QR kód pro rychlé ověření při vstupu. Uživatel má rovněž možnost stáhnout všechny vstupenky z objednávky ve formátu PDF, což usnadňuje jejich archivaci nebo sdílení. \linebreak Tato stránka poskytuje pohodlný přístup ke všem vstupenkám a zajišťuje jejich snadnou správu i použití.
+	
+	\begin{figure}[h!]
+		\centering %% příkaz, který ti obrázek zarovná na střed
+		\includegraphics[width=1\textwidth]{image/my_tickets.png} %% vložení samotného obrátku
+		\caption{Mé vstupenky} %% popisek obrázku, nezapomeň na citace!
+		\label{fig:mytickets} %% označení až budeš chtít na obrázek odkazovat
+	\end{figure}
+	
+	\begin{figure}[h!]
+		\centering %% příkaz, který ti obrázek zarovná na střed
+		\includegraphics[width=1\textwidth]{image/tickets_pdf.png} %% vložení samotného obrátku
+		\caption{Pdf soubor se vstupenkami} %% popisek obrázku, nezapomeň na citace!
+		\label{fig:ticketspdf} %% označení až budeš chtít na obrázek odkazovat
+	\end{figure}
+	
+	\chapter*{Závěr}
+	
+	\textbf{Shrnutí a celkové hodnocení projektu}
+	
+	Projekt \textbf{Eventify} představoval významnou příležitost prohloubit mé technické znalosti \linebreak a schopnosti v oblasti vývoje moderních webových aplikací. Cílem bylo vytvořit uživatelsky přívětivou platformu, která organizátorům poskytne komplexní nástroje pro správu událostí \linebreak a uživatelům zjednoduší registraci a nákup vstupenek. Navzdory různým výzvám se podařilo dosáhnout stabilního a plně funkčního řešení.
+	
+	Během práce na projektu jsem se naučil efektivně využívat moderní technologie, jako jsou Django, PostgreSQL, Tailwind CSS, HTMX a Alpine.js. Získané zkušenosti mi pomohly zvládnout principy návrhu databází, vytváření responzivního designu a optimalizace výkonu aplikace. Tyto dovednosti mi nepochybně přinesou výhody i v dalších projektech.
+	
+	Projekt Eventify splňuje všechny klíčové požadavky definované na začátku. Umožňuje snadnou správu událostí, nabízí flexibilní systém vstupenek a disponuje moderním a atraktivním uživatelským rozhraním. 
+	
+\textbf{Budoucí vylepšení}
+	
+	I přes úspěšné dokončení projektu Eventify vidím prostor pro další rozvoj, který by mohl platformu posunout na ještě vyšší úroveň. Mezi plánovaná vylepšení patří:
+	
+	\begin{itemize}
+		\item \textbf{Rozšíření platebních metod:} Přidání podpory platebních služeb, jako jsou PayPal, \linebreak GoPay, Skrill, Apple Pay a Google Pay, pro větší pohodlí uživatelů.
+		\item \textbf{Integrace AI podpory:} Implementace umělé inteligence pro podporu uživatelů s možností přesměrování na živou podporu, pokud AI nebude schopná pomoci.
+		\item \textbf{Přímá komunikace:} Umožnění přímé komunikace mezi uživateli a organizátory pro lepší interakci a rychlé řešení dotazů.
+		\item \textbf{Personalizovaná doporučení:} Zavedení systému doporučování událostí na základě předchozích zájmů a aktivit uživatele.
+		\item \textbf{Modernější vzhled:} Neustálé vylepšování designu platformy s důrazem na moderní trendy a intuitivní uživatelské prostředí.
+	\end{itemize}
+	
+	
+	\addcontentsline{toc}{chapter}{Seznam použitých zdrojů}
+	\renewcommand{\bibname}{Seznam použitých zdrojů}
+	%% literatura
+	\begin{thebibliography}{99}
+		\bibitem{djangodocs}\textit{Dokumentace Django frameworku} [online]. [cit. 2024-12-20]. Dostupné z: \url{https://docs.djangoproject.com/en/5.1/}
+		\bibitem{postresqldocs}\textit{Dokumentace PostreSQL} [online]. [cit. 2024-12-20]. Dostupné z: \url{https://www.postgresql.org/docs/}
+		\bibitem{tailwinddocs}\textit{Dokumentace k Tailwind CSS} [online]. [cit. 2024-12-20]. Dostupné z: \url{https://tailwindcss.com/docs/}
+		\bibitem{allauthdocs} \textit{Doumentace k Django-Allauth} [online]. [cit. 2024-12-20]. Dostupné z: \url{https://docs.allauth.org/en/latest/}
+	\end{thebibliography}
+	
+	\clearpage
+	
+	%% obrázky 
+	\listoffigures
+	
+\end{document}
